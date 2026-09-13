@@ -4,6 +4,7 @@ node_modules/
 # Production Builds
 dist/
 dist-ssr/
+*.node
 
 # Environment Variables & Secrets
 .env

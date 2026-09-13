@@ -1,10 +1,34 @@
 import esbuild from 'esbuild';
 import { execSync } from 'child_process';
+import fs from 'fs';
+import path from 'path';
 
-console.log('⚡ Generating Prisma client...');
+console.log('⚡ Generating Prisma client and query engine binaries...');
 execSync('npx prisma generate', { stdio: 'inherit' });
 
-const banner = "import { createRequire } from 'module'; const require = createRequire(import.meta.url);";
+// Copy Prisma engine binaries to src/ and dist/ so they are co-located in __dirname on Vercel
+const prismaDir = path.resolve('node_modules/.prisma/client');
+const engineFiles = fs.readdirSync(prismaDir).filter(f => f.startsWith('libquery_engine-') || f.startsWith('query_engine-') || f === 'schema.prisma');
+
+for (const targetDir of ['src', 'dist']) {
+  if (!fs.existsSync(targetDir)) {
+    fs.mkdirSync(targetDir, { recursive: true });
+  }
+  for (const file of engineFiles) {
+    const srcFile = path.join(prismaDir, file);
+    const destFile = path.join(targetDir, file);
+    fs.copyFileSync(srcFile, destFile);
+  }
+}
+
+const banner = `import { createRequire } from 'module';
+const require = createRequire(import.meta.url);
+import { fileURLToPath } from 'url';
+import { dirname } from 'path';
+const __filename = fileURLToPath(import.meta.url);
+const __dirname = dirname(__filename);
+`;
+
 const footer = `
 // Start the server only when running locally (not in serverless production)
 if (process.env.NODE_ENV !== 'production') {
@@ -15,7 +39,7 @@ if (process.env.NODE_ENV !== 'production') {
 }
 `;
 
-console.log('⚡ Bundling server application into src/server.mts and dist/server.mjs...');
+console.log('⚡ Bundling complete application (Express + Prisma runtime) into src/server.mts and dist/server.mjs...');
 
 // Bundle into src/server.mts (source entrypoint for Vercel)
 await esbuild.build({
@@ -27,7 +51,6 @@ await esbuild.build({
   banner: { js: banner },
   footer: { js: footer },
   outfile: 'src/server.mts',
-  external: ['@prisma/client'],
 });
 
 // Bundle into dist/server.mjs (production bundle for node start)
@@ -40,7 +63,6 @@ await esbuild.build({
   banner: { js: banner },
   footer: { js: footer },
   outfile: 'dist/server.mjs',
-  external: ['@prisma/client'],
 });
 
 console.log('⚡ Running TypeScript check on app.mts...');
