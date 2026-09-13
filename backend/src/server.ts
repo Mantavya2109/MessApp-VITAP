@@ -105,7 +105,7 @@ app.get('/api/menu/week', async (req, res) => {
   try {
     const { date, messPlan, range } = req.query;
     const planCode = resolvePlanCode(messPlan as string);
-    
+
     const plan = await prisma.messPlan.findUnique({
       where: { code: planCode },
     });
@@ -126,7 +126,7 @@ app.get('/api/menu/week', async (req, res) => {
         const d = new Date(targetDate);
         const dayOfWeek = d.getDay(); // 0 is Sun, 1 is Mon...
         const diffToMon = dayOfWeek === 0 ? -6 : 1 - dayOfWeek;
-        
+
         const mon = new Date(d);
         mon.setDate(d.getDate() + diffToMon);
         const sun = new Date(mon);
