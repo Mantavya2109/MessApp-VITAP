@@ -135,21 +135,19 @@
   opacity: 0.85;
 }
 
-/* Dishes List */
+/* Dishes Content Area */
 .meal-dishes-text-area {
   width: 100%;
-  margin-top: 4px;
+  margin-top: 5px;
   position: relative;
-  min-height: 56px;
+  display: flow-root;
 }
 
-/* Food Artwork: Fixed at right corner bottom across all devices */
-.meal-artwork-container {
-  position: absolute;
-  right: 12px;
-  bottom: 10px;
-  width: 72px;
-  height: 60px;
+/* Dedicated Food Image Block: Floats to bottom-right, reserving its own physical space */
+.meal-food-image-block {
+  float: right;
+  width: 80px;
+  height: 68px;
   display: flex;
   align-items: flex-end;
   justify-content: flex-end;
@@ -159,10 +157,12 @@
   will-change: transform;
   backface-visibility: hidden;
   transition: transform var(--transition-base);
-  z-index: 2;
+  margin-left: 10px;
+  margin-bottom: 2px;
+  margin-top: 4px;
 }
 
-.meal-card:hover .meal-artwork-container {
+.meal-card:hover .meal-food-image-block {
   transform: translateY(-2px) scale(1.02) translateZ(0);
 }
 
@@ -171,10 +171,9 @@
   font-size: 0.90625rem; /* 14.5px */
   color: var(--text-dishes);
   font-weight: var(--weight-regular);
-  line-height: 1.42;
+  line-height: 1.45;
   letter-spacing: 0.005em;
   margin: 0;
   width: 100%;
-  padding-right: 76px;
-  padding-bottom: 2px;
+  padding: 0;
 }
