@@ -178,7 +178,7 @@ export const SettingsPullout: React.FC<SettingsPulloutProps> = ({ isOpen, onClos
         {/* 6. Footer / Creator Credit */}
         <footer className="pullout-footer">
           <p>
-            Designed for students ·{' '}
+            Designed for students by{' '}
             <a
               href="https://www.linkedin.com/in/mantavya-patel-53b49932b/"
               target="_blank"

@@ -8,8 +8,9 @@
   display: flex;
   flex-direction: column;
   align-items: center;
-  background: var(--bg-app-gradient);
+  background: transparent;
   position: relative;
+  width: 100%;
 }
 
 /* Offline Indicator Banner */

@@ -13,7 +13,7 @@ interface MealCardProps {
   staggerIndex?: number;
 }
 
-export const MealCard: React.FC<MealCardProps> = ({
+const MealCardComponent: React.FC<MealCardProps> = ({
   meal,
   dateKey,
   isHero = false,
@@ -67,4 +67,6 @@ export const MealCard: React.FC<MealCardProps> = ({
     </article>
   );
 };
+
+export const MealCard = React.memo(MealCardComponent);
 

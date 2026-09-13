@@ -5,10 +5,10 @@
 
 :root,
 [data-theme="dark"] {
-  /* Rich Deep Atmospheric Canvas matching dark mode warm amber lighting */
+  /* Rich Deep Atmospheric Canvas matching dark mode warm amber lighting with prominent middle blue */
   --bg-app-base: #090B10;
   --bg-app-gradient: radial-gradient(circle at 94% 4%, rgba(240, 110, 20, 0.42) 0%, rgba(210, 90, 15, 0.18) 25%, rgba(9, 11, 16, 0) 58%),
-                     radial-gradient(circle at -4% 44%, rgba(14, 62, 92, 0.25) 0%, rgba(9, 11, 16, 0) 48%),
+                     radial-gradient(circle at -4% 44%, rgba(18, 92, 145, 0.52) 0%, rgba(14, 72, 115, 0.28) 26%, rgba(9, 11, 16, 0) 52%),
                      radial-gradient(circle at 98% 88%, rgba(245, 158, 11, 0.22) 0%, rgba(9, 11, 16, 0) 42%),
                      #090B10;
 

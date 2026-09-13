@@ -4,8 +4,8 @@
 
 .meal-card {
   background: var(--bg-surface-card);
-  backdrop-filter: blur(32px) saturate(190%);
-  -webkit-backdrop-filter: blur(32px) saturate(190%);
+  backdrop-filter: blur(20px) saturate(180%);
+  -webkit-backdrop-filter: blur(20px) saturate(180%);
   border: 1px solid var(--bg-surface-card-border);
   border-top: 1px solid var(--meal-card-top-border);
   border-radius: var(--radius-xl);
@@ -19,6 +19,7 @@
   overflow: visible;
   margin-bottom: 2px;
   transform: translateZ(0);
+  contain: layout style;
   animation: mealCardIn 260ms cubic-bezier(0.16, 1, 0.3, 1) both;
   animation-delay: calc(var(--stagger, 0) * 35ms);
 }
@@ -143,7 +144,7 @@
   margin: 0;
 }
 
-/* Fixed Food Artwork Container at Bottom-Right Corner */
+/* Fixed Food Artwork Container at Bottom-Right Corner (GPU cached) */
 .meal-artwork-container {
   position: absolute;
   right: 8px;
@@ -153,6 +154,9 @@
   z-index: 5;
   pointer-events: none;
   filter: drop-shadow(0 4px 10px rgba(0, 0, 0, 0.45));
+  transform: translateZ(0);
+  will-change: transform;
+  backface-visibility: hidden;
   transition: transform var(--transition-base);
   display: flex;
   align-items: flex-end;
@@ -160,5 +164,5 @@
 }
 
 .meal-card:hover .meal-artwork-container {
-  transform: translateY(-2px) scale(1.02);
+  transform: translateY(-2px) scale(1.02) translateZ(0);
 }

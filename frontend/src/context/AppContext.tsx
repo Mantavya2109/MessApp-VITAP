@@ -206,14 +206,22 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
   useEffect(() => {
     const checkMidnightRollover = () => {
       const nowIst = getISTDate();
-      setCurrentIST(nowIst);
       const newDateKey = formatDateKey(nowIst);
 
       if (newDateKey !== todayDateKey) {
         // Midnight transition: update today date key and switch selected menu & date to the new day
+        setCurrentIST(nowIst);
         setTodayDateKey(newDateKey);
         setSelectedMenuDateKey(newDateKey);
         refreshSchedule(nowIst);
+      } else {
+        // Only update time reference if the minute changed to avoid useless re-renders during scrolling
+        setCurrentIST((prev) => {
+          if (prev.getMinutes() !== nowIst.getMinutes() || prev.getHours() !== nowIst.getHours()) {
+            return nowIst;
+          }
+          return prev;
+        });
       }
     };
 

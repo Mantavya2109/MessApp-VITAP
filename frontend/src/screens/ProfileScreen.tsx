@@ -193,7 +193,7 @@ export const ProfileScreen: React.FC = () => {
       <footer className="app-meta-badge">
         <p>MessApp PWA v1.0.0 • VIT-AP University</p>
         <p style={{ marginTop: '3px', opacity: 0.7 }}>
-          Designed for students ·{' '}
+          Designed for students by{' '}
           <a
             href="https://www.linkedin.com/in/mantavya-patel-53b49932b/"
             target="_blank"
