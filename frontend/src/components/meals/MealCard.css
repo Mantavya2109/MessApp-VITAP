@@ -128,11 +128,42 @@
   opacity: 0.85;
 }
 
-/* Dishes List (Full-width usage of empty space with smart bottom-right clearance) */
+/* Dishes List (Full-width usage of empty space with smart bottom-right float clearance) */
 .meal-dishes-text-area {
   width: 100%;
   margin-top: 5px;
   position: relative;
+}
+
+/* Top Strut: Floats right with 0 width for the top 2 lines (~42px) so text expands full width */
+.meal-float-top-strut {
+  float: right;
+  width: 0;
+  height: 42px;
+  pointer-events: none;
+}
+
+/* Food Artwork Float: Sits below the 42px top zone and creates a guaranteed 66px + 10px safe exclusion zone */
+.meal-artwork-float {
+  float: right;
+  clear: right;
+  width: 66px;
+  height: 58px;
+  margin-left: 10px;
+  margin-bottom: 2px;
+  display: flex;
+  align-items: flex-end;
+  justify-content: flex-end;
+  pointer-events: none;
+  filter: drop-shadow(0 4px 10px rgba(0, 0, 0, 0.45));
+  transform: translateZ(0);
+  will-change: transform;
+  backface-visibility: hidden;
+  transition: transform var(--transition-base);
+}
+
+.meal-card:hover .meal-artwork-float {
+  transform: translateY(-2px) scale(1.02) translateZ(0);
 }
 
 .meal-dishes-paragraph {
@@ -144,36 +175,4 @@
   letter-spacing: 0.005em;
   margin: 0;
   width: 100%;
-}
-
-/* Safe exclusion buffer at end of text so words never collide with the bottom-right illustration */
-.meal-artwork-spacer {
-  display: inline-block;
-  width: 66px;
-  height: 24px;
-  vertical-align: -4px;
-  pointer-events: none;
-}
-
-/* Food Artwork Container: Anchored cleanly to bottom-right corner */
-.meal-artwork-container {
-  position: absolute;
-  right: 10px;
-  bottom: 8px;
-  width: 66px;
-  height: 58px;
-  z-index: 3;
-  pointer-events: none;
-  filter: drop-shadow(0 4px 10px rgba(0, 0, 0, 0.45));
-  transform: translateZ(0);
-  will-change: transform;
-  backface-visibility: hidden;
-  transition: transform var(--transition-base);
-  display: flex;
-  align-items: flex-end;
-  justify-content: flex-end;
-}
-
-.meal-card:hover .meal-artwork-container {
-  transform: translateY(-2px) scale(1.02) translateZ(0);
 }

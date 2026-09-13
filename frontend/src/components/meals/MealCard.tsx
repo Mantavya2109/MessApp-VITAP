@@ -46,8 +46,13 @@ const MealCardComponent: React.FC<MealCardProps> = ({
         </div>
       </div>
 
-      {/* Menu Dishes Text List (Full-width usage of empty horizontal space) */}
+      {/* Menu Dishes Text List (Full-width usage of empty horizontal space with smart bottom-right float) */}
       <div className="meal-dishes-text-area">
+        <div className="meal-float-top-strut" aria-hidden="true" />
+        <div className="meal-artwork-float" aria-hidden="true">
+          <FoodIllustration type={meal.type} />
+        </div>
+
         {meal.items.length > 0 && (
           <p className="meal-dishes-paragraph">
             {meal.items.map((item, idx) => (
@@ -56,14 +61,8 @@ const MealCardComponent: React.FC<MealCardProps> = ({
                 {idx < meal.items.length - 1 && ', '}
               </React.Fragment>
             ))}
-            <span className="meal-artwork-spacer" aria-hidden="true" />
           </p>
         )}
-      </div>
-
-      {/* Fixed Bottom-Right Food Illustration */}
-      <div className="meal-artwork-container" aria-hidden="true">
-        <FoodIllustration type={meal.type} />
       </div>
     </article>
   );
