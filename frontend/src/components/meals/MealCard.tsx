@@ -48,48 +48,21 @@ const MealCardComponent: React.FC<MealCardProps> = ({
 
       {/* Menu Dishes Content Area */}
       <div className="meal-dishes-text-area">
-        {meal.items.length > 0 && (() => {
-          // Calculate insertion index so upper text spans 100% full width of the card,
-          // and the bottom-right image div reserves its own physical space with zero overlap.
-          const totalLength = meal.items.reduce((acc, item) => acc + item.name.length + 2, 0);
-          const targetThreshold =
-            totalLength > 160
-              ? totalLength * 0.42
-              : totalLength > 90
-              ? totalLength * 0.38
-              : Math.max(15, totalLength * 0.30);
+        {meal.items.length > 0 && (
+          <p className="meal-dishes-paragraph">
+            {meal.items.map((item, idx) => (
+              <React.Fragment key={item.id}>
+                <span>{item.name}</span>
+                {idx < meal.items.length - 1 && ', '}
+              </React.Fragment>
+            ))}
+          </p>
+        )}
+      </div>
 
-          let runningLength = 0;
-          let floatInsertIndex = 1;
-
-          for (let i = 0; i < meal.items.length; i++) {
-            runningLength += meal.items[i].name.length + 2;
-            if (runningLength >= targetThreshold && i >= 1) {
-              floatInsertIndex = i;
-              break;
-            }
-          }
-
-          return (
-            <p className="meal-dishes-paragraph">
-              {meal.items.map((item, idx) => {
-                const shouldInsertImage = idx === floatInsertIndex;
-
-                return (
-                  <React.Fragment key={item.id}>
-                    {shouldInsertImage && (
-                      <span className="meal-food-image-block" aria-hidden="true">
-                        <FoodIllustration type={meal.type} />
-                      </span>
-                    )}
-                    <span>{item.name}</span>
-                    {idx < meal.items.length - 1 && ', '}
-                  </React.Fragment>
-                );
-              })}
-            </p>
-          );
-        })()}
+      {/* Food Artwork: Connected directly to right-bottom corner */}
+      <div className="meal-artwork-corner" aria-hidden="true">
+        <FoodIllustration type={meal.type} />
       </div>
     </article>
   );

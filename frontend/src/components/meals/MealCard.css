@@ -15,8 +15,8 @@
   box-shadow: var(--meal-card-shadow);
   display: flex;
   flex-direction: column;
-  min-height: 90px;
-  overflow: visible;
+  min-height: 92px;
+  overflow: hidden;
   margin-bottom: 2px;
   transform: translateZ(0);
   contain: layout style;
@@ -140,14 +140,16 @@
   width: 100%;
   margin-top: 5px;
   position: relative;
-  display: flow-root;
+  min-height: 64px;
 }
 
-/* Dedicated Food Image Block: Floats to bottom-right, reserving its own physical space */
-.meal-food-image-block {
-  float: right;
-  width: 80px;
-  height: 68px;
+/* Food Artwork: Connected directly to right-bottom corner */
+.meal-artwork-corner {
+  position: absolute;
+  right: -2px;
+  bottom: -2px;
+  width: 96px;
+  height: 86px;
   display: flex;
   align-items: flex-end;
   justify-content: flex-end;
@@ -157,13 +159,11 @@
   will-change: transform;
   backface-visibility: hidden;
   transition: transform var(--transition-base);
-  margin-left: 10px;
-  margin-bottom: 2px;
-  margin-top: 4px;
+  z-index: 1;
 }
 
-.meal-card:hover .meal-food-image-block {
-  transform: translateY(-2px) scale(1.02) translateZ(0);
+.meal-card:hover .meal-artwork-corner {
+  transform: scale(1.03) translateZ(0);
 }
 
 .meal-dishes-paragraph {
@@ -175,5 +175,6 @@
   letter-spacing: 0.005em;
   margin: 0;
   width: 100%;
-  padding: 0;
+  padding-right: 88px;
+  padding-bottom: 2px;
 }
