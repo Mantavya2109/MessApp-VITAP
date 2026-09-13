@@ -1,0 +1,137 @@
+/* ==========================================================================
+   MessApp Design System - Design Tokens
+   Dark & Light Mode Themes - Exact Precision Match to Design References
+   ========================================================================== */
+
+:root,
+[data-theme="dark"] {
+  /* Rich Deep Atmospheric Canvas matching dark mode warm amber lighting */
+  --bg-app-base: #0B0D12;
+  --bg-app-gradient: radial-gradient(circle at 94% 4%, rgba(240, 110, 20, 0.46) 0%, rgba(210, 90, 15, 0.22) 25%, rgba(11, 13, 18, 0) 58%),
+                     radial-gradient(circle at -4% 44%, rgba(14, 62, 92, 0.3) 0%, rgba(11, 13, 18, 0) 48%),
+                     radial-gradient(circle at 98% 88%, rgba(245, 158, 11, 0.25) 0%, rgba(11, 13, 18, 0) 42%),
+                     #0B0D12;
+
+  /* Frosted Glass Translucent Card Surfaces ("Blurriness in blocks") */
+  --bg-surface-card: rgba(22, 26, 34, 0.62);
+  --bg-surface-card-hover: rgba(28, 33, 44, 0.72);
+  --bg-surface-card-border: rgba(255, 255, 255, 0.08);
+  --meal-card-top-border: rgba(255, 255, 255, 0.16);
+  --meal-card-shadow: inset 0 1px 1px 0 rgba(255, 255, 255, 0.14),
+                      0 14px 34px rgba(0, 0, 0, 0.58),
+                      0 2px 6px rgba(0, 0, 0, 0.4);
+  --card-backdrop-blur: 28px;
+  
+  --bg-surface-elevated: #161A22;
+  --bg-surface-subtle: #1C212B;
+  --bg-surface-muted: #242A36;
+
+  /* Vivid Accents (Golden Yellow & Terracotta Orange) */
+  --accent-golden: #FFB800;
+  --accent-golden-hover: #F5A623;
+  --accent-golden-glow: rgba(255, 184, 0, 0.35);
+  
+  --accent-orange: #E06E23;
+  --accent-orange-hover: #C95E1B;
+  --accent-orange-glow: rgba(224, 110, 35, 0.35);
+
+  --bell-color: #FFB800;
+
+  /* Text Colors */
+  --text-primary: #FFFFFF;
+  --text-secondary: rgba(255, 255, 255, 0.68);
+  --text-tertiary: #687382;
+  --text-dishes: #D5DCE5;
+
+  /* Borders & Shadows */
+  --border-subtle: rgba(255, 255, 255, 0.08);
+  --border-focus: #FFB800;
+  --shadow-card: 0 12px 32px rgba(0, 0, 0, 0.55), 0 2px 6px rgba(0, 0, 0, 0.35);
+  --shadow-dock: 0 -8px 28px rgba(0, 0, 0, 0.6);
+}
+
+[data-theme="light"] {
+  /* Warm, Bright Soft Atmosphere Canvas matching light mode reference */
+  --bg-app-base: #F7F8FA;
+  --bg-app-gradient: radial-gradient(circle at 94% 4%, rgba(245, 140, 70, 0.35) 0%, rgba(245, 160, 100, 0.18) 26%, rgba(247, 248, 250, 0) 58%),
+                     radial-gradient(circle at -4% 44%, rgba(135, 195, 240, 0.38) 0%, rgba(247, 248, 250, 0) 48%),
+                     radial-gradient(circle at 98% 88%, rgba(250, 205, 110, 0.34) 0%, rgba(247, 248, 250, 0) 42%),
+                     #F7F8FA;
+
+  /* Frosted Glass Translucent Light Card Surfaces ("Blurriness in blocks") */
+  --bg-surface-card: rgba(255, 255, 255, 0.72);
+  --bg-surface-card-hover: rgba(255, 255, 255, 0.86);
+  --bg-surface-card-border: rgba(255, 255, 255, 0.85);
+  --meal-card-top-border: rgba(255, 255, 255, 0.95);
+  --meal-card-shadow: inset 0 1px 1px 0 rgba(255, 255, 255, 0.95),
+                      0 10px 28px rgba(0, 0, 0, 0.06),
+                      0 2px 8px rgba(0, 0, 0, 0.03);
+  --card-backdrop-blur: 28px;
+  
+  --bg-surface-elevated: #FFFFFF;
+  --bg-surface-subtle: #F3F4F6;
+  --bg-surface-muted: #E5E7EB;
+
+  /* Vivid Accents (Golden Yellow & Terracotta Orange) */
+  --accent-golden: #FFB800;
+  --accent-golden-hover: #F5A623;
+  --accent-golden-glow: rgba(255, 184, 0, 0.3);
+  
+  --accent-orange: #E06E23;
+  --accent-orange-hover: #C95E1B;
+  --accent-orange-glow: rgba(224, 110, 35, 0.25);
+
+  --bell-color: #E06E23;
+
+  /* Text Colors */
+  --text-primary: #111827;
+  --text-secondary: #4B5563;
+  --text-tertiary: #6B7280;
+  --text-dishes: #1F2937;
+
+  /* Borders & Shadows */
+  --border-subtle: rgba(0, 0, 0, 0.08);
+  --border-focus: #FFB800;
+  --shadow-card: 0 10px 28px rgba(0, 0, 0, 0.06), 0 2px 6px rgba(0, 0, 0, 0.03);
+  --shadow-dock: 0 -8px 24px rgba(0, 0, 0, 0.08);
+}
+
+:root {
+  /* Typography Scales (Outfit for sleek modern geometry + Plus Jakarta Sans for reading) */
+  --font-heading: 'Outfit', 'Plus Jakarta Sans', -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+  --font-body: 'Plus Jakarta Sans', 'Outfit', -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+
+  --text-2xs: 0.6875rem; /* 11px */
+  --text-xs: 0.75rem;    /* 12px */
+  --text-sm: 0.875rem;   /* 14px */
+  --text-base: 0.9375rem;/* 15px */
+  --text-md: 1.0625rem;  /* 17px */
+  --text-lg: 1.25rem;    /* 20px */
+  --text-xl: 1.5rem;     /* 24px */
+  --text-2xl: 1.875rem;  /* 30px */
+
+  --weight-regular: 400;
+  --weight-medium: 500;
+  --weight-semibold: 600;
+  --weight-bold: 700;
+  --weight-extrabold: 800;
+  --weight-black: 900;
+
+  /* Radius */
+  --radius-sm: 10px;
+  --radius-md: 14px;
+  --radius-lg: 20px;
+  --radius-xl: 24px;
+  --radius-full: 9999px;
+
+  /* Transitions */
+  --transition-fast: 140ms cubic-bezier(0.16, 1, 0.3, 1);
+  --transition-base: 220ms cubic-bezier(0.16, 1, 0.3, 1);
+  --transition-spring: 320ms cubic-bezier(0.34, 1.56, 0.64, 1);
+
+  /* Layout */
+  --app-max-width: 440px;
+  --desktop-max-width: 860px;
+  --sab: env(safe-area-inset-bottom, 0px);
+  --sat: env(safe-area-inset-top, 0px);
+}

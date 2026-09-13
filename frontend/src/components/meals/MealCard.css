@@ -1,0 +1,97 @@
+/* ==========================================================================
+   MealCard Styles (Exact Reference Match - Frosted Glass & Atmospheric Glow)
+   ========================================================================== */
+
+.meal-card {
+  background: var(--bg-surface-card);
+  backdrop-filter: blur(32px) saturate(190%);
+  -webkit-backdrop-filter: blur(32px) saturate(190%);
+  border: 1px solid var(--bg-surface-card-border);
+  border-top: 1px solid var(--meal-card-top-border);
+  border-radius: var(--radius-xl);
+  padding: 22px 20px 24px 22px;
+  position: relative;
+  transition: transform var(--transition-base), border-color var(--transition-base), box-shadow var(--transition-base), background-color var(--transition-base);
+  box-shadow: var(--meal-card-shadow);
+  display: flex;
+  flex-direction: column;
+  min-height: 148px;
+  overflow: visible; /* Allows food artwork to overlap/exit card boundary */
+  margin-bottom: 4px;
+}
+
+.meal-card:hover {
+  border-color: rgba(255, 255, 255, 0.25);
+  box-shadow: var(--meal-card-shadow);
+  transform: translateY(-1px);
+}
+
+/* Header Area */
+.meal-card-header {
+  display: flex;
+  flex-direction: column;
+  gap: 3px;
+}
+
+.meal-card-title-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.meal-card-name {
+  font-family: var(--font-heading);
+  font-size: 1.25rem; /* 20px */
+  font-weight: var(--weight-extrabold);
+  color: var(--text-primary);
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+  line-height: 1.15;
+}
+
+/* Time Row with Clock */
+.meal-card-time {
+  font-family: var(--font-body);
+  font-size: 0.84375rem; /* 13.5px */
+  color: var(--text-secondary);
+  font-weight: var(--weight-medium);
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  margin-top: 1px;
+}
+
+.meal-card-time-icon {
+  color: var(--text-secondary);
+  opacity: 0.85;
+}
+
+/* Dishes List (Flowing text with clear right-side clearance) */
+.meal-dishes-text-area {
+  max-width: calc(100% - 105px);
+  margin-top: 9px;
+}
+
+.meal-dishes-paragraph {
+  font-family: var(--font-body);
+  font-size: 0.90625rem; /* 14.5px */
+  color: var(--text-dishes);
+  font-weight: var(--weight-regular);
+  line-height: 1.5;
+  letter-spacing: 0.005em;
+}
+
+/* Overlapping Food Artwork Container */
+.meal-artwork-container {
+  position: absolute;
+  right: 0px;
+  bottom: -4px;
+  z-index: 5;
+  pointer-events: none;
+  filter: drop-shadow(0 8px 18px rgba(0, 0, 0, 0.6));
+  transition: transform var(--transition-base);
+}
+
+.meal-card:hover .meal-artwork-container {
+  transform: translateY(-2px) scale(1.02);
+}

@@ -1,0 +1,71 @@
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+enum DietaryTag {
+  VEG
+  NON_VEG
+  EGG_LESS
+}
+
+enum MealType {
+  BREAKFAST
+  LUNCH
+  SNACKS
+  DINNER
+}
+
+model MessPlan {
+  id        String    @id @default(cuid())
+  code      String    @unique // "VEG_NON_VEG" or "SPECIAL"
+  name      String    // "Veg & Non-Veg Mess" or "Special Mess"
+  sheetName String    // "Veg & Non-Veg" or "Special"
+  menuDays  MenuDay[]
+  createdAt DateTime  @default(now())
+  updatedAt DateTime  @updatedAt
+}
+
+model MenuDay {
+  id         String     @id @default(cuid())
+  messPlanId String
+  messPlan   MessPlan   @relation(fields: [messPlanId], references: [id], onDelete: Cascade)
+  date       String     // ISO date string "YYYY-MM-DD"
+  dayOfWeek  String     // "Saturday", "Sunday", etc.
+  mealSlots  MealSlot[]
+  createdAt  DateTime   @default(now())
+  updatedAt  DateTime   @updatedAt
+
+  @@unique([messPlanId, date])
+  @@index([date])
+}
+
+model MealSlot {
+  id        String     @id @default(cuid())
+  menuDayId String
+  menuDay   MenuDay    @relation(fields: [menuDayId], references: [id], onDelete: Cascade)
+  mealType  MealType
+  sortOrder Int        // 1: BREAKFAST, 2: LUNCH, 3: SNACKS, 4: DINNER
+  items     MenuItem[]
+  createdAt DateTime   @default(now())
+  updatedAt DateTime   @updatedAt
+
+  @@unique([menuDayId, mealType])
+}
+
+model MenuItem {
+  id         String      @id @default(cuid())
+  mealSlotId String
+  mealSlot   MealSlot    @relation(fields: [mealSlotId], references: [id], onDelete: Cascade)
+  name       String
+  dietaryTag DietaryTag?
+  sortOrder  Int         // 1, 2, 3... verbatim ordering within meal
+  createdAt  DateTime    @default(now())
+  updatedAt  DateTime    @updatedAt
+
+  @@index([mealSlotId])
+}

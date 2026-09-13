@@ -1,0 +1,372 @@
+/* ==========================================================================
+   Menu Screen Styles (Exact Pixel-Perfect Match to Reference UI)
+   ========================================================================== */
+
+.menu-screen-container {
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+  width: 100%;
+  padding: 4px 0 16px 0;
+}
+
+/* ==========================================================================
+   1. Top Navigation Bar (Hamburger, Notification Bell, Avatar)
+   ========================================================================== */
+.menu-top-bar {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 4px 0 2px 0;
+}
+
+/* Custom 2-Line Minimal Hamburger */
+.menu-hamburger-btn {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  gap: 6px;
+  width: 38px;
+  height: 38px;
+  padding: 4px 0;
+  background: transparent;
+  cursor: pointer;
+}
+
+.hamburger-line {
+  height: 3px;
+  background-color: var(--text-primary);
+  border-radius: 3px;
+  transition: all var(--transition-fast);
+}
+
+.hamburger-line.line-1 {
+  width: 20px;
+}
+
+.hamburger-line.line-2 {
+  width: 28px;
+}
+
+.menu-hamburger-btn:hover .hamburger-line {
+  background-color: var(--accent-golden);
+}
+
+.menu-top-actions {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+}
+
+/* Golden / Terracotta Bell Button */
+.notification-bell-btn {
+  width: 38px;
+  height: 38px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: var(--bell-color);
+  transition: transform var(--transition-fast);
+  cursor: pointer;
+}
+
+.notification-bell-btn:hover {
+  transform: scale(1.1);
+}
+
+/* Illustrated Circular Profile Avatar */
+.top-profile-avatar-btn {
+  width: 42px;
+  height: 42px;
+  border-radius: 50%;
+  background: linear-gradient(135deg, #FFB800 0%, #F59E0B 100%);
+  color: #11141A;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-family: var(--font-heading);
+  font-size: var(--text-base);
+  font-weight: var(--weight-black);
+  border: 2px solid rgba(255, 255, 255, 0.22);
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.45);
+  cursor: pointer;
+  transition: transform var(--transition-fast), box-shadow var(--transition-fast);
+  overflow: hidden;
+}
+
+.top-profile-avatar-btn:hover {
+  transform: scale(1.08);
+  box-shadow: 0 4px 16px var(--accent-golden-glow);
+}
+
+/* ==========================================================================
+   2. Centered Mess Selector ("Menu for Veg Mess ˅")
+   ========================================================================== */
+.mess-selector-wrap {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  margin: 6px 0 4px 0;
+}
+
+.mess-selector-trigger {
+  display: flex;
+  align-items: center;
+  gap: 7px;
+  font-family: var(--font-heading);
+  font-size: 1.15625rem; /* 18.5px */
+  color: #FFFFFF;
+  font-weight: var(--weight-medium);
+  padding: 6px 14px;
+  border-radius: var(--radius-full);
+  background: transparent;
+  transition: background var(--transition-fast);
+  cursor: pointer;
+}
+
+.mess-for-label {
+  color: rgba(255, 255, 255, 0.85);
+  font-weight: var(--weight-regular);
+}
+
+.mess-selector-trigger:hover {
+  background: rgba(255, 255, 255, 0.06);
+}
+
+.mess-name-underline {
+  font-weight: var(--weight-bold);
+  color: #FFFFFF;
+  text-decoration: underline;
+  text-underline-offset: 4px;
+  text-decoration-thickness: 1.5px;
+}
+
+.mess-chevron-icon {
+  color: #CBD5E1;
+  transition: transform var(--transition-fast);
+}
+
+/* ==========================================================================
+   3. Date Navigation Row (Sun, 13th Sep   [📅] [←] [→])
+   ========================================================================== */
+.menu-date-controls-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin: 6px 0 10px 0;
+  padding: 0 2px;
+}
+
+.menu-current-date-title {
+  font-family: var(--font-heading);
+  font-size: 1.375rem; /* 22px */
+  font-weight: var(--weight-bold);
+  color: #FFFFFF;
+  letter-spacing: -0.01em;
+}
+
+.menu-circular-actions {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.circle-nav-btn {
+  width: 42px;
+  height: 42px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  transition: transform var(--transition-spring), box-shadow var(--transition-fast);
+  border: none;
+}
+
+.circle-nav-btn:hover {
+  transform: scale(1.08);
+}
+
+.circle-nav-btn:active {
+  transform: scale(0.92);
+}
+
+/* Terracotta / Orange Calendar Action */
+.circle-btn-calendar {
+  background: var(--accent-orange);
+  color: #11141A;
+  box-shadow: 0 4px 14px var(--accent-orange-glow);
+}
+
+.circle-btn-calendar.active {
+  background: #C2410C;
+  box-shadow: 0 0 0 2px #FFFFFF, 0 4px 14px var(--accent-orange-glow);
+}
+
+/* Bright Yellow / Golden Arrow Buttons */
+.circle-btn-arrow {
+  background: var(--accent-golden);
+  color: #11141A;
+  box-shadow: 0 4px 14px var(--accent-golden-glow);
+}
+
+.circle-btn-arrow:hover {
+  background: var(--accent-golden-hover);
+}
+
+/* ==========================================================================
+   4. Week Calendar Carousel (When Calendar Button is Active)
+   ========================================================================== */
+.date-pill-scroll {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  overflow-x: auto;
+  padding: 2px 2px 10px 2px;
+  scrollbar-width: none;
+  -webkit-overflow-scrolling: touch;
+}
+
+.date-pill-scroll::-webkit-scrollbar {
+  display: none;
+}
+
+.date-pill-item {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  min-width: 60px;
+  padding: 8px 10px;
+  border-radius: var(--radius-md);
+  background: var(--bg-surface-card);
+  backdrop-filter: blur(16px);
+  -webkit-backdrop-filter: blur(16px);
+  border: 1px solid var(--border-subtle);
+  transition: all var(--transition-fast);
+  flex-shrink: 0;
+}
+
+.date-pill-item.active {
+  background: var(--accent-golden);
+  border-color: var(--accent-golden);
+  color: #11141A;
+  box-shadow: 0 4px 14px var(--accent-golden-glow);
+  transform: translateY(-2px);
+}
+
+.date-pill-day {
+  font-size: var(--text-2xs);
+  font-weight: var(--weight-bold);
+  text-transform: uppercase;
+  opacity: 0.8;
+}
+
+.date-pill-date {
+  font-family: var(--font-heading);
+  font-size: var(--text-md);
+  font-weight: var(--weight-black);
+  line-height: 1.15;
+  margin-top: 2px;
+}
+
+/* ==========================================================================
+   5. Meals Cards Column
+   ========================================================================== */
+.meals-vertical-stack {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+
+@media (min-width: 768px) {
+  .meals-vertical-stack {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 20px;
+  }
+}
+
+/* ==========================================================================
+   6. Mess Selector Modal / Bottom Sheet
+   ========================================================================== */
+.mess-modal-backdrop {
+  position: fixed;
+  inset: 0;
+  background: rgba(0, 0, 0, 0.78);
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+  z-index: 1000;
+  display: flex;
+  align-items: flex-end;
+  justify-content: center;
+  padding: 0;
+}
+
+@media (min-width: 768px) {
+  .mess-modal-backdrop {
+    align-items: center;
+    padding: 20px;
+  }
+}
+
+.mess-modal-card {
+  width: 100%;
+  max-width: 440px;
+  background: #151922;
+  border: 1px solid rgba(255, 255, 255, 0.12);
+  border-radius: var(--radius-xl) var(--radius-xl) 0 0;
+  padding: 24px 20px calc(var(--sab) + 20px) 20px;
+  box-shadow: var(--shadow-dock);
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+  animation: slideUp 240ms cubic-bezier(0.16, 1, 0.3, 1) forwards;
+}
+
+@media (min-width: 768px) {
+  .mess-modal-card {
+    border-radius: var(--radius-xl);
+  }
+}
+
+.mess-modal-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.mess-modal-title {
+  font-family: var(--font-heading);
+  font-size: var(--text-lg);
+  font-weight: var(--weight-black);
+  color: #FFFFFF;
+}
+
+.mess-modal-options {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.mess-option-btn {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 15px 18px;
+  background: rgba(255, 255, 255, 0.04);
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  border-radius: var(--radius-lg);
+  color: #FFFFFF;
+  font-size: var(--text-base);
+  font-weight: var(--weight-bold);
+  transition: all var(--transition-fast);
+}
+
+.mess-option-btn:hover,
+.mess-option-btn.selected {
+  background: rgba(255, 184, 0, 0.12);
+  border-color: var(--accent-golden);
+  color: var(--accent-golden);
+}
