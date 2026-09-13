@@ -6,7 +6,7 @@
   "type": "module",
   "scripts": {
     "dev": "tsx watch src/server.mts",
-    "build": "prisma generate && esbuild src/server.mts --bundle --platform=node --target=node20 --format=esm --outfile=dist/server.mjs --external:@prisma/client",
+    "build": "prisma generate && tsc",
     "start": "node dist/server.mjs",
     "postinstall": "prisma generate",
     "prisma:generate": "prisma generate",

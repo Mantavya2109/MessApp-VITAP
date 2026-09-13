@@ -8,7 +8,7 @@
         "backend": {
             "root": "backend/",
             "framework": "express",
-            "entrypoint": "dist/server.mjs",
+            "entrypoint": "src/server.mts",
             "installCommand": "npm install",
             "buildCommand": "npm run build"
         }
