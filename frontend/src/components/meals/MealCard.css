@@ -133,30 +133,30 @@
   width: 100%;
   margin-top: 6px;
   position: relative;
-  display: flow-root;
+  min-height: 56px;
 }
 
-/* Food Artwork: Noticeably larger (25-35% larger) and floated to the bottom-right of text flow */
-.meal-artwork-float {
-  float: right;
-  width: 84px;
-  height: 70px;
+/* Food Artwork: Fixed block at bottom-right corner for every meal card, enlarged */
+.meal-artwork-container {
+  position: absolute;
+  right: 12px;
+  bottom: 8px;
+  width: 96px;
+  height: 82px;
   display: flex;
   align-items: flex-end;
   justify-content: flex-end;
   pointer-events: none;
-  filter: drop-shadow(0 4px 10px rgba(0, 0, 0, 0.45));
+  filter: drop-shadow(0 6px 14px rgba(0, 0, 0, 0.45));
   transform: translateZ(0);
   will-change: transform;
   backface-visibility: hidden;
   transition: transform var(--transition-base);
-  margin-left: 10px;
-  margin-top: 2px;
-  margin-bottom: 2px;
+  z-index: 2;
 }
 
-.meal-card:hover .meal-artwork-float {
-  transform: translateY(-2px) scale(1.02) translateZ(0);
+.meal-card:hover .meal-artwork-container {
+  transform: translateY(-2px) scale(1.03) translateZ(0);
 }
 
 .meal-dishes-paragraph {
@@ -168,4 +168,6 @@
   letter-spacing: 0.005em;
   margin: 0;
   width: 100%;
+  padding-bottom: 18px;
+  padding-right: 42px;
 }
