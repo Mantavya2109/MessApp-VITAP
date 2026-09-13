@@ -5,7 +5,7 @@
   "main": "dist/server.mjs",
   "type": "module",
   "scripts": {
-    "dev": "tsx watch src/server.ts",
+    "dev": "tsx watch src/server.mts",
     "build": "prisma generate && tsc",
     "start": "node dist/server.mjs",
     "postinstall": "prisma generate",
