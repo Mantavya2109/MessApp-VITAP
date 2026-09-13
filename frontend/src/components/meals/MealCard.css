@@ -9,13 +9,13 @@
   border: 1px solid var(--bg-surface-card-border);
   border-top: 1px solid var(--meal-card-top-border);
   border-radius: var(--radius-xl);
-  padding: 14px 16px 14px 18px;
+  padding: 12px 14px 10px 16px;
   position: relative;
   transition: transform var(--transition-base), border-color var(--transition-base), box-shadow var(--transition-base), background-color var(--transition-base);
   box-shadow: var(--meal-card-shadow);
   display: flex;
   flex-direction: column;
-  min-height: 94px;
+  min-height: 80px;
   overflow: visible;
   margin-bottom: 2px;
   transform: translateZ(0);
@@ -131,32 +131,32 @@
 /* Dishes List */
 .meal-dishes-text-area {
   width: 100%;
-  margin-top: 6px;
+  margin-top: 4px;
   position: relative;
-  min-height: 68px;
+  display: flow-root;
 }
 
-/* Food Artwork: Fixed block at bottom-right corner for every meal card, enlarged */
-.meal-artwork-container {
-  position: absolute;
-  right: 12px;
-  bottom: 8px;
-  width: 88px;
-  height: 76px;
+/* Food Artwork: Positioned inside right-bottom corner without overlap */
+.meal-artwork-float {
+  float: right;
+  width: 84px;
+  height: 68px;
   display: flex;
   align-items: flex-end;
   justify-content: flex-end;
   pointer-events: none;
-  filter: drop-shadow(0 6px 14px rgba(0, 0, 0, 0.45));
+  filter: drop-shadow(0 4px 12px rgba(0, 0, 0, 0.45));
   transform: translateZ(0);
   will-change: transform;
   backface-visibility: hidden;
   transition: transform var(--transition-base);
-  z-index: 2;
+  margin-left: 8px;
+  margin-bottom: 2px;
+  margin-top: 2px;
 }
 
-.meal-card:hover .meal-artwork-container {
-  transform: translateY(-2px) scale(1.03) translateZ(0);
+.meal-card:hover .meal-artwork-float {
+  transform: translateY(-2px) scale(1.02) translateZ(0);
 }
 
 .meal-dishes-paragraph {
@@ -164,10 +164,9 @@
   font-size: 0.90625rem; /* 14.5px */
   color: var(--text-dishes);
   font-weight: var(--weight-regular);
-  line-height: 1.45;
+  line-height: 1.42;
   letter-spacing: 0.005em;
   margin: 0;
   width: 100%;
-  padding-right: 84px;
-  padding-bottom: 4px;
+  padding: 0;
 }

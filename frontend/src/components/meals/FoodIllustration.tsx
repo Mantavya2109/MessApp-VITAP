@@ -232,44 +232,76 @@ export const FoodIllustration: React.FC<FoodIllustrationProps> = ({ type, classN
     case 'dinner':
       return (
         <svg
-          viewBox="0 0 130 115"
+          viewBox="0 0 135 120"
           fill="none"
           xmlns="http://www.w3.org/2000/svg"
           className={className}
           aria-hidden="true"
           style={{ width: '100%', height: '100%', display: 'block' }}
         >
-          {/* Ceramic Salad Bowl / Plate */}
-          <ellipse cx="65" cy="80" rx="54" ry="24" fill="#1E3A8A" stroke="#0F172A" strokeWidth="4" />
-          <ellipse cx="65" cy="74" rx="48" ry="20" fill="#2563EB" />
-          
-          {/* Crisp Fresh Salad Greens (Lettuce Leaves) */}
+          {/* Dinner Plate Shadow */}
+          <ellipse cx="68" cy="94" rx="56" ry="18" fill="#0F172A" opacity="0.6" />
+
+          {/* Stainless Steel / Metallic Thali Base */}
+          <ellipse cx="68" cy="82" rx="56" ry="24" fill="#334155" stroke="#1E293B" strokeWidth="3.5" />
+          <ellipse cx="68" cy="79" rx="52" ry="21" fill="#475569" />
+          <ellipse cx="68" cy="76" rx="48" ry="18" fill="#1E293B" />
+
+          {/* Saffron Spiced Rice Mound (Center-Left) */}
+          <ellipse cx="48" cy="74" rx="22" ry="12" fill="#FDE047" stroke="#CA8A04" strokeWidth="2" />
+          <ellipse cx="48" cy="72" rx="18" ry="9" fill="#FEF08A" />
+          {/* Rice Grain Details */}
+          <path d="M 38 70 Q 42 68 46 70" stroke="#EAB308" strokeWidth="2" strokeLinecap="round" />
+          <path d="M 48 73 Q 52 71 56 73" stroke="#EAB308" strokeWidth="2" strokeLinecap="round" />
+          <circle cx="48" cy="67" r="2.5" fill="#22C55E" /> {/* Green Pea */}
+
+          {/* Rich Curry Katori (Top-Right) */}
+          <ellipse cx="86" cy="65" rx="20" ry="11" fill="#991B1B" stroke="#450A0A" strokeWidth="2.5" />
+          <ellipse cx="86" cy="63" rx="17" ry="8.5" fill="#DC2626" />
+          <ellipse cx="86" cy="62" rx="14" ry="6.5" fill="#EA580C" />
+          {/* Paneer / Butter Cube in Curry */}
+          <rect x="80" y="58" width="7" height="6" rx="1.5" fill="#FEF3C7" stroke="#D97706" strokeWidth="1" />
+          <circle cx="91" cy="61" r="2" fill="#16A34A" /> {/* Cilantro garnish */}
+
+          {/* Golden Layered Naan / Roti (Front-Left, draping over rim) */}
           <path
-            d="M 26 66 Q 38 48 54 60 Q 70 44 86 58 Q 102 50 108 66"
-            fill="#4ADE80"
-            stroke="#166534"
+            d="M 22 72 C 26 50 56 46 68 58 C 76 66 70 84 54 86 C 36 88 18 84 22 72 Z"
+            fill="#E28743"
+            stroke="#9A3412"
+            strokeWidth="3"
+          />
+          <path
+            d="M 26 71 C 30 54 54 50 64 60 C 70 66 65 80 52 82 C 38 84 24 81 26 71 Z"
+            fill="#F6BD60"
+          />
+          {/* Char-grilled marks on Naan */}
+          <ellipse cx="42" cy="62" rx="4" ry="2.5" fill="#9A3412" opacity="0.8" transform="rotate(-15 42 62)" />
+          <ellipse cx="54" cy="68" rx="3.5" ry="2" fill="#9A3412" opacity="0.8" transform="rotate(10 54 68)" />
+          <ellipse cx="36" cy="74" rx="3" ry="2" fill="#9A3412" opacity="0.7" />
+          {/* Melting Butter Glaze */}
+          <ellipse cx="48" cy="64" rx="5" ry="3" fill="#FEF08A" opacity="0.9" />
+
+          {/* Whimsical Night Aroma / Steam Wisps */}
+          <path
+            d="M 86 48 Q 82 36 88 28"
+            stroke="rgba(255,255,255,0.55)"
             strokeWidth="2.5"
+            strokeLinecap="round"
+            fill="none"
           />
           <path
-            d="M 36 72 Q 52 58 68 72 Q 84 58 98 72"
-            fill="#22C55E"
+            d="M 96 46 Q 100 34 94 24"
+            stroke="rgba(255,255,255,0.4)"
+            strokeWidth="2"
+            strokeLinecap="round"
+            fill="none"
           />
-          
-          {/* Juicy Red Tomato Slices */}
-          <circle cx="50" cy="66" r="10" fill="#EF4444" stroke="#991B1B" strokeWidth="2.5" />
-          <circle cx="50" cy="66" r="5.5" fill="#FECACA" />
-          <circle cx="80" cy="64" r="11" fill="#EF4444" stroke="#991B1B" strokeWidth="2.5" />
-          <circle cx="80" cy="64" r="6.5" fill="#FECACA" />
-
-          {/* Cucumber / Avocado Slices */}
-          <ellipse cx="65" cy="70" rx="9" ry="6" fill="#86EFAC" stroke="#15803D" strokeWidth="2" transform="rotate(-15 65 70)" />
-          <ellipse cx="36" cy="70" rx="8" ry="5.5" fill="#86EFAC" stroke="#15803D" strokeWidth="2" transform="rotate(20 36 70)" />
-          <ellipse cx="94" cy="68" rx="8" ry="5.5" fill="#86EFAC" stroke="#15803D" strokeWidth="2" transform="rotate(-25 94 68)" />
-
-          {/* Sweetcorn / Dressing Droplets */}
-          <circle cx="62" cy="58" r="3" fill="#FACC15" />
-          <circle cx="72" cy="60" r="3" fill="#FACC15" />
-          <circle cx="44" cy="56" r="2.5" fill="#FACC15" />
+          {/* Night sparkle / evening dinner star */}
+          <path
+            d="M 104 22 L 106 16 L 108 22 L 114 24 L 108 26 L 106 32 L 104 26 L 98 24 Z"
+            fill="#FACC15"
+            opacity="0.85"
+          />
         </svg>
       );
 
