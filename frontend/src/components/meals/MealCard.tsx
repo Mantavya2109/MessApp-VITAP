@@ -46,7 +46,7 @@ export const MealCard: React.FC<MealCardProps> = ({
         </div>
       </div>
 
-      {/* Menu Dishes Text List (Natural flowing comma-separated text with right-side clearance) */}
+      {/* Menu Dishes Text List */}
       <div className="meal-dishes-text-area">
         {meal.items.length > 0 && (
           <p className="meal-dishes-paragraph">
@@ -60,8 +60,8 @@ export const MealCard: React.FC<MealCardProps> = ({
         )}
       </div>
 
-      {/* Overlapping Food Illustration (Partially exits card boundary) */}
-      <div className="meal-artwork-container">
+      {/* Fixed Bottom-Right Food Illustration */}
+      <div className="meal-artwork-container" aria-hidden="true">
         <FoodIllustration type={meal.type} />
       </div>
     </article>

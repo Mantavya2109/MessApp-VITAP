@@ -127,9 +127,9 @@
   opacity: 0.85;
 }
 
-/* Dishes List (Flowing text with clear right-side clearance) */
+/* Dishes List (Clean readable column with clearance for fixed artwork) */
 .meal-dishes-text-area {
-  max-width: calc(100% - 92px);
+  max-width: calc(100% - 78px);
   margin-top: 8px;
 }
 
@@ -140,17 +140,23 @@
   font-weight: var(--weight-regular);
   line-height: 1.48;
   letter-spacing: 0.005em;
+  margin: 0;
 }
 
-/* Overlapping Food Artwork Container */
+/* Fixed Food Artwork Container at Bottom-Right Corner */
 .meal-artwork-container {
   position: absolute;
-  right: 4px;
-  bottom: 0px;
+  right: 6px;
+  bottom: -4px;
+  width: 84px;
+  height: 76px;
   z-index: 5;
   pointer-events: none;
-  filter: drop-shadow(0 6px 16px rgba(0, 0, 0, 0.6));
+  filter: drop-shadow(0 6px 14px rgba(0, 0, 0, 0.55));
   transition: transform var(--transition-base);
+  display: flex;
+  align-items: flex-end;
+  justify-content: flex-end;
 }
 
 .meal-card:hover .meal-artwork-container {
