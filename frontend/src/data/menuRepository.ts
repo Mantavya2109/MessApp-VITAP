@@ -2,8 +2,9 @@ import { db, type DbDayMenuRecord } from './db';
 import type { DayMenu, MealSlot, MenuItem } from '../types';
 import { formatDateKey, MEAL_TIMINGS } from './mockData';
 
-const API_BASE_URL = import.meta.env.VITE_API_URL || 'http://localhost:3001/api';
-
+const API_BASE_URL =
+  import.meta.env.VITE_API_URL ||
+  (import.meta.env.DEV ? 'http://localhost:3001/api' : '/api');
 /**
  * Resolves frontend messType string to backend MessPlan code.
  */
@@ -185,7 +186,7 @@ export async function getWeekSchedule(
       }));
 
       // Background revalidation
-      syncMenusFromApi(refDate, messType).catch(() => {});
+      syncMenusFromApi(refDate, messType).catch(() => { });
 
       return cachedDayMenus;
     }
