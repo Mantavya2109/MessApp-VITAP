@@ -8,8 +8,8 @@
         "backend": {
             "root": "backend/",
             "framework": "express",
-            "entrypoint": "src/server.mts",
-            "installCommand": "npm ci",
+            "entrypoint": "dist/server.mjs",
+            "installCommand": "npm install",
             "buildCommand": "npm run build"
         }
     },
