@@ -146,17 +146,18 @@
   justify-content: flex-end;
   pointer-events: none;
   filter: drop-shadow(0 4px 12px rgba(0, 0, 0, 0.45));
-  transform: translateZ(0);
+  transform: translateY(6px) translateZ(0);
   will-change: transform;
   backface-visibility: hidden;
   transition: transform var(--transition-base);
   margin-left: 8px;
-  margin-bottom: 2px;
-  margin-top: 2px;
+  margin-bottom: -2px;
+  margin-top: 6px;
+  margin-right: -2px;
 }
 
 .meal-card:hover .meal-artwork-float {
-  transform: translateY(-2px) scale(1.02) translateZ(0);
+  transform: translateY(4px) scale(1.02) translateZ(0);
 }
 
 .meal-dishes-paragraph {
