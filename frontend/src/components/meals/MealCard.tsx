@@ -46,50 +46,24 @@ const MealCardComponent: React.FC<MealCardProps> = ({
         </div>
       </div>
 
-      {/* Menu Dishes Text List with Float Image Div */}
+      {/* Menu Dishes Text List */}
       <div className="meal-dishes-text-area">
-        {meal.items.length > 0 && (() => {
-          // Calculate insertion index so text fills upper lines at 100% full width,
-          // and the food illustration div is anchored at the right-bottom corner for every meal.
-          const totalLength = meal.items.reduce((acc, item) => acc + item.name.length + 2, 0);
-          const targetThreshold =
-            totalLength > 180
-              ? totalLength - 95
-              : totalLength > 120
-              ? totalLength - 80
-              : Math.max(20, totalLength * 0.35);
+        <div className="meal-float-spacer" aria-hidden="true" />
+        {meal.items.length > 0 && (
+          <p className="meal-dishes-paragraph">
+            {meal.items.map((item, idx) => (
+              <React.Fragment key={item.id}>
+                <span>{item.name}</span>
+                {idx < meal.items.length - 1 && ', '}
+              </React.Fragment>
+            ))}
+          </p>
+        )}
+      </div>
 
-          let runningLength = 0;
-          let floatInsertIndex = 1;
-
-          for (let i = 0; i < meal.items.length; i++) {
-            runningLength += meal.items[i].name.length + 2;
-            if (runningLength >= targetThreshold && i >= 1) {
-              floatInsertIndex = i;
-              break;
-            }
-          }
-
-          return (
-            <p className="meal-dishes-paragraph">
-              {meal.items.map((item, idx) => {
-                const shouldInsertFloat = idx === floatInsertIndex;
-
-                return (
-                  <React.Fragment key={item.id}>
-                    {shouldInsertFloat && (
-                      <span className="meal-artwork-float" aria-hidden="true">
-                        <FoodIllustration type={meal.type} />
-                      </span>
-                    )}
-                    <span>{item.name}</span>
-                    {idx < meal.items.length - 1 && ', '}
-                  </React.Fragment>
-                );
-              })}
-            </p>
-          );
-        })()}
+      {/* Food Artwork: Fixed at right corner bottom */}
+      <div className="meal-artwork-container" aria-hidden="true">
+        <FoodIllustration type={meal.type} />
       </div>
     </article>
   );
