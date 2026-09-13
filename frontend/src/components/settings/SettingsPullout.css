@@ -248,3 +248,205 @@
   opacity: 1;
   color: var(--accent-golden);
 }
+
+/* Like App Item */
+.pullout-like-item {
+  position: relative;
+  user-select: none;
+  -webkit-user-select: none;
+  overflow: visible;
+}
+
+.pullout-like-icon {
+  transition: transform 180ms cubic-bezier(0.175, 0.885, 0.32, 1.275);
+}
+
+.pullout-heart-svg {
+  transition: fill 200ms ease, color 200ms ease, transform 200ms ease;
+}
+
+.pullout-like-icon.heart-bump {
+  animation: heartBumpAnim 320ms cubic-bezier(0.175, 0.885, 0.32, 1.4) forwards;
+}
+
+@keyframes heartBumpAnim {
+  0% {
+    transform: scale(1);
+  }
+  40% {
+    transform: scale(1.35);
+  }
+  100% {
+    transform: scale(1);
+  }
+}
+
+.pullout-like-item:active .pullout-like-icon {
+  transform: scale(0.85);
+}
+
+.pullout-like-title-wrap {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.pullout-offline-pill {
+  font-size: 0.65625rem; /* 10.5px */
+  font-weight: var(--weight-bold);
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+  padding: 1.5px 6px;
+  border-radius: var(--radius-full);
+  background: rgba(148, 163, 184, 0.16);
+  color: #94A3B8;
+  border: 1px solid rgba(148, 163, 184, 0.25);
+}
+
+/* Offline Disabled State */
+.pullout-like-item.is-disabled-offline {
+  opacity: 0.72;
+  cursor: not-allowed;
+}
+
+.pullout-like-item.is-disabled-offline:hover {
+  background: transparent;
+}
+
+/* Dedicated Interactive Like Button */
+.pullout-like-action-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+  padding: 5px 12px;
+  background: rgba(239, 68, 68, 0.16);
+  border: 1px solid rgba(239, 68, 68, 0.38);
+  border-radius: var(--radius-full);
+  font-family: var(--font-heading);
+  font-size: 0.8125rem; /* 13px */
+  font-weight: var(--weight-bold);
+  color: #FFFFFF;
+  cursor: pointer;
+  touch-action: manipulation;
+  transition: all 160ms cubic-bezier(0.16, 1, 0.3, 1);
+  box-shadow: 0 2px 8px rgba(239, 68, 68, 0.2);
+}
+
+.pullout-like-action-btn:hover {
+  background: rgba(239, 68, 68, 0.26);
+  border-color: rgba(239, 68, 68, 0.55);
+  transform: scale(1.05);
+}
+
+.pullout-like-action-btn:active,
+.pullout-like-action-btn.liked-active {
+  transform: scale(0.92);
+  background: rgba(239, 68, 68, 0.4);
+}
+
+.pullout-like-action-btn:disabled,
+.pullout-like-action-btn.btn-disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+  background: rgba(148, 163, 184, 0.12);
+  border-color: rgba(148, 163, 184, 0.25);
+  color: #94A3B8;
+  box-shadow: none;
+}
+
+.pullout-like-action-btn:disabled:hover,
+.pullout-like-action-btn.btn-disabled:hover {
+  transform: none;
+  background: rgba(148, 163, 184, 0.12);
+  border-color: rgba(148, 163, 184, 0.25);
+}
+
+[data-theme="light"] .pullout-like-action-btn {
+  background: rgba(239, 68, 68, 0.1);
+  border-color: rgba(239, 68, 68, 0.28);
+  color: #DC2626;
+}
+
+[data-theme="light"] .pullout-like-action-btn:disabled,
+[data-theme="light"] .pullout-like-action-btn.btn-disabled {
+  background: rgba(0, 0, 0, 0.05);
+  border-color: rgba(0, 0, 0, 0.1);
+  color: #94A3B8;
+}
+
+/* Below Option Total Likes Display */
+.pullout-likes-below-info {
+  margin-top: 3px;
+  padding-left: 34px; /* Aligns with text label next to the heart icon */
+  display: flex;
+  align-items: center;
+}
+
+.pullout-likes-counter-tag {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  font-family: var(--font-body);
+  font-size: 0.78125rem; /* 12.5px */
+  font-weight: var(--weight-medium);
+  color: #F87171;
+  background: rgba(239, 68, 68, 0.1);
+  border: 1px solid rgba(239, 68, 68, 0.22);
+  border-radius: var(--radius-full);
+  padding: 2.5px 10px;
+  letter-spacing: 0.01em;
+  transition: all var(--transition-fast);
+}
+
+.pullout-likes-counter-tag.tag-offline {
+  color: #94A3B8;
+  background: rgba(148, 163, 184, 0.1);
+  border-color: rgba(148, 163, 184, 0.2);
+}
+
+[data-theme="light"] .pullout-likes-counter-tag {
+  background: rgba(239, 68, 68, 0.07);
+  border-color: rgba(239, 68, 68, 0.18);
+  color: #DC2626;
+}
+
+[data-theme="light"] .pullout-likes-counter-tag.tag-offline {
+  background: rgba(0, 0, 0, 0.04);
+  border-color: rgba(0, 0, 0, 0.08);
+  color: #64748B;
+}
+
+/* Floating Hearts Animation */
+.floating-hearts-container {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  pointer-events: none;
+  overflow: visible;
+  z-index: 100;
+}
+
+.floating-heart {
+  position: absolute;
+  top: 10px;
+  font-size: 1.15rem;
+  pointer-events: none;
+  animation: floatHeartUp 850ms cubic-bezier(0.22, 1, 0.36, 1) forwards;
+}
+
+@keyframes floatHeartUp {
+  0% {
+    opacity: 1;
+    transform: translateY(0) scale(0.7) rotate(0deg);
+  }
+  50% {
+    opacity: 0.9;
+    transform: translateY(-28px) scale(1.2) rotate(-8deg);
+  }
+  100% {
+    opacity: 0;
+    transform: translateY(-56px) scale(1) rotate(12deg);
+  }
+}

@@ -46,27 +46,23 @@ const MealCardComponent: React.FC<MealCardProps> = ({
         </div>
       </div>
 
-      {/* Meal Content Area: Text with bottom-right floating artwork */}
-      <div className="meal-card-content">
-        {/* Float spacer pushes the artwork container down so upper lines have 100% full width */}
-        <div className="meal-artwork-spacer" aria-hidden="true" />
-
-        {/* Dedicated Food Artwork Container (Bottom-Right) */}
-        <div className="meal-artwork-container" aria-hidden="true">
-          <FoodIllustration type={meal.type} />
-        </div>
-
-        {/* Menu Dishes Content Area */}
+      {/* Menu Dishes Content Area */}
+      <div className="meal-dishes-text-area">
         {meal.items.length > 0 && (
           <p className="meal-dishes-paragraph">
             {meal.items.map((item, idx) => (
               <React.Fragment key={item.id}>
-                <span className="meal-dish-item">{item.name}</span>
+                <span>{item.name}</span>
                 {idx < meal.items.length - 1 && ', '}
               </React.Fragment>
             ))}
           </p>
         )}
+      </div>
+
+      {/* Food Artwork: Connected directly to right-bottom corner */}
+      <div className="meal-artwork-corner" aria-hidden="true">
+        <FoodIllustration type={meal.type} />
       </div>
     </article>
   );

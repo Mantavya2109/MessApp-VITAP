@@ -70,3 +70,9 @@ model MenuItem {
 
   @@index([mealSlotId])
 }
+
+model AppLike {
+  id        String   @id @default("global")
+  count     Int      @default(0)
+  updatedAt DateTime @updatedAt
+}

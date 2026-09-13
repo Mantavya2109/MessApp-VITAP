@@ -179,4 +179,52 @@ app.get('/api/menu/week', async (req, res) => {
   }
 });
 
+// Get total likes across all users
+app.get('/api/likes', async (req, res) => {
+  try {
+    const record = await prisma.appLike.findUnique({
+      where: { id: 'global' },
+    });
+    res.json({ count: record ? record.count : 0 });
+  } catch (error) {
+    console.error('Error fetching likes:', error);
+    res.status(500).json({ error: 'Failed to fetch likes', count: 0 });
+  }
+});
+
+// Increment likes (supports single or batched multiple likes per user)
+app.post('/api/likes', async (req, res) => {
+  try {
+    const incrementBy =
+      typeof req.body?.count === 'number' && req.body.count > 0
+        ? Math.floor(req.body.count)
+        : 1;
+
+    const record = await prisma.appLike.upsert({
+      where: { id: 'global' },
+      update: {
+        count: { increment: incrementBy },
+      },
+      create: {
+        id: 'global',
+        count: incrementBy,
+      },
+    });
+
+    res.json({ count: record.count });
+  } catch (error) {
+    console.error('Error incrementing likes:', error);
+    res.status(500).json({ error: 'Failed to update likes' });
+  }
+});
+
+// Start local dev server if executed directly
+if (process.env.NODE_ENV !== 'production') {
+  const PORT = process.env.PORT || 3001;
+  app.listen(PORT, () => {
+    console.log(`🚀 MessApp Backend API running on http://localhost:${PORT}`);
+  });
+}
+
 export default app;
+

@@ -17,7 +17,13 @@ for (const targetDir of ['src', 'dist']) {
   for (const file of engineFiles) {
     const srcFile = path.join(prismaDir, file);
     const destFile = path.join(targetDir, file);
-    fs.copyFileSync(srcFile, destFile);
+    try {
+      fs.copyFileSync(srcFile, destFile);
+    } catch (err) {
+      if (err.code !== 'EBUSY') {
+        console.warn(`Warning copying ${file}:`, err.message);
+      }
+    }
   }
 }
 
@@ -29,15 +35,7 @@ const __filename = fileURLToPath(import.meta.url);
 const __dirname = dirname(__filename);
 `;
 
-const footer = `
-// Start the server only when running locally (not in serverless production)
-if (process.env.NODE_ENV !== 'production') {
-  const PORT = process.env.PORT || 3001;
-  app.listen(PORT, () => {
-    console.log(\`🚀 MessApp Backend API running on port \${PORT}\`);
-  });
-}
-`;
+const footer = '';
 
 console.log('⚡ Bundling complete application (Express + Prisma runtime) into src/server.mts and dist/server.mjs...');
 
