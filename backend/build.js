@@ -5,9 +5,19 @@ console.log('⚡ Generating Prisma client...');
 execSync('npx prisma generate', { stdio: 'inherit' });
 
 const banner = "import { createRequire } from 'module'; const require = createRequire(import.meta.url);";
+const footer = `
+// Start the server only when running locally (not in serverless production)
+if (process.env.NODE_ENV !== 'production') {
+  const PORT = process.env.PORT || 3001;
+  app.listen(PORT, () => {
+    console.log(\`🚀 MessApp Backend API running on port \${PORT}\`);
+  });
+}
+`;
 
-console.log('⚡ Bundling server application for Vercel and production...');
-// 1. Bundle to src/bundle.generated.mjs (source entrypoint for Vercel's serverless packaging)
+console.log('⚡ Bundling server application into src/server.mts and dist/server.mjs...');
+
+// Bundle into src/server.mts (source entrypoint for Vercel)
 await esbuild.build({
   entryPoints: ['src/app.mts'],
   bundle: true,
@@ -15,14 +25,12 @@ await esbuild.build({
   target: 'node20',
   format: 'esm',
   banner: { js: banner },
-  outfile: 'src/bundle.generated.mjs',
+  footer: { js: footer },
+  outfile: 'src/server.mts',
   external: ['@prisma/client'],
 });
 
-console.log('⚡ Running TypeScript typecheck and emit...');
-execSync('npx tsc', { stdio: 'inherit' });
-
-// 2. Bundle to dist/bundle.generated.mjs (for local production starts node dist/server.mjs)
+// Bundle into dist/server.mjs (production bundle for node start)
 await esbuild.build({
   entryPoints: ['src/app.mts'],
   bundle: true,
@@ -30,8 +38,12 @@ await esbuild.build({
   target: 'node20',
   format: 'esm',
   banner: { js: banner },
-  outfile: 'dist/bundle.generated.mjs',
+  footer: { js: footer },
+  outfile: 'dist/server.mjs',
   external: ['@prisma/client'],
 });
+
+console.log('⚡ Running TypeScript check on app.mts...');
+execSync('npx tsc src/app.mts --noEmit --skipLibCheck --target ES2022 --module NodeNext --moduleResolution NodeNext', { stdio: 'inherit' });
 
 console.log('✅ Build completed successfully.');

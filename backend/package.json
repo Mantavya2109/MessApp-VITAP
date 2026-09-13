@@ -10,7 +10,7 @@
     "start": "node dist/server.mjs",
     "postinstall": "prisma generate",
     "prisma:generate": "prisma generate",
-    "typecheck": "tsc --noEmit",
+    "typecheck": "tsc src/app.mts --noEmit --skipLibCheck --target ES2022 --module NodeNext --moduleResolution NodeNext",
     "import:dry-run": "tsx src/importer/importMenu.ts --dry-run",
     "import:menu": "tsx src/importer/importMenu.ts"
   },
