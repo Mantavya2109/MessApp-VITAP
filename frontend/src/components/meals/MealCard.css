@@ -128,29 +128,21 @@
   opacity: 0.85;
 }
 
-/* Dishes List (Full-width usage of empty space with smart bottom-right float clearance) */
+/* Dishes List */
 .meal-dishes-text-area {
   width: 100%;
-  margin-top: 5px;
+  margin-top: 6px;
   position: relative;
+  min-height: 44px;
 }
 
-/* Top Strut: Floats right with 0 width for the top 2 lines (~42px) so text expands full width */
-.meal-float-top-strut {
-  float: right;
-  width: 0;
-  height: 42px;
-  pointer-events: none;
-}
-
-/* Food Artwork Float: Sits below the 42px top zone and creates a guaranteed 66px + 10px safe exclusion zone */
-.meal-artwork-float {
-  float: right;
-  clear: right;
-  width: 66px;
-  height: 58px;
-  margin-left: 10px;
-  margin-bottom: 2px;
+/* Food Artwork: Anchored strictly to the bottom-right of the meal card */
+.meal-artwork-container {
+  position: absolute;
+  right: 14px;
+  bottom: 12px;
+  width: 58px;
+  height: 50px;
   display: flex;
   align-items: flex-end;
   justify-content: flex-end;
@@ -160,9 +152,10 @@
   will-change: transform;
   backface-visibility: hidden;
   transition: transform var(--transition-base);
+  z-index: 2;
 }
 
-.meal-card:hover .meal-artwork-float {
+.meal-card:hover .meal-artwork-container {
   transform: translateY(-2px) scale(1.02) translateZ(0);
 }
 
@@ -175,4 +168,6 @@
   letter-spacing: 0.005em;
   margin: 0;
   width: 100%;
+  padding-bottom: 24px;
+  padding-right: 46px;
 }
