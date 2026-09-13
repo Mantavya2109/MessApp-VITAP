@@ -48,7 +48,6 @@ const MealCardComponent: React.FC<MealCardProps> = ({
 
       {/* Menu Dishes Text List */}
       <div className="meal-dishes-text-area">
-        <div className="meal-float-spacer" aria-hidden="true" />
         {meal.items.length > 0 && (
           <p className="meal-dishes-paragraph">
             {meal.items.map((item, idx) => (

@@ -138,28 +138,18 @@
 /* Dishes List */
 .meal-dishes-text-area {
   width: 100%;
-  margin-top: 5px;
+  margin-top: 4px;
   position: relative;
-  display: flow-root;
+  min-height: 56px;
 }
 
-/* Float Spacer: Sits on the right starting after the top 2 lines (at y=36px) */
-.meal-float-spacer {
-  float: right;
-  width: 72px;
-  height: 62px;
-  margin-top: 36px;
-  margin-left: 10px;
-  pointer-events: none;
-}
-
-/* Food Artwork: Fixed at right corner bottom */
+/* Food Artwork: Fixed at right corner bottom across all devices */
 .meal-artwork-container {
   position: absolute;
-  right: 14px;
-  bottom: 12px;
+  right: 12px;
+  bottom: 10px;
   width: 72px;
-  height: 62px;
+  height: 60px;
   display: flex;
   align-items: flex-end;
   justify-content: flex-end;
@@ -181,9 +171,10 @@
   font-size: 0.90625rem; /* 14.5px */
   color: var(--text-dishes);
   font-weight: var(--weight-regular);
-  line-height: 1.45;
+  line-height: 1.42;
   letter-spacing: 0.005em;
   margin: 0;
   width: 100%;
-  padding: 0;
+  padding-right: 76px;
+  padding-bottom: 2px;
 }
