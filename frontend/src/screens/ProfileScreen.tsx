@@ -3,8 +3,6 @@ import {
   Bell,
   Moon,
   Sun,
-  Wifi,
-  WifiOff,
   Clock,
   MessageSquare,
   ChevronRight,
@@ -18,19 +16,12 @@ export const ProfileScreen: React.FC = () => {
   const {
     profile,
     updateProfile,
-    isSimulatedOffline,
-    setSimulateOffline,
     setActiveTab,
   } = useApp();
 
   const handleToggleNotifications = () => {
     const nextVal = !profile.notificationsEnabled;
     updateProfile({ notificationsEnabled: nextVal });
-  };
-
-  const handleToggleSimulateOffline = () => {
-    const nextVal = !isSimulatedOffline;
-    setSimulateOffline(nextVal);
   };
 
   const handleFeedback = () => {
@@ -128,22 +119,6 @@ export const ProfileScreen: React.FC = () => {
               </div>
             </div>
             <div className={`toggle-switch ${profile.notificationsEnabled ? 'on' : ''}`} role="switch" aria-checked={profile.notificationsEnabled}>
-              <div className="toggle-handle" />
-            </div>
-          </div>
-
-          {/* Simulate Offline Mode */}
-          <div className="profile-setting-item" onClick={handleToggleSimulateOffline} style={{ cursor: 'pointer' }}>
-            <div className="profile-setting-left">
-              <div className="setting-icon-wrap" style={{ color: isSimulatedOffline ? '#F59E0B' : 'var(--accent-golden)' }}>
-                {isSimulatedOffline ? <WifiOff size={17} /> : <Wifi size={17} />}
-              </div>
-              <div className="setting-texts">
-                <span className="setting-label">Simulate Offline Mode</span>
-                <span className="setting-desc">{isSimulatedOffline ? 'Simulating offline (Dexie cache only)' : 'Live network active'}</span>
-              </div>
-            </div>
-            <div className={`toggle-switch ${isSimulatedOffline ? 'on' : ''}`} role="switch" aria-checked={isSimulatedOffline}>
               <div className="toggle-handle" />
             </div>
           </div>

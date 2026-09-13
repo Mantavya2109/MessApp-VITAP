@@ -128,10 +128,11 @@
   opacity: 0.85;
 }
 
-/* Dishes List (Clean readable column with clearance for fixed artwork) */
+/* Dishes List (Full-width usage of empty space with smart bottom-right clearance) */
 .meal-dishes-text-area {
-  max-width: calc(100% - 66px);
+  width: 100%;
   margin-top: 5px;
+  position: relative;
 }
 
 .meal-dishes-paragraph {
@@ -142,16 +143,26 @@
   line-height: 1.45;
   letter-spacing: 0.005em;
   margin: 0;
+  width: 100%;
 }
 
-/* Fixed Food Artwork Container at Bottom-Right Corner (GPU cached) */
+/* Safe exclusion buffer at end of text so words never collide with the bottom-right illustration */
+.meal-artwork-spacer {
+  display: inline-block;
+  width: 66px;
+  height: 24px;
+  vertical-align: -4px;
+  pointer-events: none;
+}
+
+/* Food Artwork Container: Anchored cleanly to bottom-right corner */
 .meal-artwork-container {
   position: absolute;
-  right: 8px;
-  bottom: 4px;
+  right: 10px;
+  bottom: 8px;
   width: 66px;
   height: 58px;
-  z-index: 5;
+  z-index: 3;
   pointer-events: none;
   filter: drop-shadow(0 4px 10px rgba(0, 0, 0, 0.45));
   transform: translateZ(0);

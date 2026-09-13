@@ -104,24 +104,9 @@ export async function clearStaleCache(): Promise<void> {
 }
 
 /**
- * Checks if Simulate Offline Mode is enabled in localStorage.
- */
-export function isSimulatedOffline(): boolean {
-  try {
-    return typeof localStorage !== 'undefined' && localStorage.getItem('messapp_simulate_offline') === 'true';
-  } catch {
-    return false;
-  }
-}
-
-/**
  * Fetches menu from backend API and caches all days into IndexedDB (Dexie).
  */
 export async function syncMenusFromApi(refDate: Date = getISTDate(), messType: string = 'Veg Mess'): Promise<DayMenu[]> {
-  if (isSimulatedOffline()) {
-    throw new Error('Network requests blocked (Simulate Offline Mode is active)');
-  }
-
   const planCode = getPlanCode(messType);
   const dateKey = formatDateKey(refDate);
 
@@ -202,20 +187,13 @@ export async function getWeekSchedule(
         meals: rec.meals,
       }));
 
-      // Background revalidation only if NOT simulated offline
-      if (!isSimulatedOffline()) {
-        syncMenusFromApi(refDate, messType).catch(() => { });
-      }
+      // Background revalidation
+      syncMenusFromApi(refDate, messType).catch(() => { });
 
       return cachedDayMenus;
     }
 
-    // 2. If IndexedDB empty and simulated offline, do not attempt network request
-    if (isSimulatedOffline()) {
-      return [];
-    }
-
-    // 3. If IndexedDB empty, fetch from API and cache
+    // 2. If IndexedDB empty, fetch from API and cache
     const freshDays = await syncMenusFromApi(refDate, messType);
     return freshDays;
   } catch (err) {
@@ -254,12 +232,7 @@ export async function getDayMenu(
     console.warn('[menuRepository] Dexie read failed:', e);
   }
 
-  // 2. If simulated offline, don't attempt network
-  if (isSimulatedOffline()) {
-    return null;
-  }
-
-  // 3. Fetch from API and store into Dexie cache
+  // 2. Fetch from API and store into Dexie cache
   try {
     const response = await fetch(`${API_BASE_URL}/menu?date=${dateKey}&messPlan=${planCode}`);
     if (response.ok) {
@@ -290,8 +263,6 @@ export async function getDayMenu(
  * Prefetches and caches all mess plans in the background for instant offline availability.
  */
 export async function prefetchAllMessPlans(): Promise<void> {
-  if (isSimulatedOffline()) return;
-
   const plans = ['Veg Mess', 'Special Mess'];
   for (const plan of plans) {
     try {

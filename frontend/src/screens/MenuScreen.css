@@ -136,24 +136,6 @@
   transform: scale(0.92);
 }
 
-/* Subtle Simulated Offline Status Banner */
-.simulated-offline-status-banner {
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  gap: 6px;
-  padding: 4px 12px;
-  background: rgba(245, 158, 11, 0.12);
-  border: 1px solid rgba(245, 158, 11, 0.32);
-  border-radius: var(--radius-full);
-  color: #FBBF24;
-  font-size: var(--text-2xs);
-  font-weight: var(--weight-semibold);
-  width: fit-content;
-  margin: 0 auto;
-  animation: fadeIn 200ms ease-out forwards;
-}
-
 /* ==========================================================================
    2. Compact Mess Segmented Toggle (Veg & Non-Veg / Special)
    ========================================================================== */

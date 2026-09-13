@@ -46,7 +46,7 @@ const MealCardComponent: React.FC<MealCardProps> = ({
         </div>
       </div>
 
-      {/* Menu Dishes Text List */}
+      {/* Menu Dishes Text List (Full-width usage of empty horizontal space) */}
       <div className="meal-dishes-text-area">
         {meal.items.length > 0 && (
           <p className="meal-dishes-paragraph">
@@ -56,6 +56,7 @@ const MealCardComponent: React.FC<MealCardProps> = ({
                 {idx < meal.items.length - 1 && ', '}
               </React.Fragment>
             ))}
+            <span className="meal-artwork-spacer" aria-hidden="true" />
           </p>
         )}
       </div>

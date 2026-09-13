@@ -50,9 +50,6 @@ interface AppContextType {
 
   // Network / Offline & Toasts
   isOffline: boolean;
-  isSimulatedOffline: boolean;
-  setIsOffline: (offline: boolean) => void;
-  setSimulateOffline: (simulated: boolean) => void;
   toasts: ToastItem[];
   showToast: (title: string, message?: string, type?: 'success' | 'info' | 'warning' | 'error') => void;
   dismissToast: (id: string) => void;
@@ -61,34 +58,28 @@ interface AppContextType {
 const AppContext = createContext<AppContextType | undefined>(undefined);
 
 const PROFILE_STORAGE_KEY = 'messapp_student_profile_v1';
-const SIMULATE_OFFLINE_STORAGE_KEY = 'messapp_simulate_offline';
 
 export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children }) => {
   const [activeTab, setActiveTab] = useState<'menu' | 'profile'>('menu');
   const [selectedMenuTab, setSelectedMenuTab] = useState<'today' | 'tomorrow' | 'week'>('today');
   const [toasts, setToasts] = useState<ToastItem[]>([]);
 
-  // Real Browser Network State + Persistent Dev Simulation
-  const [isOnline, setIsOnline] = useState<boolean>(() =>
-    typeof navigator !== 'undefined' ? navigator.onLine : true
-  );
-  const [isSimulatedOffline, setIsSimulatedOffline] = useState<boolean>(() => {
+  // Clean up any legacy simulation flags in storage
+  useEffect(() => {
     try {
-      return typeof localStorage !== 'undefined' && localStorage.getItem(SIMULATE_OFFLINE_STORAGE_KEY) === 'true';
-    } catch {
-      return false;
-    }
-  });
-  const isOffline = !isOnline || isSimulatedOffline;
-
-  const setSimulateOffline = useCallback((simulated: boolean) => {
-    setIsSimulatedOffline(simulated);
-    try {
-      localStorage.setItem(SIMULATE_OFFLINE_STORAGE_KEY, String(simulated));
+      if (typeof localStorage !== 'undefined') {
+        localStorage.removeItem('messapp_simulate_offline');
+      }
     } catch {
       // ignore
     }
   }, []);
+
+  // Real Browser Network State (PWA offline sync via Dexie & Service Worker)
+  const [isOnline, setIsOnline] = useState<boolean>(() =>
+    typeof navigator !== 'undefined' ? navigator.onLine : true
+  );
+  const isOffline = !isOnline;
 
   // Live IST Clock & Date Keys
   const [currentIST, setCurrentIST] = useState<Date>(() => getISTDate());
@@ -319,9 +310,6 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
         profile,
         updateProfile,
         isOffline,
-        isSimulatedOffline,
-        setIsOffline: setSimulateOffline,
-        setSimulateOffline,
         toasts,
         showToast,
         dismissToast,

@@ -3,8 +3,6 @@ import {
   Bell,
   Moon,
   Sun,
-  Wifi,
-  WifiOff,
   Clock,
   MessageSquare,
   ChevronDown,
@@ -23,8 +21,6 @@ export const SettingsPullout: React.FC<SettingsPulloutProps> = ({ isOpen, onClos
   const {
     profile,
     updateProfile,
-    isSimulatedOffline,
-    setSimulateOffline,
   } = useApp();
 
   const [isTimingsOpen, setIsTimingsOpen] = useState(false);
@@ -33,10 +29,6 @@ export const SettingsPullout: React.FC<SettingsPulloutProps> = ({ isOpen, onClos
 
   const handleToggleNotifications = () => {
     updateProfile({ notificationsEnabled: !profile.notificationsEnabled });
-  };
-
-  const handleToggleSimulateOffline = () => {
-    setSimulateOffline(!isSimulatedOffline);
   };
 
   return (
@@ -105,26 +97,7 @@ export const SettingsPullout: React.FC<SettingsPulloutProps> = ({ isOpen, onClos
             </div>
           </div>
 
-          {/* 3. Simulate Offline Mode */}
-          <div className="pullout-item clickable" onClick={handleToggleSimulateOffline}>
-            <div className="pullout-item-header">
-              <div className="pullout-item-left">
-                <div className="pullout-icon" style={{ color: isSimulatedOffline ? '#F59E0B' : 'inherit' }}>
-                  {isSimulatedOffline ? <WifiOff size={20} strokeWidth={2.2} /> : <Wifi size={20} strokeWidth={2.2} />}
-                </div>
-                <span className="pullout-item-label">Simulate Offline</span>
-              </div>
-              <div
-                className={`pullout-toggle ${isSimulatedOffline ? 'on' : ''}`}
-                role="switch"
-                aria-checked={isSimulatedOffline}
-              >
-                <div className="pullout-toggle-thumb" />
-              </div>
-            </div>
-          </div>
-
-          {/* 4. Daily Mess Timings (Collapsible) */}
+          {/* 3. Daily Mess Timings (Collapsible) */}
           <div className="pullout-item">
             <div
               className="pullout-item-header clickable"

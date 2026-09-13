@@ -4,7 +4,6 @@ import {
   Calendar as CalendarIcon,
   ChevronLeft,
   ChevronRight,
-  WifiOff,
 } from 'lucide-react';
 import { useApp } from '../context/AppContext';
 import { MealCard } from '../components/meals/MealCard';
@@ -24,7 +23,6 @@ export const MenuScreen: React.FC = () => {
     currentMealInfo,
     profile,
     updateProfile,
-    isSimulatedOffline,
     refreshSchedule,
   } = useApp();
 
@@ -168,14 +166,6 @@ export const MenuScreen: React.FC = () => {
           </div>
         </div>
       </header>
-
-      {/* Subtle Simulated Offline Mode Indicator (if active) */}
-      {isSimulatedOffline && (
-        <div className="simulated-offline-status-banner">
-          <WifiOff size={13} strokeWidth={2.4} />
-          <span>Simulated Offline Mode Active (Dexie Cache)</span>
-        </div>
-      )}
 
       {/* 2. Compact Mess Segmented Toggle (Veg & Non-Veg / Special) */}
       <div className="mess-selector-wrap">
