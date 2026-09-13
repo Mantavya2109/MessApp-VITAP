@@ -1,0 +1,144 @@
+/* ==========================================================================
+   Avatar Selector Popover Styles (Ultra-Smooth Floating Frosted Card)
+   ========================================================================== */
+
+.avatar-popover-backdrop {
+  position: fixed;
+  inset: 0;
+  z-index: 998;
+  background: rgba(0, 0, 0, 0.45);
+  backdrop-filter: blur(4px);
+  -webkit-backdrop-filter: blur(4px);
+  animation: fadeIn 160ms ease-out forwards;
+}
+
+.avatar-selector-popover {
+  position: absolute;
+  top: 52px;
+  right: 0;
+  z-index: 999;
+  width: min(240px, calc(100vw - 28px));
+  background: var(--bg-surface-elevated);
+  backdrop-filter: blur(32px) saturate(180%);
+  -webkit-backdrop-filter: blur(32px) saturate(180%);
+  border: 1px solid var(--border-subtle);
+  border-radius: 24px;
+  padding: 16px 14px 14px 14px;
+  box-shadow: 0 18px 48px rgba(0, 0, 0, 0.55), 0 4px 14px rgba(0, 0, 0, 0.3);
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  transform-origin: top right;
+  animation: avatarPopoverAnim 200ms cubic-bezier(0.16, 1, 0.3, 1) forwards;
+}
+
+[data-theme="light"] .avatar-selector-popover {
+  background: rgba(255, 255, 255, 0.98);
+  box-shadow: 0 16px 44px rgba(0, 0, 0, 0.16), 0 4px 12px rgba(0, 0, 0, 0.08);
+  border: 1px solid rgba(0, 0, 0, 0.08);
+}
+
+@keyframes avatarPopoverAnim {
+  0% {
+    opacity: 0;
+    transform: scale(0.92) translateY(-8px);
+  }
+  100% {
+    opacity: 1;
+    transform: scale(1) translateY(0);
+  }
+}
+
+.avatar-popover-header {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 0 4px;
+}
+
+.avatar-popover-title {
+  font-family: var(--font-heading);
+  font-size: 0.9375rem; /* 15px */
+  font-weight: var(--weight-bold);
+  color: var(--text-primary);
+  letter-spacing: -0.01em;
+  text-align: center;
+}
+
+/* 2x2 Grid for 4 Avatars */
+.avatar-options-grid {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 10px;
+}
+
+.avatar-option-card {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 10px;
+  background: var(--bg-surface-subtle);
+  border: 1.5px solid var(--border-subtle);
+  border-radius: var(--radius-lg);
+  cursor: pointer;
+  transition: transform var(--transition-spring), border-color var(--transition-fast), background-color var(--transition-fast), box-shadow var(--transition-fast);
+  touch-action: manipulation;
+}
+
+.avatar-option-card:hover {
+  background: var(--bg-surface-card-hover);
+  border-color: rgba(255, 255, 255, 0.22);
+  transform: translateY(-2px);
+}
+
+.avatar-option-card:active {
+  transform: scale(0.94);
+}
+
+.avatar-option-card.selected {
+  background: rgba(255, 184, 0, 0.14);
+  border-color: var(--accent-golden);
+  box-shadow: 0 4px 14px var(--accent-golden-glow);
+}
+
+.avatar-preview-wrap {
+  position: relative;
+  width: 50px;
+  height: 50px;
+  border-radius: 50%;
+  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.35);
+  transition: transform var(--transition-spring);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.avatar-option-card:hover .avatar-preview-wrap {
+  transform: scale(1.06);
+}
+
+.avatar-selected-badge {
+  position: absolute;
+  bottom: -2px;
+  right: -2px;
+  width: 18px;
+  height: 18px;
+  border-radius: 50%;
+  background: var(--accent-golden);
+  color: #11141A;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border: 2px solid var(--bg-surface-elevated);
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.4);
+  animation: popIn 180ms cubic-bezier(0.34, 1.56, 0.64, 1) forwards;
+}
+
+@keyframes popIn {
+  0% {
+    transform: scale(0);
+  }
+  100% {
+    transform: scale(1);
+  }
+}

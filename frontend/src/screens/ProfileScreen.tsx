@@ -15,32 +15,26 @@ import { MEAL_TIMINGS } from '../data/mockData';
 import './ProfileScreen.css';
 
 export const ProfileScreen: React.FC = () => {
-  const { profile, updateProfile, isOffline, setIsOffline, showToast, setActiveTab } = useApp();
-
-  const handleToggleTheme = () => {
-    const nextTheme = profile.theme === 'dark' ? 'light' : 'dark';
-    updateProfile({ theme: nextTheme });
-    showToast(`Switched to ${nextTheme === 'dark' ? 'Dark' : 'Light'} Mode`);
-  };
+  const {
+    profile,
+    updateProfile,
+    isSimulatedOffline,
+    setSimulateOffline,
+    setActiveTab,
+  } = useApp();
 
   const handleToggleNotifications = () => {
     const nextVal = !profile.notificationsEnabled;
     updateProfile({ notificationsEnabled: nextVal });
-    showToast(nextVal ? 'Meal reminders enabled' : 'Meal reminders muted');
   };
 
-  const handleToggleOffline = () => {
-    const nextVal = !isOffline;
-    setIsOffline(nextVal);
-    if (nextVal) {
-      showToast('Offline Mode Active', 'Serving saved menu from local cache', 'info');
-    } else {
-      showToast('Connected to Network', 'Synchronized with mess servers', 'success');
-    }
+  const handleToggleSimulateOffline = () => {
+    const nextVal = !isSimulatedOffline;
+    setSimulateOffline(nextVal);
   };
 
   const handleFeedback = () => {
-    showToast('Feedback form', 'Redirecting to hostel mess feedback portal...', 'info');
+    // Open feedback
   };
 
   return (
@@ -74,19 +68,51 @@ export const ProfileScreen: React.FC = () => {
       <div className="profile-section-group">
         <span className="profile-section-title">Preferences</span>
         <div className="profile-settings-card">
-          {/* Dark Mode */}
-          <div className="profile-setting-item" onClick={handleToggleTheme} style={{ cursor: 'pointer' }}>
+          {/* Appearance / Theme Selector */}
+          <div className="profile-setting-item theme-setting-item">
             <div className="profile-setting-left">
               <div className="setting-icon-wrap">
-                {profile.theme === 'dark' ? <Moon size={17} /> : <Sun size={17} />}
+                {profile.theme === 'light' ? <Sun size={17} /> : <Moon size={17} />}
               </div>
               <div className="setting-texts">
-                <span className="setting-label">Dark Mode</span>
-                <span className="setting-desc">Currently {profile.theme === 'dark' ? 'Dark' : 'Light'}</span>
+                <span className="setting-label">Appearance</span>
+                <span className="setting-desc">
+                  {profile.theme === 'ultra-dark'
+                    ? 'Ultra Dark'
+                    : profile.theme === 'light'
+                    ? 'Light Mode'
+                    : 'Dark Mode'}
+                </span>
               </div>
             </div>
-            <div className={`toggle-switch ${profile.theme === 'dark' ? 'on' : ''}`} role="switch" aria-checked={profile.theme === 'dark'}>
-              <div className="toggle-handle" />
+            <div className="theme-toggle-pills" role="radiogroup" aria-label="Theme Selection">
+              <button
+                type="button"
+                className={`theme-pill ${profile.theme === 'dark' || !profile.theme ? 'active' : ''}`}
+                onClick={() => {
+                  updateProfile({ theme: 'dark' });
+                }}
+              >
+                Dark
+              </button>
+              <button
+                type="button"
+                className={`theme-pill ${profile.theme === 'ultra-dark' ? 'active' : ''}`}
+                onClick={() => {
+                  updateProfile({ theme: 'ultra-dark' });
+                }}
+              >
+                Ultra Dark
+              </button>
+              <button
+                type="button"
+                className={`theme-pill ${profile.theme === 'light' ? 'active' : ''}`}
+                onClick={() => {
+                  updateProfile({ theme: 'light' });
+                }}
+              >
+                Light
+              </button>
             </div>
           </div>
 
@@ -106,18 +132,18 @@ export const ProfileScreen: React.FC = () => {
             </div>
           </div>
 
-          {/* Offline Mode Simulator */}
-          <div className="profile-setting-item" onClick={handleToggleOffline} style={{ cursor: 'pointer' }}>
+          {/* Simulate Offline Mode */}
+          <div className="profile-setting-item" onClick={handleToggleSimulateOffline} style={{ cursor: 'pointer' }}>
             <div className="profile-setting-left">
-              <div className="setting-icon-wrap" style={{ color: isOffline ? '#D97706' : 'var(--veg-color)' }}>
-                {isOffline ? <WifiOff size={17} /> : <Wifi size={17} />}
+              <div className="setting-icon-wrap" style={{ color: isSimulatedOffline ? '#F59E0B' : 'var(--accent-golden)' }}>
+                {isSimulatedOffline ? <WifiOff size={17} /> : <Wifi size={17} />}
               </div>
               <div className="setting-texts">
                 <span className="setting-label">Simulate Offline Mode</span>
-                <span className="setting-desc">{isOffline ? 'Using local saved cache' : 'Live network active'}</span>
+                <span className="setting-desc">{isSimulatedOffline ? 'Simulating offline (Dexie cache only)' : 'Live network active'}</span>
               </div>
             </div>
-            <div className={`toggle-switch ${isOffline ? 'on' : ''}`} role="switch" aria-checked={isOffline}>
+            <div className={`toggle-switch ${isSimulatedOffline ? 'on' : ''}`} role="switch" aria-checked={isSimulatedOffline}>
               <div className="toggle-handle" />
             </div>
           </div>
@@ -166,7 +192,17 @@ export const ProfileScreen: React.FC = () => {
       {/* App Meta Info */}
       <footer className="app-meta-badge">
         <p>MessApp PWA v1.0.0 • VIT-AP University</p>
-        <p style={{ marginTop: '2px', opacity: 0.7 }}>Designed for Students</p>
+        <p style={{ marginTop: '3px', opacity: 0.7 }}>
+          Designed for students ·{' '}
+          <a
+            href="https://www.linkedin.com/in/mantavya-patel-53b49932b/"
+            target="_blank"
+            rel="noopener noreferrer"
+            className="footer-creator-link"
+          >
+            Mantavya Patel
+          </a>
+        </p>
       </footer>
     </div>
   );

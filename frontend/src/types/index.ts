@@ -35,10 +35,13 @@ export interface DayMenu {
   };
 }
 
+export type AvatarId = 'pro-man-1' | 'pro-man-2' | 'pro-woman-1' | 'pro-woman-2';
+
 export interface StudentProfile {
   name: string;
   messType: 'Special Mess' | 'Non-Veg Mess' | 'Veg Mess';
   notificationsEnabled: boolean;
-  theme: 'light' | 'dark' | 'system';
+  theme: 'light' | 'dark' | 'ultra-dark' | 'system';
+  avatar?: AvatarId;
 }
 

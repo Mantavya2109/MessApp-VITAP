@@ -8,8 +8,10 @@ import {
   formatDateKey,
   mockStudentProfile,
   getCurrentOrNextMealType,
+  getISTDate,
 } from '../data/mockData';
-import { getWeekSchedule } from '../data/menuRepository';
+import { getWeekSchedule, prefetchAllMessPlans } from '../data/menuRepository';
+import { db } from '../data/db';
 
 export interface ToastItem {
   id: string;
@@ -21,33 +23,36 @@ export interface ToastItem {
 interface AppContextType {
   activeTab: 'menu' | 'profile';
   setActiveTab: (tab: 'menu' | 'profile') => void;
-  
+
   // Menus & Schedule
   schedule: DayMenu[];
   todayMenu: DayMenu | null;
   tomorrowMenu: DayMenu | null;
   todayDateKey: string;
-  
+  refreshSchedule: (refDate?: Date | string, forceMessType?: string) => Promise<void>;
+
   // Current active/upcoming meal info
   currentMealInfo: {
     currentMeal: MealType;
     greeting: string;
     status: 'active' | 'upcoming' | 'ended';
   };
-  
+
   // Selection
   selectedMenuDateKey: string;
   setSelectedMenuDateKey: (dateKey: string) => void;
   selectedMenuTab: 'today' | 'tomorrow' | 'week';
   setSelectedMenuTab: (tab: 'today' | 'tomorrow' | 'week') => void;
-  
+
   // Profile
   profile: StudentProfile;
   updateProfile: (updated: Partial<StudentProfile>) => void;
-  
+
   // Network / Offline & Toasts
   isOffline: boolean;
+  isSimulatedOffline: boolean;
   setIsOffline: (offline: boolean) => void;
+  setSimulateOffline: (simulated: boolean) => void;
   toasts: ToastItem[];
   showToast: (title: string, message?: string, type?: 'success' | 'info' | 'warning' | 'error') => void;
   dismissToast: (id: string) => void;
@@ -56,23 +61,39 @@ interface AppContextType {
 const AppContext = createContext<AppContextType | undefined>(undefined);
 
 const PROFILE_STORAGE_KEY = 'messapp_student_profile_v1';
+const SIMULATE_OFFLINE_STORAGE_KEY = 'messapp_simulate_offline';
 
 export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children }) => {
   const [activeTab, setActiveTab] = useState<'menu' | 'profile'>('menu');
   const [selectedMenuTab, setSelectedMenuTab] = useState<'today' | 'tomorrow' | 'week'>('today');
   const [toasts, setToasts] = useState<ToastItem[]>([]);
 
-  // Real Browser Network State + Optional Dev Simulation
+  // Real Browser Network State + Persistent Dev Simulation
   const [isOnline, setIsOnline] = useState<boolean>(() =>
     typeof navigator !== 'undefined' ? navigator.onLine : true
   );
-  const [isSimulatedOffline, setIsSimulatedOffline] = useState<boolean>(false);
+  const [isSimulatedOffline, setIsSimulatedOffline] = useState<boolean>(() => {
+    try {
+      return typeof localStorage !== 'undefined' && localStorage.getItem(SIMULATE_OFFLINE_STORAGE_KEY) === 'true';
+    } catch {
+      return false;
+    }
+  });
   const isOffline = !isOnline || isSimulatedOffline;
 
-  // Real system / browser local date
-  const today = useMemo(() => new Date(), []);
-  const todayDateKey = useMemo(() => formatDateKey(today), [today]);
-  const [selectedMenuDateKey, setSelectedMenuDateKey] = useState<string>(todayDateKey);
+  const setSimulateOffline = useCallback((simulated: boolean) => {
+    setIsSimulatedOffline(simulated);
+    try {
+      localStorage.setItem(SIMULATE_OFFLINE_STORAGE_KEY, String(simulated));
+    } catch {
+      // ignore
+    }
+  }, []);
+
+  // Live IST Clock & Date Keys
+  const [currentIST, setCurrentIST] = useState<Date>(() => getISTDate());
+  const [todayDateKey, setTodayDateKey] = useState<string>(() => formatDateKey(getISTDate()));
+  const [selectedMenuDateKey, setSelectedMenuDateKey] = useState<string>(() => formatDateKey(getISTDate()));
 
   // Profile state initialized from localStorage
   const [profile, setProfile] = useState<StudentProfile>(() => {
@@ -87,11 +108,33 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
     return mockStudentProfile;
   });
 
-  // Local-first Real Schedule State (Starts empty, hydrated strictly from Dexie / API)
+  // Local-first Real Schedule State (Hydrated strictly from Dexie / API)
   const [schedule, setSchedule] = useState<DayMenu[]>([]);
 
-  // Current meal time calculation
-  const currentMealInfo = useMemo(() => getCurrentOrNextMealType(today), [today]);
+  // Current meal time calculation (Live based on current IST time)
+  const currentMealInfo = useMemo(() => getCurrentOrNextMealType(currentIST), [currentIST]);
+
+  // Schedule hydration / refresh function (guarantees caching into Dexie)
+  const refreshSchedule = useCallback(
+    async (refDate?: Date | string, forceMessType?: string) => {
+      const mType = forceMessType || profile.messType;
+      const targetDate = refDate
+        ? typeof refDate === 'string'
+          ? new Date(refDate + 'T00:00:00')
+          : refDate
+        : getISTDate();
+
+      try {
+        const days = await getWeekSchedule(targetDate, mType);
+        if (days.length > 0) {
+          setSchedule(days);
+        }
+      } catch (err) {
+        console.warn('[AppContext] Could not refresh schedule:', err);
+      }
+    },
+    [profile.messType]
+  );
 
   // Toast dispatch
   const showToast = useCallback(
@@ -117,12 +160,10 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
   useEffect(() => {
     const handleOnline = () => {
       setIsOnline(true);
-      showToast('Back Online', 'Synchronizing with mess servers', 'success');
     };
 
     const handleOffline = () => {
       setIsOnline(false);
-      showToast('Offline Mode Active', 'Serving saved menu from local cache', 'info');
     };
 
     window.addEventListener('online', handleOnline);
@@ -132,23 +173,25 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
       window.removeEventListener('online', handleOnline);
       window.removeEventListener('offline', handleOffline);
     };
-  }, [showToast]);
+  }, []);
 
-  // Hydrate real menu from Dexie / API whenever messType changes
+  // Hydrate schedule from Dexie / API whenever messType changes
   useEffect(() => {
     let isMounted = true;
 
-    getWeekSchedule(today, profile.messType)
+    getWeekSchedule(currentIST, profile.messType)
       .then((days) => {
         if (isMounted && days.length > 0) {
           setSchedule(days);
           setSelectedMenuDateKey((prev) => {
             const hasPrev = days.some((d) => d.date === prev);
             const hasToday = days.some((d) => d.date === todayDateKey);
-            if (hasToday) return todayDateKey;
+            if (hasToday && (!prev || prev === todayDateKey)) return todayDateKey;
             return hasPrev ? prev : days[0].date;
           });
         }
+        // Prefetch both plans in background for seamless offline use
+        prefetchAllMessPlans().catch(() => { });
       })
       .catch((err) => {
         console.warn('[AppContext] Could not hydrate schedule:', err);
@@ -157,7 +200,53 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
     return () => {
       isMounted = false;
     };
-  }, [today, todayDateKey, profile.messType]);
+  }, [profile.messType]);
+
+  // 12:00 AM (Midnight IST) automated date and menu rollover
+  useEffect(() => {
+    const checkMidnightRollover = () => {
+      const nowIst = getISTDate();
+      setCurrentIST(nowIst);
+      const newDateKey = formatDateKey(nowIst);
+
+      if (newDateKey !== todayDateKey) {
+        // Midnight transition: update today date key and switch selected menu & date to the new day
+        setTodayDateKey(newDateKey);
+        setSelectedMenuDateKey(newDateKey);
+        refreshSchedule(nowIst);
+      }
+    };
+
+    // Calculate exact milliseconds until next 12:00:00 AM IST midnight
+    const now = getISTDate();
+    const nextMidnight = new Date(now);
+    nextMidnight.setHours(24, 0, 1, 0); // 12:00:01 AM
+    const msUntilMidnight = Math.max(1000, nextMidnight.getTime() - now.getTime());
+
+    const midnightTimer = setTimeout(() => {
+      checkMidnightRollover();
+    }, msUntilMidnight);
+
+    // Periodic check every 15 seconds to update serving status and catch wake-from-sleep
+    const interval = setInterval(checkMidnightRollover, 15000);
+
+    // Also trigger on visibility change or window focus
+    const handleVisibilityOrFocus = () => {
+      if (!document.hidden) {
+        checkMidnightRollover();
+      }
+    };
+
+    document.addEventListener('visibilitychange', handleVisibilityOrFocus);
+    window.addEventListener('focus', handleVisibilityOrFocus);
+
+    return () => {
+      clearTimeout(midnightTimer);
+      clearInterval(interval);
+      document.removeEventListener('visibilitychange', handleVisibilityOrFocus);
+      window.removeEventListener('focus', handleVisibilityOrFocus);
+    };
+  }, [todayDateKey, refreshSchedule]);
 
   // Apply theme dynamically to documentElement
   useEffect(() => {
@@ -171,24 +260,35 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
     [schedule, todayDateKey]
   );
   const tomorrowKey = useMemo(() => {
-    const t = new Date(today);
+    const t = new Date(currentIST);
     t.setDate(t.getDate() + 1);
     return formatDateKey(t);
-  }, [today]);
+  }, [currentIST]);
   const tomorrowMenu = useMemo(
     () => schedule.find((d) => d.date === tomorrowKey) || null,
     [schedule, tomorrowKey]
   );
 
-  // Save profile to localStorage
+  // Save profile to localStorage and Dexie cache
   const updateProfile = (updated: Partial<StudentProfile>) => {
     setProfile((prev) => {
-      const next = { ...prev, ...updated };
+      const next: StudentProfile = {
+        ...prev,
+        ...updated,
+        avatar: updated.avatar || prev.avatar || 'pro-man-1',
+      };
       try {
         localStorage.setItem(PROFILE_STORAGE_KEY, JSON.stringify(next));
       } catch {
         // ignore
       }
+      // Also cache in Dexie DB
+      db.metadata.put({
+        key: 'studentProfile',
+        value: next,
+        updatedAt: new Date().toISOString(),
+      }).catch(() => { });
+
       return next;
     });
   };
@@ -202,6 +302,7 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
         todayMenu,
         tomorrowMenu,
         todayDateKey,
+        refreshSchedule,
         currentMealInfo,
         selectedMenuDateKey,
         setSelectedMenuDateKey,
@@ -210,7 +311,9 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
         profile,
         updateProfile,
         isOffline,
-        setIsOffline: setIsSimulatedOffline,
+        isSimulatedOffline,
+        setIsOffline: setSimulateOffline,
+        setSimulateOffline,
         toasts,
         showToast,
         dismissToast,
@@ -228,3 +331,4 @@ export const useApp = () => {
   }
   return context;
 };
+

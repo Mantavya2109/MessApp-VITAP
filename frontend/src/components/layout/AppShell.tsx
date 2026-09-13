@@ -1,7 +1,6 @@
 import React from 'react';
 import { WifiOff } from 'lucide-react';
 import { useApp } from '../../context/AppContext';
-import { ToastContainer } from '../common/Toast';
 import './AppShell.css';
 
 interface AppShellProps {
@@ -26,9 +25,6 @@ export const AppShell: React.FC<AppShellProps> = ({ children }) => {
       <main className="app-content-wrapper">
         {children}
       </main>
-
-      {/* Toast notification overlay */}
-      <ToastContainer />
     </div>
   );
 };

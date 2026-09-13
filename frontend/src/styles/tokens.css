@@ -6,25 +6,25 @@
 :root,
 [data-theme="dark"] {
   /* Rich Deep Atmospheric Canvas matching dark mode warm amber lighting */
-  --bg-app-base: #0B0D12;
-  --bg-app-gradient: radial-gradient(circle at 94% 4%, rgba(240, 110, 20, 0.46) 0%, rgba(210, 90, 15, 0.22) 25%, rgba(11, 13, 18, 0) 58%),
-                     radial-gradient(circle at -4% 44%, rgba(14, 62, 92, 0.3) 0%, rgba(11, 13, 18, 0) 48%),
-                     radial-gradient(circle at 98% 88%, rgba(245, 158, 11, 0.25) 0%, rgba(11, 13, 18, 0) 42%),
-                     #0B0D12;
+  --bg-app-base: #090B10;
+  --bg-app-gradient: radial-gradient(circle at 94% 4%, rgba(240, 110, 20, 0.42) 0%, rgba(210, 90, 15, 0.18) 25%, rgba(9, 11, 16, 0) 58%),
+                     radial-gradient(circle at -4% 44%, rgba(14, 62, 92, 0.25) 0%, rgba(9, 11, 16, 0) 48%),
+                     radial-gradient(circle at 98% 88%, rgba(245, 158, 11, 0.22) 0%, rgba(9, 11, 16, 0) 42%),
+                     #090B10;
 
-  /* Frosted Glass Translucent Card Surfaces ("Blurriness in blocks") */
-  --bg-surface-card: rgba(22, 26, 34, 0.62);
-  --bg-surface-card-hover: rgba(28, 33, 44, 0.72);
-  --bg-surface-card-border: rgba(255, 255, 255, 0.08);
-  --meal-card-top-border: rgba(255, 255, 255, 0.16);
-  --meal-card-shadow: inset 0 1px 1px 0 rgba(255, 255, 255, 0.14),
-                      0 14px 34px rgba(0, 0, 0, 0.58),
-                      0 2px 6px rgba(0, 0, 0, 0.4);
+  /* Frosted Glass Translucent Card Surfaces - Deep Dark */
+  --bg-surface-card: rgba(14, 18, 26, 0.78);
+  --bg-surface-card-hover: rgba(20, 25, 36, 0.86);
+  --bg-surface-card-border: rgba(255, 255, 255, 0.07);
+  --meal-card-top-border: rgba(255, 255, 255, 0.14);
+  --meal-card-shadow: inset 0 1px 1px 0 rgba(255, 255, 255, 0.12),
+                      0 14px 34px rgba(0, 0, 0, 0.65),
+                      0 2px 6px rgba(0, 0, 0, 0.45);
   --card-backdrop-blur: 28px;
   
-  --bg-surface-elevated: #161A22;
-  --bg-surface-subtle: #1C212B;
-  --bg-surface-muted: #242A36;
+  --bg-surface-elevated: #11151E;
+  --bg-surface-subtle: #161B26;
+  --bg-surface-muted: #1F2635;
 
   /* Vivid Accents (Golden Yellow & Terracotta Orange) */
   --accent-golden: #FFB800;
@@ -46,8 +46,54 @@
   /* Borders & Shadows */
   --border-subtle: rgba(255, 255, 255, 0.08);
   --border-focus: #FFB800;
-  --shadow-card: 0 12px 32px rgba(0, 0, 0, 0.55), 0 2px 6px rgba(0, 0, 0, 0.35);
+  --shadow-card: 0 12px 32px rgba(0, 0, 0, 0.65), 0 2px 6px rgba(0, 0, 0, 0.45);
   --shadow-dock: 0 -8px 28px rgba(0, 0, 0, 0.6);
+}
+
+[data-theme="ultra-dark"] {
+  /* Ultra Deep Atmospheric Canvas - Exact same yellow -> blue -> yellow flow, higher blue opacity */
+  --bg-app-base: #040507;
+  --bg-app-gradient: radial-gradient(circle at 94% 4%, rgba(240, 110, 20, 0.34) 0%, rgba(210, 90, 15, 0.14) 25%, rgba(4, 5, 7, 0) 58%),
+                     radial-gradient(circle at -4% 44%, rgba(14, 75, 115, 0.44) 0%, rgba(14, 62, 92, 0.22) 28%, rgba(4, 5, 7, 0) 52%),
+                     radial-gradient(circle at 98% 88%, rgba(245, 158, 11, 0.18) 0%, rgba(4, 5, 7, 0) 42%),
+                     #040507;
+
+  /* Frosted Glass Translucent Card Surfaces - Ultra Dark */
+  --bg-surface-card: rgba(10, 12, 17, 0.88);
+  --bg-surface-card-hover: rgba(15, 18, 25, 0.94);
+  --bg-surface-card-border: rgba(255, 255, 255, 0.05);
+  --meal-card-top-border: rgba(255, 255, 255, 0.10);
+  --meal-card-shadow: inset 0 1px 1px 0 rgba(255, 255, 255, 0.08),
+                      0 16px 38px rgba(0, 0, 0, 0.82),
+                      0 2px 8px rgba(0, 0, 0, 0.6);
+  --card-backdrop-blur: 28px;
+  
+  --bg-surface-elevated: #080A0E;
+  --bg-surface-subtle: #0D1016;
+  --bg-surface-muted: #131720;
+
+  /* Vivid Accents (Golden Yellow & Terracotta Orange - Exactly Preserved) */
+  --accent-golden: #FFB800;
+  --accent-golden-hover: #F5A623;
+  --accent-golden-glow: rgba(255, 184, 0, 0.35);
+  
+  --accent-orange: #E06E23;
+  --accent-orange-hover: #C95E1B;
+  --accent-orange-glow: rgba(224, 110, 35, 0.35);
+
+  --bell-color: #FFB800;
+
+  /* Text Colors */
+  --text-primary: #FFFFFF;
+  --text-secondary: rgba(255, 255, 255, 0.65);
+  --text-tertiary: #5A6472;
+  --text-dishes: #D0D7E0;
+
+  /* Borders & Shadows */
+  --border-subtle: rgba(255, 255, 255, 0.06);
+  --border-focus: #FFB800;
+  --shadow-card: 0 12px 32px rgba(0, 0, 0, 0.8), 0 2px 6px rgba(0, 0, 0, 0.55);
+  --shadow-dock: 0 -8px 28px rgba(0, 0, 0, 0.85);
 }
 
 [data-theme="light"] {

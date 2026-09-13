@@ -16,7 +16,7 @@ export const FoodIllustration: React.FC<FoodIllustrationProps> = ({ type, classN
           xmlns="http://www.w3.org/2000/svg"
           className={className}
           aria-hidden="true"
-          style={{ width: '112px', height: '104px', display: 'block' }}
+          style={{ width: '90px', height: '82px', display: 'block' }}
         >
           {/* Back Toast Slice */}
           <rect
@@ -104,7 +104,7 @@ export const FoodIllustration: React.FC<FoodIllustrationProps> = ({ type, classN
           xmlns="http://www.w3.org/2000/svg"
           className={className}
           aria-hidden="true"
-          style={{ width: '120px', height: '106px', display: 'block' }}
+          style={{ width: '94px', height: '84px', display: 'block' }}
         >
           {/* Clay Bowl Shadow */}
           <ellipse cx="68" cy="88" rx="54" ry="24" fill="#451A03" opacity="0.5" />
@@ -172,7 +172,7 @@ export const FoodIllustration: React.FC<FoodIllustrationProps> = ({ type, classN
           xmlns="http://www.w3.org/2000/svg"
           className={className}
           aria-hidden="true"
-          style={{ width: '106px', height: '110px', display: 'block' }}
+          style={{ width: '84px', height: '88px', display: 'block' }}
         >
           {/* Angled Straw */}
           <path
@@ -237,7 +237,7 @@ export const FoodIllustration: React.FC<FoodIllustrationProps> = ({ type, classN
           xmlns="http://www.w3.org/2000/svg"
           className={className}
           aria-hidden="true"
-          style={{ width: '116px', height: '102px', display: 'block' }}
+          style={{ width: '92px', height: '82px', display: 'block' }}
         >
           {/* Ceramic Salad Bowl / Plate */}
           <ellipse cx="65" cy="80" rx="54" ry="24" fill="#1E3A8A" stroke="#0F172A" strokeWidth="4" />

@@ -25,26 +25,26 @@ export function getFormattedDateDisplay(dateStr: string): string {
 export const MEAL_TIMINGS = {
   breakfast: {
     label: 'Breakfast',
-    timeRange: '7:30 AM - 9:30 AM',
-    startTime: '07:30',
-    endTime: '09:30',
+    timeRange: '7:15 AM – 9:00 AM',
+    startTime: '07:15',
+    endTime: '09:00',
   },
   lunch: {
     label: 'Lunch',
-    timeRange: '12:30 PM - 2:30 PM',
+    timeRange: '12:30 PM – 2:00 PM',
     startTime: '12:30',
-    endTime: '14:30',
+    endTime: '14:00',
   },
   snacks: {
     label: 'Snacks',
-    timeRange: '4:30 PM - 6:15 PM',
-    startTime: '16:30',
+    timeRange: '4:45 PM – 6:15 PM',
+    startTime: '16:45',
     endTime: '18:15',
   },
   dinner: {
     label: 'Dinner',
-    timeRange: '7:00 PM - 9:00 PM',
-    startTime: '19:00',
+    timeRange: '7:15 PM – 9:00 PM',
+    startTime: '19:15',
     endTime: '21:00',
   },
 };
@@ -55,16 +55,28 @@ export const mockStudentProfile: StudentProfile = {
   messType: 'Veg Mess',
   notificationsEnabled: true,
   theme: 'dark',
+  avatar: 'pro-man-1',
 };
 
-// Determines the currently active or next upcoming meal based on clock
+// Calculate current IST (Asia/Kolkata) time
+export function getISTDate(now: Date = new Date()): Date {
+  try {
+    const istString = now.toLocaleString('en-US', { timeZone: 'Asia/Kolkata' });
+    return new Date(istString);
+  } catch {
+    return now;
+  }
+}
+
+// Determines the currently active meal based on IST clock
 export function getCurrentOrNextMealType(now: Date = new Date()): {
   currentMeal: 'breakfast' | 'lunch' | 'snacks' | 'dinner';
   greeting: string;
   status: 'active' | 'upcoming' | 'ended';
 } {
-  const hours = now.getHours();
-  const minutes = now.getMinutes();
+  const ist = getISTDate(now);
+  const hours = ist.getHours();
+  const minutes = ist.getMinutes();
   const timeVal = hours * 60 + minutes;
 
   // Greetings
@@ -75,37 +87,38 @@ export function getCurrentOrNextMealType(now: Date = new Date()): {
     greeting = 'Good evening';
   }
 
-  // Breakfast: 07:30 to 10:00
-  if (timeVal < 10 * 60) {
-    return {
-      currentMeal: 'breakfast',
-      greeting,
-      status: timeVal >= 7 * 60 + 30 ? 'active' : 'upcoming',
-    };
+  // Check exact active serving windows in IST:
+  // Breakfast: 07:15 to 09:00
+  if (timeVal >= 7 * 60 + 15 && timeVal <= 9 * 60) {
+    return { currentMeal: 'breakfast', greeting, status: 'active' };
   }
 
-  // Lunch: 12:30 to 15:00
-  if (timeVal < 15 * 60) {
-    return {
-      currentMeal: 'lunch',
-      greeting,
-      status: timeVal >= 12 * 60 + 30 ? 'active' : 'upcoming',
-    };
+  // Lunch: 12:30 to 14:00
+  if (timeVal >= 12 * 60 + 30 && timeVal <= 14 * 60) {
+    return { currentMeal: 'lunch', greeting, status: 'active' };
   }
 
-  // Snacks: 16:30 to 18:30
-  if (timeVal < 18 * 60 + 30) {
-    return {
-      currentMeal: 'snacks',
-      greeting,
-      status: timeVal >= 16 * 60 + 30 ? 'active' : 'upcoming',
-    };
+  // Snacks: 16:45 to 18:15
+  if (timeVal >= 16 * 60 + 45 && timeVal <= 18 * 60 + 15) {
+    return { currentMeal: 'snacks', greeting, status: 'active' };
   }
 
-  // Dinner: 19:00 to 22:00
+  // Dinner: 19:15 to 21:00
+  if (timeVal >= 19 * 60 + 15 && timeVal <= 21 * 60) {
+    return { currentMeal: 'dinner', greeting, status: 'active' };
+  }
+
+  // Outside serving windows
+  let upcomingMeal: 'breakfast' | 'lunch' | 'snacks' | 'dinner' = 'breakfast';
+  if (timeVal < 7 * 60 + 15) upcomingMeal = 'breakfast';
+  else if (timeVal < 12 * 60 + 30) upcomingMeal = 'lunch';
+  else if (timeVal < 16 * 60 + 45) upcomingMeal = 'snacks';
+  else if (timeVal < 19 * 60 + 15) upcomingMeal = 'dinner';
+  else upcomingMeal = 'breakfast';
+
   return {
-    currentMeal: 'dinner',
+    currentMeal: upcomingMeal,
     greeting,
-    status: timeVal >= 19 * 60 && timeVal <= 22 * 60 ? 'active' : 'upcoming',
+    status: 'upcoming',
   };
 }

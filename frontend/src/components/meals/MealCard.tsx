@@ -10,6 +10,7 @@ interface MealCardProps {
   isHero?: boolean;
   statusOverride?: 'serving' | 'upcoming' | 'ended';
   isPast?: boolean;
+  staggerIndex?: number;
 }
 
 export const MealCard: React.FC<MealCardProps> = ({
@@ -18,10 +19,12 @@ export const MealCard: React.FC<MealCardProps> = ({
   isHero = false,
   statusOverride,
   isPast = false,
+  staggerIndex = 0,
 }) => {
   return (
     <article
       className={`meal-card ${isHero ? 'is-active-meal' : ''} ${isPast ? 'is-past-meal' : ''}`}
+      style={{ '--stagger': staggerIndex } as React.CSSProperties}
       aria-label={`${meal.label} menu for ${dateKey}`}
     >
       {/* Header Area */}
@@ -32,11 +35,6 @@ export const MealCard: React.FC<MealCardProps> = ({
             <span className="meal-card-status-badge status-badge-serving">
               <span className="status-dot" />
               Serving
-            </span>
-          )}
-          {statusOverride === 'upcoming' && (
-            <span className="meal-card-status-badge status-badge-upcoming">
-              Next
             </span>
           )}
         </div>

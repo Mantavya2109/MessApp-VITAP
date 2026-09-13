@@ -1,10 +1,11 @@
 import { db, type DbDayMenuRecord } from './db';
 import type { DayMenu, MealSlot, MenuItem } from '../types';
-import { formatDateKey, MEAL_TIMINGS } from './mockData';
+import { formatDateKey, MEAL_TIMINGS, getISTDate } from './mockData';
 
 const API_BASE_URL =
   import.meta.env.VITE_API_URL ||
   (import.meta.env.DEV ? 'http://localhost:3001/api' : '/api');
+
 /**
  * Resolves frontend messType string to backend MessPlan code.
  */
@@ -103,9 +104,24 @@ export async function clearStaleCache(): Promise<void> {
 }
 
 /**
- * Fetches menu from backend API and caches into IndexedDB.
+ * Checks if Simulate Offline Mode is enabled in localStorage.
  */
-export async function syncMenusFromApi(refDate: Date = new Date(), messType: string = 'Veg Mess'): Promise<DayMenu[]> {
+export function isSimulatedOffline(): boolean {
+  try {
+    return typeof localStorage !== 'undefined' && localStorage.getItem('messapp_simulate_offline') === 'true';
+  } catch {
+    return false;
+  }
+}
+
+/**
+ * Fetches menu from backend API and caches all days into IndexedDB (Dexie).
+ */
+export async function syncMenusFromApi(refDate: Date = getISTDate(), messType: string = 'Veg Mess'): Promise<DayMenu[]> {
+  if (isSimulatedOffline()) {
+    throw new Error('Network requests blocked (Simulate Offline Mode is active)');
+  }
+
   const planCode = getPlanCode(messType);
   const dateKey = formatDateKey(refDate);
 
@@ -120,15 +136,16 @@ export async function syncMenusFromApi(refDate: Date = new Date(), messType: str
       return [];
     }
 
-    const todayKey = formatDateKey(new Date());
-    const tomorrowObj = new Date();
+    const todayDate = getISTDate();
+    const todayKey = formatDateKey(todayDate);
+    const tomorrowObj = new Date(todayDate);
     tomorrowObj.setDate(tomorrowObj.getDate() + 1);
     const tomorrowKey = formatDateKey(tomorrowObj);
 
     const nowIso = new Date().toISOString();
     const dayMenus: DayMenu[] = data.days.map((apiDay: any) => mapApiDayToDayMenu(apiDay, todayKey, tomorrowKey));
 
-    // Save to IndexedDB
+    // Save to IndexedDB Dexie Cache
     const recordsToInsert: DbDayMenuRecord[] = dayMenus.map((day) => ({
       id: `${messType}_${day.date}`,
       messType,
@@ -156,16 +173,16 @@ export async function syncMenusFromApi(refDate: Date = new Date(), messType: str
 
 /**
  * Retrieves the schedule for a given date and mess type (Local-first: IndexedDB -> Network Sync).
- * NO MOCK DATA FALLBACK: Returns empty array if no menu exists.
  */
 export async function getWeekSchedule(
-  refDate: Date = new Date(),
+  refDate: Date = getISTDate(),
   messType: string = 'Veg Mess'
 ): Promise<DayMenu[]> {
   await clearStaleCache();
 
-  const todayKey = formatDateKey(new Date());
-  const tomorrowObj = new Date();
+  const todayDate = getISTDate();
+  const todayKey = formatDateKey(todayDate);
+  const tomorrowObj = new Date(todayDate);
   tomorrowObj.setDate(tomorrowObj.getDate() + 1);
   const tomorrowKey = formatDateKey(tomorrowObj);
 
@@ -185,13 +202,20 @@ export async function getWeekSchedule(
         meals: rec.meals,
       }));
 
-      // Background revalidation
-      syncMenusFromApi(refDate, messType).catch(() => { });
+      // Background revalidation only if NOT simulated offline
+      if (!isSimulatedOffline()) {
+        syncMenusFromApi(refDate, messType).catch(() => { });
+      }
 
       return cachedDayMenus;
     }
 
-    // 2. If IndexedDB empty, fetch from API
+    // 2. If IndexedDB empty and simulated offline, do not attempt network request
+    if (isSimulatedOffline()) {
+      return [];
+    }
+
+    // 3. If IndexedDB empty, fetch from API and cache
     const freshDays = await syncMenusFromApi(refDate, messType);
     return freshDays;
   } catch (err) {
@@ -201,19 +225,20 @@ export async function getWeekSchedule(
 }
 
 /**
- * Fetch a single day menu for a specific date (Local-first: Dexie -> API).
+ * Fetch a single day menu for a specific date and guarantees it is added to Dexie cache.
  */
 export async function getDayMenu(
   dateKey: string,
   messType: string = 'Veg Mess'
 ): Promise<DayMenu | null> {
   const planCode = getPlanCode(messType);
-  const todayKey = formatDateKey(new Date());
-  const tomorrowObj = new Date();
+  const todayDate = getISTDate();
+  const todayKey = formatDateKey(todayDate);
+  const tomorrowObj = new Date(todayDate);
   tomorrowObj.setDate(tomorrowObj.getDate() + 1);
   const tomorrowKey = formatDateKey(tomorrowObj);
 
-  // 1. Check Dexie
+  // 1. Check Dexie cache
   try {
     const cached = await db.menus.get(`${messType}_${dateKey}`);
     if (cached) {
@@ -229,7 +254,12 @@ export async function getDayMenu(
     console.warn('[menuRepository] Dexie read failed:', e);
   }
 
-  // 2. Fetch from API
+  // 2. If simulated offline, don't attempt network
+  if (isSimulatedOffline()) {
+    return null;
+  }
+
+  // 3. Fetch from API and store into Dexie cache
   try {
     const response = await fetch(`${API_BASE_URL}/menu?date=${dateKey}&messPlan=${planCode}`);
     if (response.ok) {
@@ -255,3 +285,20 @@ export async function getDayMenu(
 
   return null;
 }
+
+/**
+ * Prefetches and caches all mess plans in the background for instant offline availability.
+ */
+export async function prefetchAllMessPlans(): Promise<void> {
+  if (isSimulatedOffline()) return;
+
+  const plans = ['Veg Mess', 'Special Mess'];
+  for (const plan of plans) {
+    try {
+      await syncMenusFromApi(getISTDate(), plan);
+    } catch {
+      // Quiet background fallback
+    }
+  }
+}
+

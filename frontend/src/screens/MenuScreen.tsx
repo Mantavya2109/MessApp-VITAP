@@ -1,15 +1,16 @@
-import React, { useState, useMemo } from 'react';
+import React, { useState, useMemo, useRef, useEffect } from 'react';
 import {
   Bell,
   Calendar as CalendarIcon,
   ChevronLeft,
   ChevronRight,
-  ChevronDown,
-  Check,
-  X,
+  WifiOff,
 } from 'lucide-react';
 import { useApp } from '../context/AppContext';
 import { MealCard } from '../components/meals/MealCard';
+import { SettingsPullout } from '../components/settings/SettingsPullout';
+import { AvatarIcon } from '../components/profile/AvatarIcon';
+import { AvatarSelectorPopover } from '../components/profile/AvatarSelectorPopover';
 import './MenuScreen.css';
 
 export const MenuScreen: React.FC = () => {
@@ -23,18 +24,24 @@ export const MenuScreen: React.FC = () => {
     currentMealInfo,
     profile,
     updateProfile,
-    setActiveTab,
-    showToast,
+    isSimulatedOffline,
+    refreshSchedule,
   } = useApp();
 
-  const [isMessModalOpen, setIsMessModalOpen] = useState(false);
+  const [isSettingsOpen, setIsSettingsOpen] = useState(false);
+  const [isAvatarPickerOpen, setIsAvatarPickerOpen] = useState(false);
+  const activePillRef = useRef<HTMLButtonElement | null>(null);
 
-  // Available mess options
-  const messOptions: Array<'Veg Mess' | 'Special Mess' | 'Non-Veg Mess'> = [
-    'Veg Mess',
-    'Special Mess',
-    'Non-Veg Mess',
-  ];
+  // Auto scroll active date pill into center when week calendar view is open
+  useEffect(() => {
+    if (selectedMenuTab === 'week' && activePillRef.current) {
+      activePillRef.current.scrollIntoView({
+        behavior: 'smooth',
+        inline: 'center',
+        block: 'nearest',
+      });
+    }
+  }, [selectedMenuTab, selectedMenuDateKey]);
 
   // Find active day menu from schedule
   const activeDayIndex = useMemo(() => {
@@ -77,8 +84,7 @@ export const MenuScreen: React.FC = () => {
       const prevDate = schedule[activeDayIndex - 1].date;
       setSelectedMenuDateKey(prevDate);
       if (selectedMenuTab === 'week') setSelectedMenuTab('today');
-    } else {
-      showToast('Reached earliest menu in cache', undefined, 'info');
+      refreshSchedule(prevDate);
     }
   };
 
@@ -88,86 +94,119 @@ export const MenuScreen: React.FC = () => {
       const nextDate = schedule[activeDayIndex + 1].date;
       setSelectedMenuDateKey(nextDate);
       if (selectedMenuTab === 'week') setSelectedMenuTab('today');
-    } else {
-      showToast('Reached end of weekly menu cycle', undefined, 'info');
+      refreshSchedule(nextDate);
     }
   };
 
-  // Toggle Week / Day view via Calendar button
+  // Toggle Week / Day view via Calendar button (Directly jumps to current date & caches all dates)
   const handleToggleCalendar = () => {
     if (selectedMenuTab === 'week') {
       setSelectedMenuTab('today');
     } else {
       setSelectedMenuTab('week');
+      const hasToday = schedule.some((d) => d.date === todayDateKey);
+      if (hasToday) {
+        setSelectedMenuDateKey(todayDateKey);
+      }
+      // Proactively ensure schedule and selected date are fully cached in Dexie
+      refreshSchedule(todayDateKey);
     }
   };
 
   return (
     <div className="menu-screen-container animate-fade-in">
-      {/* 1. Top Navigation Bar (Minimal Hamburger, Notification Bell, Avatar) */}
+      {/* 1. Top Navigation Bar (Hamburger, subtle "VIT - AP Mess" label, Notification Bell, Avatar) */}
       <header className="menu-top-bar">
         {/* Custom 2-Line Minimal Hamburger */}
         <button
           type="button"
           className="menu-hamburger-btn"
-          onClick={() => setActiveTab('profile')}
-          aria-label="Open menu options"
+          onClick={() => setIsSettingsOpen(!isSettingsOpen)}
+          aria-label="Open settings menu"
           title="Open settings"
         >
           <span className="hamburger-line line-1" />
           <span className="hamburger-line line-2" />
         </button>
 
+        {/* Floating Pullout Settings Menu Anchored under Hamburger */}
+        <SettingsPullout isOpen={isSettingsOpen} onClose={() => setIsSettingsOpen(false)} />
+
+        {/* Subtle App Identity Label between Settings and Bell */}
+        <div className="menu-app-brand-badge" aria-label="VIT - AP Mess">
+          <span className="brand-text-label">VIT - AP Mess</span>
+        </div>
+
         {/* Right Actions (Bell + Circular Illustrated Avatar) */}
         <div className="menu-top-actions">
           <button
             type="button"
             className="notification-bell-btn"
-            onClick={() => showToast('No new unread mess notices', undefined, 'info')}
             aria-label="View notifications"
           >
             <Bell size={26} fill="currentColor" strokeWidth={0} />
           </button>
 
-          <button
-            type="button"
-            className="top-profile-avatar-btn"
-            onClick={() => setActiveTab('profile')}
-            aria-label="Go to My Profile"
-            title={`${profile.name} • ${profile.messType}`}
-          >
-            {/* Friendly Avatar SVG Illustration */}
-            <svg viewBox="0 0 36 36" fill="none" xmlns="http://www.w3.org/2000/svg" style={{ width: '100%', height: '100%', display: 'block' }}>
-              <rect width="36" height="36" fill="#FBBF24" />
-              {/* Hair */}
-              <path d="M 8 16 C 8 8 16 6 24 6 C 28 6 30 10 30 14 C 30 17 28 19 28 19 C 26 13 22 10 18 10 C 14 10 11 12 10 16 Z" fill="#78350F" />
-              {/* Face */}
-              <circle cx="18" cy="18" r="8" fill="#FDE68A" />
-              {/* Eyes */}
-              <circle cx="15" cy="17" r="1.2" fill="#78350F" />
-              <circle cx="21" cy="17" r="1.2" fill="#78350F" />
-              {/* Smile */}
-              <path d="M 16 21 Q 18 23 20 21" stroke="#78350F" strokeWidth="1.2" strokeLinecap="round" fill="none" />
-              {/* Collar / Shirt */}
-              <path d="M 8 36 C 8 28 14 26 18 26 C 22 26 28 28 28 36 Z" fill="#EA580C" />
-            </svg>
-          </button>
+          <div style={{ position: 'relative' }}>
+            <button
+              type="button"
+              className="top-profile-avatar-btn"
+              onClick={() => setIsAvatarPickerOpen(!isAvatarPickerOpen)}
+              aria-label="Select Avatar"
+              title="Change Profile Avatar"
+            >
+              <AvatarIcon avatarId={profile.avatar || 'pro-man-1'} size={38} />
+            </button>
+
+            {/* Avatar Selector Floating Box */}
+            <AvatarSelectorPopover
+              isOpen={isAvatarPickerOpen}
+              currentAvatarId={profile.avatar || 'pro-man-1'}
+              onSelect={(newAvatar) => updateProfile({ avatar: newAvatar })}
+              onClose={() => setIsAvatarPickerOpen(false)}
+            />
+          </div>
         </div>
       </header>
 
-      {/* 2. Centered Mess Selector ("Menu for Veg Mess ˅") */}
+      {/* Subtle Simulated Offline Mode Indicator (if active) */}
+      {isSimulatedOffline && (
+        <div className="simulated-offline-status-banner">
+          <WifiOff size={13} strokeWidth={2.4} />
+          <span>Simulated Offline Mode Active (Dexie Cache)</span>
+        </div>
+      )}
+
+      {/* 2. Compact Mess Segmented Toggle (Veg & Non-Veg / Special) */}
       <div className="mess-selector-wrap">
-        <button
-          type="button"
-          className="mess-selector-trigger"
-          onClick={() => setIsMessModalOpen(true)}
-          aria-haspopup="dialog"
-          aria-expanded={isMessModalOpen}
-        >
-          <span className="mess-for-label">Menu for</span>
-          <span className="mess-name-underline">{profile.messType}</span>
-          <ChevronDown size={17} className="mess-chevron-icon" />
-        </button>
+        <div className="compact-mess-segmented-toggle" role="radiogroup" aria-label="Select mess plan">
+          <button
+            type="button"
+            role="radio"
+            aria-checked={profile.messType !== 'Special Mess'}
+            className={`compact-mess-pill ${profile.messType !== 'Special Mess' ? 'active' : ''}`}
+            onClick={() => {
+              if (profile.messType === 'Special Mess') {
+                updateProfile({ messType: 'Veg Mess' });
+              }
+            }}
+          >
+            Veg &amp; Non-Veg
+          </button>
+          <button
+            type="button"
+            role="radio"
+            aria-checked={profile.messType === 'Special Mess'}
+            className={`compact-mess-pill ${profile.messType === 'Special Mess' ? 'active' : ''}`}
+            onClick={() => {
+              if (profile.messType !== 'Special Mess') {
+                updateProfile({ messType: 'Special Mess' });
+              }
+            }}
+          >
+            Special
+          </button>
+        </div>
       </div>
 
       {/* 3. Date Navigation Row (Sun, 13th Sep   [📅] [←] [→]) */}
@@ -222,9 +261,13 @@ export const MenuScreen: React.FC = () => {
             return (
               <button
                 key={day.date}
+                ref={isSelected ? activePillRef : null}
                 type="button"
                 className={`date-pill-item ${isSelected ? 'active' : ''}`}
-                onClick={() => setSelectedMenuDateKey(day.date)}
+                onClick={() => {
+                  setSelectedMenuDateKey(day.date);
+                  refreshSchedule(day.date);
+                }}
               >
                 <span className="date-pill-day">{day.isToday ? 'Today' : shortDay}</span>
                 <span className="date-pill-date">{dayNum}</span>
@@ -237,7 +280,7 @@ export const MenuScreen: React.FC = () => {
       {/* 4. Vertical Stack of Meal Cards (BREAKFAST, LUNCH, SNACKS, DINNER) */}
       {activeDayMenu ? (
         <div className="meals-vertical-stack animate-fade-in">
-          {mealSlotsOrder.map((mType) => {
+          {mealSlotsOrder.map((mType, idx) => {
             const meal = activeDayMenu.meals[mType];
             if (!meal) return null;
             const isTodayDate = activeDayMenu.date === todayDateKey;
@@ -248,12 +291,11 @@ export const MenuScreen: React.FC = () => {
                 key={`${activeDayMenu.date}-${meal.id}`}
                 meal={meal}
                 dateKey={activeDayMenu.date}
-                isHero={isCurrentActive}
+                staggerIndex={idx}
+                isHero={isCurrentActive && currentMealInfo.status === 'active'}
                 statusOverride={
-                  isCurrentActive
-                    ? currentMealInfo.status === 'active'
-                      ? 'serving'
-                      : 'upcoming'
+                  isCurrentActive && currentMealInfo.status === 'active'
+                    ? 'serving'
                     : undefined
                 }
               />
@@ -264,52 +306,6 @@ export const MenuScreen: React.FC = () => {
         <div className="menu-empty-state" style={{ padding: '60px 20px', textAlign: 'center', color: '#9CA3AF' }}>
           <p style={{ fontSize: '1.1rem', fontWeight: 600, color: 'var(--text-primary)' }}>Menu not available</p>
           <p style={{ fontSize: '0.9rem', marginTop: '6px' }}>No menu published for this date.</p>
-        </div>
-      )}
-
-      {/* 5. Mess Selection Bottom Sheet Modal */}
-      {isMessModalOpen && (
-        <div
-          className="mess-modal-backdrop"
-          onClick={() => setIsMessModalOpen(false)}
-          role="dialog"
-          aria-modal="true"
-          aria-label="Select Mess Type"
-        >
-          <div className="mess-modal-card" onClick={(e) => e.stopPropagation()}>
-            <div className="mess-modal-header">
-              <h3 className="mess-modal-title">Select Mess</h3>
-              <button
-                type="button"
-                onClick={() => setIsMessModalOpen(false)}
-                style={{ color: '#9CA3AF', padding: '4px' }}
-                aria-label="Close dialog"
-              >
-                <X size={20} />
-              </button>
-            </div>
-
-            <div className="mess-modal-options">
-              {messOptions.map((opt) => {
-                const isSelected = profile.messType === opt;
-                return (
-                  <button
-                    key={opt}
-                    type="button"
-                    className={`mess-option-btn ${isSelected ? 'selected' : ''}`}
-                    onClick={() => {
-                      updateProfile({ messType: opt });
-                      setIsMessModalOpen(false);
-                      showToast(`Switched to ${opt}`);
-                    }}
-                  >
-                    <span>{opt}</span>
-                    {isSelected && <Check size={18} strokeWidth={3} />}
-                  </button>
-                );
-              })}
-            </div>
-          </div>
         </div>
       )}
     </div>
