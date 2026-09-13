@@ -133,7 +133,7 @@
   width: 100%;
   margin-top: 6px;
   position: relative;
-  min-height: 56px;
+  min-height: 68px;
 }
 
 /* Food Artwork: Fixed block at bottom-right corner for every meal card, enlarged */
@@ -141,8 +141,8 @@
   position: absolute;
   right: 12px;
   bottom: 8px;
-  width: 96px;
-  height: 82px;
+  width: 88px;
+  height: 76px;
   display: flex;
   align-items: flex-end;
   justify-content: flex-end;
@@ -168,6 +168,6 @@
   letter-spacing: 0.005em;
   margin: 0;
   width: 100%;
-  padding-bottom: 18px;
-  padding-right: 42px;
+  padding-right: 84px;
+  padding-bottom: 4px;
 }
