@@ -180,7 +180,11 @@ app.get('/api/menu/week', async (req, res) => {
   }
 });
 
-// Start server
-app.listen(PORT, () => {
-  console.log(`🚀 MessApp Backend API running on port ${PORT}`);
-});
+export default app;
+
+// Start the server only when running locally
+if (process.env.NODE_ENV !== 'production') {
+  app.listen(PORT, () => {
+    console.log(`🚀 MessApp Backend API running on port ${PORT}`);
+  });
+}
