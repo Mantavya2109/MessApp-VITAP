@@ -96,10 +96,11 @@
 }
 
 .avatar-option-card.selected {
-  background: rgba(255, 184, 0, 0.14);
+  background: var(--bg-surface-elevated);
   border-color: var(--accent-golden);
-  box-shadow: 0 4px 14px var(--accent-golden-glow);
+  box-shadow: 0 0 0 1px var(--accent-golden);
 }
+
 
 .avatar-preview-wrap {
   position: relative;

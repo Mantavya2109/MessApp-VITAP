@@ -143,7 +143,7 @@
 
 .theme-pill-recommended-badge {
   position: absolute;
-  top: -7.5px;
+  top: -7px;
   left: 50%;
   transform: translateX(-50%);
   font-family: var(--font-heading);
@@ -153,10 +153,10 @@
   letter-spacing: 0.04em;
   padding: 1.5px 5px;
   border-radius: var(--radius-full);
-  background: #181E2A;
-  color: var(--accent-golden);
-  border: 1px solid rgba(255, 184, 0, 0.45);
-  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.4);
+  background: var(--bg-surface-elevated);
+  color: var(--text-primary);
+  border: 1px solid var(--border-subtle);
+  box-shadow: var(--shadow-xs);
   pointer-events: none;
   user-select: none;
   white-space: nowrap;
@@ -166,15 +166,14 @@
 
 [data-theme="light"] .theme-pill-recommended-badge {
   background: #FFFFFF;
-  color: #B45309;
-  border: 1px solid rgba(217, 119, 6, 0.35);
-  box-shadow: 0 1px 4px rgba(0, 0, 0, 0.1);
+  color: var(--text-secondary);
+  border: 1px solid rgba(0, 0, 0, 0.15);
 }
 
 [data-theme="ultra-dark"] .theme-pill-recommended-badge {
-  background: #000000;
-  color: var(--accent-golden);
-  border: 1px solid rgba(255, 184, 0, 0.55);
+  background: #11151E;
+  color: var(--text-primary);
+  border: 1px solid rgba(255, 255, 255, 0.15);
 }
 
 .pullout-theme-pill:hover {
@@ -182,14 +181,15 @@
 }
 
 .pullout-theme-pill:active {
-  transform: scale(0.95);
+  transform: scale(0.97);
 }
 
 .pullout-theme-pill.active {
   background: var(--accent-golden);
   color: #11141A;
-  box-shadow: 0 2px 8px var(--accent-golden-glow);
+  box-shadow: none;
 }
+
 
 /* Timings Sublist */
 .pullout-expand-btn {
@@ -333,35 +333,34 @@
   align-items: center;
   gap: 5px;
   padding: 5px 12px;
-  background: rgba(239, 68, 68, 0.16);
-  border: 1px solid rgba(239, 68, 68, 0.38);
+  background: rgba(239, 68, 68, 0.12);
+  border: 1px solid rgba(239, 68, 68, 0.28);
   border-radius: var(--radius-full);
   font-family: var(--font-heading);
   font-size: 0.8125rem;
   /* 13px */
   font-weight: var(--weight-bold);
-  color: #FFFFFF;
+  color: #EF4444;
   cursor: pointer;
   touch-action: manipulation;
-  transition: all 160ms cubic-bezier(0.16, 1, 0.3, 1);
-  box-shadow: 0 2px 8px rgba(239, 68, 68, 0.2);
+  transition: background-color var(--transition-fast), border-color var(--transition-fast);
+  box-shadow: none;
 }
 
 .pullout-like-action-btn:hover {
-  background: rgba(239, 68, 68, 0.26);
-  border-color: rgba(239, 68, 68, 0.55);
-  transform: scale(1.05);
+  background: rgba(239, 68, 68, 0.22);
+  border-color: rgba(239, 68, 68, 0.45);
 }
 
 .pullout-like-action-btn:active,
 .pullout-like-action-btn.liked-active {
-  transform: scale(0.92);
-  background: rgba(239, 68, 68, 0.4);
+  transform: scale(0.96);
+  background: rgba(239, 68, 68, 0.3);
 }
 
 .pullout-like-action-btn:disabled,
 .pullout-like-action-btn.btn-disabled {
-  opacity: 0.6;
+  opacity: 0.5;
   cursor: not-allowed;
   background: rgba(148, 163, 184, 0.12);
   border-color: rgba(148, 163, 184, 0.25);
@@ -377,8 +376,8 @@
 }
 
 [data-theme="light"] .pullout-like-action-btn {
-  background: rgba(239, 68, 68, 0.1);
-  border-color: rgba(239, 68, 68, 0.28);
+  background: rgba(239, 68, 68, 0.08);
+  border-color: rgba(239, 68, 68, 0.22);
   color: #DC2626;
 }
 
@@ -388,6 +387,7 @@
   border-color: rgba(0, 0, 0, 0.1);
   color: #94A3B8;
 }
+
 
 /* Below Option Total Likes Display */
 .pullout-likes-below-info {
@@ -532,34 +532,31 @@
   display: inline-flex;
   align-items: center;
   gap: 5px;
-  height: 29px;
-  padding: 0 12px;
+  height: 28px;
+  padding: 0 11px;
   border-radius: var(--radius-full);
-  background: linear-gradient(135deg, rgba(255, 184, 0, 0.18) 0%, rgba(224, 110, 35, 0.1) 100%), rgba(24, 30, 42, 0.88);
-  border: 1.5px solid rgba(255, 184, 0, 0.45);
-  color: #FFFFFF;
+  background: var(--bg-surface-elevated);
+  border: 1px solid var(--border-subtle);
+  color: var(--text-primary);
   font-family: var(--font-heading);
   font-size: 0.75rem;
   /* 12px */
-  font-weight: var(--weight-bold);
-  letter-spacing: 0.02em;
+  font-weight: var(--weight-semibold);
+  letter-spacing: 0.01em;
   cursor: pointer;
   touch-action: manipulation;
-  transition: all var(--transition-fast);
-  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.35), 0 0 10px rgba(255, 184, 0, 0.12);
+  transition: background-color var(--transition-fast), border-color var(--transition-fast);
+  box-shadow: var(--shadow-xs);
   white-space: nowrap;
 }
 
 .pullout-install-action-btn:hover:not(:disabled) {
-  transform: translateY(-1px);
-  border-color: var(--accent-golden);
-  color: var(--accent-golden);
-  background: linear-gradient(135deg, rgba(255, 184, 0, 0.26) 0%, rgba(224, 110, 35, 0.18) 100%), rgba(32, 40, 56, 0.96);
-  box-shadow: 0 4px 14px var(--accent-golden-glow);
+  background: var(--bg-surface-subtle);
+  border-color: var(--text-tertiary);
 }
 
 .pullout-install-action-btn:active:not(:disabled) {
-  transform: scale(0.95);
+  transform: scale(0.97);
 }
 
 .pullout-install-action-btn:disabled,
@@ -574,16 +571,14 @@
 }
 
 [data-theme="light"] .pullout-install-action-btn {
-  background: linear-gradient(135deg, rgba(255, 184, 0, 0.12) 0%, rgba(255, 255, 255, 0.95) 100%), #FFFFFF;
-  border-color: rgba(224, 110, 35, 0.38);
+  background: #FFFFFF;
+  border-color: var(--border-subtle);
   color: var(--text-primary);
-  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
 }
 
 [data-theme="light"] .pullout-install-action-btn:hover:not(:disabled) {
-  border-color: var(--accent-orange);
-  color: var(--accent-orange);
-  box-shadow: 0 4px 12px rgba(224, 110, 35, 0.2);
+  background: #F3F4F6;
+  border-color: #D1D5DB;
 }
 
 [data-theme="light"] .pullout-install-action-btn:disabled,
@@ -592,6 +587,7 @@
   border-color: rgba(0, 0, 0, 0.1);
   color: #94A3B8;
 }
+
 
 /* ==========================================================================
    Coming Soon Badge Styles

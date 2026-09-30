@@ -74,7 +74,7 @@ button {
 }
 
 button:active {
-  transform: scale(0.95);
+  transform: scale(0.98);
 }
 
 button:focus-visible {
@@ -98,7 +98,7 @@ a {
 }
 
 ::-webkit-scrollbar-thumb {
-  background: var(--border-medium);
+  background: var(--border-subtle);
   border-radius: var(--radius-full);
 }
 
@@ -109,7 +109,7 @@ a {
 @keyframes fadeIn {
   from {
     opacity: 0;
-    transform: translateY(6px);
+    transform: translateY(4px);
   }
   to {
     opacity: 1;
@@ -120,7 +120,7 @@ a {
 @keyframes slideUp {
   from {
     opacity: 0;
-    transform: translateY(16px);
+    transform: translateY(12px);
   }
   to {
     opacity: 1;
@@ -128,14 +128,6 @@ a {
   }
 }
 
-@keyframes pulseGlow {
-  0%, 100% {
-    box-shadow: 0 0 0 0 rgba(255, 184, 0, 0.4);
-  }
-  50% {
-    box-shadow: 0 0 0 8px rgba(255, 184, 0, 0);
-  }
-}
 
 @keyframes heartBurst {
   0% {

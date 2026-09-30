@@ -78,3 +78,18 @@ model AppLike {
 
   @@map("app_likes")
 }
+
+model NightCanteenItem {
+  id        String   @id @default(cuid())
+  sno       Int      @unique
+  type      String   // "Veg" | "Non-Veg"
+  category  String
+  name      String
+  quantity  String
+  price     Float
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@map("night_canteen_items")
+}
+

@@ -11,6 +11,7 @@ import { SettingsPullout } from '../components/settings/SettingsPullout';
 import { AvatarIcon } from '../components/profile/AvatarIcon';
 import { AvatarSelectorPopover } from '../components/profile/AvatarSelectorPopover';
 import { InstallAppButton } from '../components/common/InstallAppButton';
+import { NightCanteenView } from '../components/nightCanteen/NightCanteenView';
 import './MenuScreen.css';
 
 export const MenuScreen: React.FC = () => {
@@ -124,8 +125,9 @@ export const MenuScreen: React.FC = () => {
           aria-label="Open settings menu"
           title="Open settings"
         >
-          <Settings size={26} strokeWidth={2.2} />
+          <Settings size={30} strokeWidth={2.1} />
         </button>
+
 
         {/* Floating Pullout Settings Menu Anchored under Settings */}
         <SettingsPullout isOpen={isSettingsOpen} onClose={() => setIsSettingsOpen(false)} />
@@ -162,16 +164,16 @@ export const MenuScreen: React.FC = () => {
         </div>
       </header>
 
-      {/* 2. Compact Mess Segmented Toggle (Veg & Non-Veg / Special) */}
+      {/* 2. Compact Mess Segmented Toggle (Veg & Non-Veg / Special / Night Canteen) */}
       <div className="mess-selector-wrap">
         <div className="compact-mess-segmented-toggle" role="radiogroup" aria-label="Select mess plan">
           <button
             type="button"
             role="radio"
-            aria-checked={profile.messType !== 'Special Mess'}
-            className={`compact-mess-pill ${profile.messType !== 'Special Mess' ? 'active' : ''}`}
+            aria-checked={profile.messType !== 'Special Mess' && profile.messType !== 'Night Canteen'}
+            className={`compact-mess-pill ${profile.messType !== 'Special Mess' && profile.messType !== 'Night Canteen' ? 'active' : ''}`}
             onClick={() => {
-              if (profile.messType === 'Special Mess') {
+              if (profile.messType !== 'Veg Mess') {
                 updateProfile({ messType: 'Veg Mess' });
               }
             }}
@@ -191,108 +193,128 @@ export const MenuScreen: React.FC = () => {
           >
             Special
           </button>
-        </div>
-      </div>
-
-      {/* 3. Date Navigation Row (Sun, 13th Sep   [📅] [←] [→]) */}
-      <div className="menu-date-controls-row">
-        <h1 className="menu-current-date-title">{formattedDateTitle}</h1>
-
-        <div className="menu-circular-actions">
-          {/* Calendar Toggle Button */}
           <button
             type="button"
-            className={`circle-nav-btn circle-btn-calendar ${selectedMenuTab === 'week' ? 'active' : ''}`}
-            onClick={handleToggleCalendar}
-            aria-label="Toggle Full Week Schedule"
-            title="Toggle Week View"
+            role="radio"
+            aria-checked={profile.messType === 'Night Canteen'}
+            className={`compact-mess-pill ${profile.messType === 'Night Canteen' ? 'active' : ''}`}
+            onClick={() => {
+              if (profile.messType !== 'Night Canteen') {
+                updateProfile({ messType: 'Night Canteen' });
+              }
+            }}
           >
-            <CalendarIcon size={20} stroke="#11141A" strokeWidth={2.4} />
-          </button>
-
-          {/* Previous Day Arrow */}
-          <button
-            type="button"
-            className="circle-nav-btn circle-btn-arrow"
-            onClick={handlePrevDay}
-            aria-label="Previous Day"
-            title="Previous Day"
-          >
-            <ChevronLeft size={22} stroke="#11141A" strokeWidth={3.2} />
-          </button>
-
-          {/* Next Day Arrow */}
-          <button
-            type="button"
-            className="circle-nav-btn circle-btn-arrow"
-            onClick={handleNextDay}
-            aria-label="Next Day"
-            title="Next Day"
-          >
-            <ChevronRight size={22} stroke="#11141A" strokeWidth={3.2} />
+            Night Canteen
           </button>
         </div>
       </div>
 
-      {/* Full Week Horizontal Day Selector (When Calendar Week view is toggled) */}
-      {selectedMenuTab === 'week' && (
-        <div className="date-pill-scroll" aria-label="Select day of week">
-          {schedule.map((day) => {
-            const isSelected = selectedMenuDateKey === day.date;
-            const dateObj = new Date(day.date + 'T00:00:00');
-            const dayNum = dateObj.getDate();
-            const shortDay = day.dayName.slice(0, 3);
-
-            return (
-              <button
-                key={day.date}
-                ref={isSelected ? activePillRef : null}
-                type="button"
-                className={`date-pill-item ${isSelected ? 'active' : ''}`}
-                onClick={() => {
-                  setSelectedMenuDateKey(day.date);
-                  refreshSchedule(day.date);
-                }}
-              >
-                <span className="date-pill-day">{day.isToday ? 'Today' : shortDay}</span>
-                <span className="date-pill-date">{dayNum}</span>
-              </button>
-            );
-          })}
-        </div>
-      )}
-
-      {/* 4. Vertical Stack of Meal Cards (BREAKFAST, LUNCH, SNACKS, DINNER) */}
-      {activeDayMenu ? (
-        <div className="meals-vertical-stack animate-fade-in">
-          {mealSlotsOrder.map((mType, idx) => {
-            const meal = activeDayMenu.meals[mType];
-            if (!meal) return null;
-            const isTodayDate = activeDayMenu.date === todayDateKey;
-            const isCurrentActive = isTodayDate && mType === currentMealInfo.currentMeal;
-
-            return (
-              <MealCard
-                key={`${activeDayMenu.date}-${meal.id}`}
-                meal={meal}
-                dateKey={activeDayMenu.date}
-                staggerIndex={idx}
-                isHero={isCurrentActive && currentMealInfo.status === 'active'}
-                statusOverride={
-                  isCurrentActive && currentMealInfo.status === 'active'
-                    ? 'serving'
-                    : undefined
-                }
-              />
-            );
-          })}
-        </div>
+      {profile.messType === 'Night Canteen' ? (
+        <NightCanteenView />
       ) : (
-        <div className="menu-empty-state" style={{ padding: '60px 20px', textAlign: 'center', color: '#9CA3AF' }}>
-          <p style={{ fontSize: '1.1rem', fontWeight: 600, color: 'var(--text-primary)' }}>Menu not available</p>
-          <p style={{ fontSize: '0.9rem', marginTop: '6px' }}>No menu published for this date.</p>
-        </div>
+        <>
+          {/* 3. Date Navigation Row (Sun, 13th Sep   [📅] [←] [→]) */}
+          <div className="menu-date-controls-row">
+            <h1 className="menu-current-date-title">{formattedDateTitle}</h1>
+
+            <div className="menu-circular-actions">
+              {/* Calendar Toggle Button */}
+              <button
+                type="button"
+                className={`circle-nav-btn circle-btn-calendar ${selectedMenuTab === 'week' ? 'active' : ''}`}
+                onClick={handleToggleCalendar}
+                aria-label="Toggle Full Week Schedule"
+                title="Toggle Week View"
+              >
+                <CalendarIcon size={20} stroke="#11141A" strokeWidth={2.4} />
+              </button>
+
+              {/* Previous Day Arrow */}
+              <button
+                type="button"
+                className="circle-nav-btn circle-btn-arrow"
+                onClick={handlePrevDay}
+                aria-label="Previous Day"
+                title="Previous Day"
+              >
+                <ChevronLeft size={22} stroke="#11141A" strokeWidth={3.2} />
+              </button>
+
+              {/* Next Day Arrow */}
+              <button
+                type="button"
+                className="circle-nav-btn circle-btn-arrow"
+                onClick={handleNextDay}
+                aria-label="Next Day"
+                title="Next Day"
+              >
+                <ChevronRight size={22} stroke="#11141A" strokeWidth={3.2} />
+              </button>
+            </div>
+          </div>
+
+          {/* Full Week Horizontal Day Selector (When Calendar Week view is toggled) */}
+          {selectedMenuTab === 'week' && (
+            <div className="date-pill-scroll" aria-label="Select day of week">
+              {schedule.map((day) => {
+                const isSelected = selectedMenuDateKey === day.date;
+                const dateObj = new Date(day.date + 'T00:00:00');
+                const dayNum = dateObj.getDate();
+                const shortDay = day.dayName.slice(0, 3);
+
+                return (
+                  <button
+                    key={day.date}
+                    ref={isSelected ? activePillRef : null}
+                    type="button"
+                    className={`date-pill-item ${isSelected ? 'active' : ''}`}
+                    onClick={() => {
+                      setSelectedMenuDateKey(day.date);
+                      refreshSchedule(day.date);
+                    }}
+                  >
+                    <span className="date-pill-day">{day.isToday ? 'Today' : shortDay}</span>
+                    <span className="date-pill-date">{dayNum}</span>
+                  </button>
+                );
+              })}
+            </div>
+          )}
+
+          {/* 4. Vertical Stack of Meal Cards (BREAKFAST, LUNCH, SNACKS, DINNER) */}
+          {activeDayMenu ? (
+            <div className="meals-vertical-stack animate-fade-in">
+              {mealSlotsOrder.map((mType, idx) => {
+                const meal = activeDayMenu.meals[mType];
+                if (!meal) return null;
+                const isTodayDate = activeDayMenu.date === todayDateKey;
+                const isCurrentActive = isTodayDate && mType === currentMealInfo.currentMeal;
+
+                return (
+                  <MealCard
+                    key={`${activeDayMenu.date}-${meal.id}`}
+                    meal={meal}
+                    dateKey={activeDayMenu.date}
+                    staggerIndex={idx}
+                    isHero={isCurrentActive && currentMealInfo.status === 'active'}
+                    statusOverride={
+                      isCurrentActive && currentMealInfo.status === 'active'
+                        ? 'serving'
+                        : undefined
+                    }
+                  />
+                );
+              })}
+            </div>
+          ) : (
+            <div className="menu-empty-state" style={{ padding: '60px 20px', textAlign: 'center', color: '#9CA3AF' }}>
+              <p style={{ fontSize: '1.1rem', fontWeight: 600, color: 'var(--text-primary)' }}>Menu not available</p>
+              <p style={{ fontSize: '0.9rem', marginTop: '6px' }}>No menu published for this date.</p>
+            </div>
+          )}
+        </>
       )}
     </div>
   );
 };
+

@@ -1,6 +1,9 @@
 import express from 'express';
 import cors from 'cors';
 import dotenv from 'dotenv';
+import path from 'path';
+import fs from 'fs';
+import xlsx from 'xlsx';
 import { PrismaClient } from '@prisma/client';
 import { DietaryTag } from './types/index.js';
 
@@ -16,6 +19,85 @@ app.use(express.json());
 app.get('/api/health', (req, res) => {
   res.json({ status: 'ok', timestamp: new Date().toISOString() });
 });
+
+// Night Canteen cached data helper from authoritative Excel file
+let cachedNightCanteenItems: any[] | null = null;
+let lastNightCanteenLoad = 0;
+
+function loadNightCanteenItemsFromExcel() {
+  const now = Date.now();
+  if (cachedNightCanteenItems && now - lastNightCanteenLoad < 60000) {
+    return cachedNightCanteenItems;
+  }
+  const possiblePaths = [
+    path.resolve(process.cwd(), 'data', 'Night canteen.xlsx'),
+    path.resolve(process.cwd(), '..', 'data', 'Night canteen.xlsx'),
+  ];
+  let targetPath = '';
+  for (const p of possiblePaths) {
+    if (fs.existsSync(p)) {
+      targetPath = p;
+      break;
+    }
+  }
+  if (!targetPath) {
+    if (cachedNightCanteenItems) return cachedNightCanteenItems;
+    throw new Error('Night canteen.xlsx data file not found');
+  }
+
+  const wb = xlsx.readFile(targetPath);
+  const sheet = wb.Sheets[wb.SheetNames[0]];
+  const raw: any[][] = xlsx.utils.sheet_to_json(sheet, { header: 1 });
+  const items = [];
+  for (let i = 2; i < raw.length; i++) {
+    const row = raw[i];
+    if (!row || row.length === 0 || !row[3]) continue;
+    items.push({
+      sno: Number(row[0]) || (items.length + 1),
+      type: String(row[1] || 'Veg').trim() === 'Non-Veg' ? 'Non-Veg' : 'Veg',
+      category: String(row[2] || 'Other').trim(),
+      name: String(row[3] || '').trim(),
+      quantity: String(row[4] || '').trim(),
+      price: Number(row[5]) || 0,
+    });
+  }
+  cachedNightCanteenItems = items;
+  lastNightCanteenLoad = now;
+  return items;
+}
+
+// Get Night Canteen items (Database-backed with Excel file fallback)
+app.get('/api/night-canteen', async (req, res) => {
+  try {
+    // 1. Try reading from Database
+    try {
+      const dbItems = await prisma.nightCanteenItem.findMany({
+        orderBy: { sno: 'asc' },
+      });
+      if (dbItems && dbItems.length > 0) {
+        return res.json({
+          success: true,
+          count: dbItems.length,
+          items: dbItems,
+        });
+      }
+    } catch {
+      // Table may not be migrated yet or DB unreachable; fallback to authoritative Excel file
+    }
+
+    // 2. Authoritative Excel source
+    const items = loadNightCanteenItemsFromExcel();
+    res.json({
+      success: true,
+      count: items.length,
+      items,
+    });
+  } catch (error) {
+    console.error('Error fetching night canteen items:', error);
+    res.status(500).json({ error: 'Failed to fetch night canteen menu' });
+  }
+});
+
 
 // List mess plans
 app.get('/api/plans', async (req, res) => {

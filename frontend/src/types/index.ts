@@ -39,8 +39,17 @@ export type AvatarId = 'pro-man-1' | 'pro-man-2' | 'pro-woman-1' | 'pro-woman-2'
 
 export interface StudentProfile {
   name: string;
-  messType: 'Special Mess' | 'Non-Veg Mess' | 'Veg Mess';
+  messType: 'Special Mess' | 'Non-Veg Mess' | 'Veg Mess' | 'Night Canteen';
   theme: 'light' | 'dark' | 'ultra-dark' | 'system';
   avatar?: AvatarId;
+}
+
+export interface NightCanteenItem {
+  sno: number;
+  type: 'Veg' | 'Non-Veg';
+  category: string;
+  name: string;
+  quantity: string;
+  price: number;
 }
 

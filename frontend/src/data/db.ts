@@ -23,10 +23,21 @@ export interface DbMetadataRecord {
   updatedAt: string;
 }
 
+export interface DbNightCanteenRecord {
+  sno: number;
+  type: 'Veg' | 'Non-Veg';
+  category: string;
+  name: string;
+  quantity: string;
+  price: number;
+  updatedAt: string;
+}
+
 // Dexie IndexedDB Definition for MessApp
 export class MessAppDatabase extends Dexie {
   menus!: EntityTable<DbDayMenuRecord, 'id'>;
   metadata!: EntityTable<DbMetadataRecord, 'key'>;
+  nightCanteen!: EntityTable<DbNightCanteenRecord, 'sno'>;
 
   constructor() {
     super('MessAppDB');
@@ -37,8 +48,14 @@ export class MessAppDatabase extends Dexie {
       attendance: null,
       syncQueue: null,
     });
+    this.version(3).stores({
+      menus: 'id, messType, date, [messType+date], updatedAt',
+      metadata: 'key, updatedAt',
+      nightCanteen: 'sno, type, category, price, updatedAt',
+    });
   }
 }
 
 export const db = new MessAppDatabase();
+
 

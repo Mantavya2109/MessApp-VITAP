@@ -46,10 +46,10 @@
   transform: scale(0.99);
 }
 
-/* Active Serving Hero Card Glow */
+/* Active Serving Card */
 .meal-card.is-active-meal {
-  border-color: rgba(255, 184, 0, 0.35);
-  box-shadow: 0 0 0 1px rgba(255, 184, 0, 0.2), var(--meal-card-shadow);
+  border-color: var(--accent-golden);
+  box-shadow: 0 0 0 1px var(--accent-golden);
 }
 
 /* Header Area */
@@ -59,13 +59,13 @@
   gap: 1px;
 }
 
-/* 3D Realistic Corner Ribbon at 135° / 45° across top-right */
+/* Modern Corner Ribbon across top-right */
 .meal-corner-ribbon-wrap {
   position: absolute;
   top: 0;
   right: 0;
-  width: 68px;
-  height: 68px;
+  width: 64px;
+  height: 64px;
   overflow: hidden;
   pointer-events: none;
   z-index: 2;
@@ -74,44 +74,33 @@
 
 .meal-corner-ribbon {
   position: absolute;
-  top: 13px;
+  top: 12px;
   right: -26px;
-  width: 94px;
+  width: 90px;
   height: 14px;
   transform: rotate(45deg);
-  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.45), inset 0 1.5px 1px rgba(255, 255, 255, 0.45), inset 0 -1.5px 1px rgba(0, 0, 0, 0.35);
-  border-top: 0.75px solid rgba(255, 255, 255, 0.5);
-  border-bottom: 0.75px solid rgba(0, 0, 0, 0.35);
-  transition: transform var(--transition-fast), filter var(--transition-fast), box-shadow var(--transition-fast);
-}
-
-.meal-corner-ribbon::after {
-  content: '';
-  position: absolute;
-  inset: 0;
-  background: linear-gradient(180deg, rgba(255, 255, 255, 0.35) 0%, rgba(255, 255, 255, 0.05) 40%, rgba(0, 0, 0, 0.15) 75%, rgba(0, 0, 0, 0.35) 100%);
-  pointer-events: none;
+  box-shadow: var(--shadow-xs);
+  transition: opacity var(--transition-fast);
 }
 
 .meal-card:hover .meal-corner-ribbon {
-  filter: brightness(1.12);
-  box-shadow: 0 6px 14px rgba(0, 0, 0, 0.55), inset 0 1.5px 1px rgba(255, 255, 255, 0.6), inset 0 -1.5px 1px rgba(0, 0, 0, 0.4);
+  opacity: 0.95;
 }
 
 .ribbon-breakfast {
-  background: linear-gradient(135deg, #F59E0B, #EA580C);
+  background: #F59E0B;
 }
 
 .ribbon-lunch {
-  background: linear-gradient(135deg, #06B6D4, #0284C7);
+  background: #0284C7;
 }
 
 .ribbon-snacks {
-  background: linear-gradient(135deg, #10B981, #059669);
+  background: #10B981;
 }
 
 .ribbon-dinner {
-  background: linear-gradient(135deg, #6366F1, #4F46E5);
+  background: #6366F1;
 }
 
 .meal-card-title-row {
@@ -137,7 +126,7 @@
   display: inline-flex;
   align-items: center;
   gap: 6px;
-  padding: 3px 9px;
+  padding: 2px 8px;
   border-radius: var(--radius-full);
   font-family: var(--font-heading);
   font-size: 0.6875rem;
@@ -145,9 +134,15 @@
   font-weight: var(--weight-bold);
   letter-spacing: 0.04em;
   text-transform: uppercase;
-  background: rgba(34, 197, 94, 0.14);
-  border: 1px solid rgba(34, 197, 94, 0.35);
-  color: #4ADE80;
+  background: rgba(34, 197, 94, 0.12);
+  border: 1px solid rgba(34, 197, 94, 0.28);
+  color: #22C55E;
+}
+
+[data-theme="light"] .meal-card-status-badge {
+  color: #16A34A;
+  background: rgba(34, 197, 94, 0.1);
+  border-color: rgba(34, 197, 94, 0.25);
 }
 
 .meal-card-status-badge .status-dot {
@@ -155,23 +150,8 @@
   height: 6px;
   border-radius: 50%;
   background-color: #22C55E;
-  box-shadow: 0 0 8px #22C55E;
-  animation: pulseDot 1.8s infinite ease-in-out;
 }
 
-@keyframes pulseDot {
-
-  0%,
-  100% {
-    transform: scale(1);
-    opacity: 1;
-  }
-
-  50% {
-    transform: scale(1.4);
-    opacity: 0.6;
-  }
-}
 
 /* Time Row with Clock */
 .meal-card-time {

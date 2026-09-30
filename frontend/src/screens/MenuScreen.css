@@ -26,8 +26,8 @@
   display: flex;
   align-items: center;
   justify-content: center;
-  width: 40px;
-  height: 40px;
+  width: 44px;
+  height: 44px;
   padding: 0;
   background: transparent;
   color: var(--text-primary);
@@ -35,16 +35,17 @@
   cursor: pointer;
   flex-shrink: 0;
   touch-action: manipulation;
-  transition: transform var(--transition-spring), color var(--transition-fast);
+  transition: opacity var(--transition-fast), color var(--transition-fast);
 }
+
 
 .menu-settings-btn:hover {
   color: var(--accent-golden);
-  transform: rotate(25deg);
+  opacity: 0.9;
 }
 
 .menu-settings-btn:active {
-  transform: scale(0.92) rotate(45deg);
+  transform: scale(0.95);
 }
 
 /* Small App Identity Label: "VIT-AP Mess Menu" */
@@ -74,30 +75,29 @@
 
 /* Illustrated Circular Profile Avatar */
 .top-profile-avatar-btn {
-  width: 46px;
-  height: 46px;
+  width: 44px;
+  height: 44px;
   border-radius: 50%;
   padding: 0;
   background: transparent;
   display: flex;
   align-items: center;
   justify-content: center;
-  border: 2px solid rgba(255, 255, 255, 0.22);
-  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.35);
+  border: 1.5px solid var(--border-subtle);
+  box-shadow: var(--shadow-xs);
   cursor: pointer;
-  transition: transform var(--transition-spring), box-shadow var(--transition-fast), border-color var(--transition-fast);
+  transition: border-color var(--transition-fast), transform var(--transition-fast);
   overflow: hidden;
   touch-action: manipulation;
 }
 
 .top-profile-avatar-btn:hover {
-  transform: scale(1.08);
   border-color: var(--accent-golden);
-  box-shadow: 0 4px 16px var(--accent-golden-glow);
+  transform: scale(1.04);
 }
 
 .top-profile-avatar-btn:active {
-  transform: scale(0.92);
+  transform: scale(0.95);
 }
 
 /* ==========================================================================
@@ -133,7 +133,7 @@
   background: transparent;
   border: none;
   cursor: pointer;
-  transition: all var(--transition-fast);
+  transition: background-color var(--transition-fast), color var(--transition-fast);
   white-space: nowrap;
   touch-action: manipulation;
 }
@@ -143,13 +143,13 @@
 }
 
 .compact-mess-pill:active {
-  transform: scale(0.95);
+  transform: scale(0.97);
 }
 
 .compact-mess-pill.active {
   background: var(--accent-golden);
   color: #11141A;
-  box-shadow: 0 2px 8px var(--accent-golden-glow);
+  box-shadow: none;
 }
 
 /* ==========================================================================
@@ -178,43 +178,43 @@
 }
 
 .circle-nav-btn {
-  width: 42px;
-  height: 42px;
+  width: 40px;
+  height: 40px;
   border-radius: 50%;
   display: flex;
   align-items: center;
   justify-content: center;
   cursor: pointer;
-  transition: transform var(--transition-spring), box-shadow var(--transition-fast);
+  transition: opacity var(--transition-fast), transform var(--transition-fast);
   border: none;
   touch-action: manipulation;
+  box-shadow: var(--shadow-xs);
 }
 
 .circle-nav-btn:hover {
-  transform: scale(1.08);
+  opacity: 0.92;
+  transform: scale(1.04);
 }
 
 .circle-nav-btn:active {
-  transform: scale(0.92);
+  transform: scale(0.95);
 }
 
 /* Terracotta / Orange Calendar Action */
 .circle-btn-calendar {
   background: var(--accent-orange);
   color: #11141A;
-  box-shadow: 0 4px 14px var(--accent-orange-glow);
 }
 
 .circle-btn-calendar.active {
   background: #C2410C;
-  box-shadow: 0 0 0 2px #FFFFFF, 0 4px 14px var(--accent-orange-glow);
+  color: #FFFFFF;
 }
 
 /* Bright Yellow / Golden Arrow Buttons */
 .circle-btn-arrow {
   background: var(--accent-golden);
   color: #11141A;
-  box-shadow: 0 4px 14px var(--accent-golden-glow);
 }
 
 .circle-btn-arrow:hover {
@@ -244,29 +244,29 @@
   flex-direction: column;
   align-items: center;
   justify-content: center;
-  min-width: 60px;
-  padding: 8px 10px;
+  min-width: 58px;
+  padding: 7px 10px;
   border-radius: var(--radius-md);
   background: var(--bg-surface-card);
   backdrop-filter: blur(20px) saturate(180%);
   -webkit-backdrop-filter: blur(20px) saturate(180%);
   border: 1px solid var(--border-subtle);
   color: var(--text-primary);
-  transition: transform var(--transition-spring), background var(--transition-fast), border-color var(--transition-fast), box-shadow var(--transition-fast);
+  transition: background var(--transition-fast), border-color var(--transition-fast), color var(--transition-fast);
   flex-shrink: 0;
   touch-action: manipulation;
+  box-shadow: var(--shadow-xs);
 }
 
 .date-pill-item:active {
-  transform: scale(0.94);
+  transform: scale(0.96);
 }
 
 .date-pill-item.active {
   background: var(--accent-golden);
   border-color: var(--accent-golden);
   color: #11141A;
-  box-shadow: 0 4px 14px var(--accent-golden-glow);
-  transform: translateY(-2px);
+  box-shadow: none;
 }
 
 .date-pill-day {
@@ -283,6 +283,7 @@
 
 .date-pill-date {
   font-family: var(--font-heading);
+
   font-size: var(--text-md);
   font-weight: var(--weight-black);
   line-height: 1.15;

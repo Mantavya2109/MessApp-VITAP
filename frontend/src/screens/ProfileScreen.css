@@ -127,7 +127,7 @@
 
 .theme-pill-recommended-badge {
   position: absolute;
-  top: -7.5px;
+  top: -7px;
   left: 50%;
   transform: translateX(-50%);
   font-family: var(--font-heading);
@@ -137,10 +137,10 @@
   letter-spacing: 0.04em;
   padding: 1.5px 5px;
   border-radius: var(--radius-full);
-  background: #181E2A;
-  color: var(--accent-golden);
-  border: 1px solid rgba(255, 184, 0, 0.45);
-  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.4);
+  background: var(--bg-surface-elevated);
+  color: var(--text-primary);
+  border: 1px solid var(--border-subtle);
+  box-shadow: var(--shadow-xs);
   pointer-events: none;
   user-select: none;
   white-space: nowrap;
@@ -150,15 +150,14 @@
 
 [data-theme="light"] .theme-pill-recommended-badge {
   background: #FFFFFF;
-  color: #B45309;
-  border: 1px solid rgba(217, 119, 6, 0.35);
-  box-shadow: 0 1px 4px rgba(0, 0, 0, 0.1);
+  color: var(--text-secondary);
+  border: 1px solid rgba(0, 0, 0, 0.15);
 }
 
 [data-theme="ultra-dark"] .theme-pill-recommended-badge {
-  background: #000000;
-  color: var(--accent-golden);
-  border: 1px solid rgba(255, 184, 0, 0.55);
+  background: #11151E;
+  color: var(--text-primary);
+  border: 1px solid rgba(255, 255, 255, 0.15);
 }
 
 .theme-pill:hover {
@@ -168,8 +167,9 @@
 .theme-pill.active {
   background: var(--accent-golden);
   color: #11141A;
-  box-shadow: 0 2px 8px var(--accent-golden-glow);
+  box-shadow: none;
 }
+
 
 /* App Info card */
 .app-meta-badge {
