@@ -179,42 +179,89 @@ app.get('/api/menu/week', async (req, res) => {
   }
 });
 
-// Get total likes across all users
-app.get('/api/likes', async (req, res) => {
+// -------------------------------------------------------------
+// App-level Like System (Settings Page - Global Count & Unique per Device)
+// -------------------------------------------------------------
+
+// GET total likes & user liked state
+app.get(['/api/app-like', '/api/likes'], async (req, res) => {
   try {
-    const record = await prisma.appLike.findUnique({
-      where: { id: 'global' },
+    const anonymousUserId = (req.query.anonymousUserId as string)?.trim();
+    const totalLikes = await prisma.appLike.count();
+
+    let userLiked = false;
+    if (anonymousUserId && anonymousUserId.length >= 4) {
+      const existing = await prisma.appLike.findUnique({
+        where: { anonymousUserId },
+      });
+      userLiked = !!existing;
+    }
+
+    res.json({
+      totalLikes,
+      userLiked,
+      count: totalLikes, // backward compatibility
     });
-    res.json({ count: record ? record.count : 0 });
   } catch (error) {
-    console.error('Error fetching likes:', error);
-    res.status(500).json({ error: 'Failed to fetch likes', count: 0 });
+    console.error('Error fetching app likes:', error);
+    res.status(500).json({ error: 'Failed to fetch app likes', totalLikes: 0, userLiked: false, count: 0 });
   }
 });
 
-// Increment likes (supports single or batched multiple likes per user)
-app.post('/api/likes', async (req, res) => {
+// POST give like (idempotent, 1 like per anonymous installation identity)
+app.post(['/api/app-like', '/api/likes'], async (req, res) => {
   try {
-    const incrementBy =
-      typeof req.body?.count === 'number' && req.body.count > 0
-        ? Math.floor(req.body.count)
-        : 1;
+    const anonymousUserId = (req.body?.anonymousUserId as string)?.trim();
 
-    const record = await prisma.appLike.upsert({
-      where: { id: 'global' },
-      update: {
-        count: { increment: incrementBy },
-      },
-      create: {
-        id: 'global',
-        count: incrementBy,
-      },
+    if (!anonymousUserId || anonymousUserId.length < 4) {
+      return res.status(400).json({ error: 'Valid anonymousUserId is required' });
+    }
+
+    // Upsert unique record per anonymous user ID
+    await prisma.appLike.upsert({
+      where: { anonymousUserId },
+      create: { anonymousUserId },
+      update: {}, // no-op if already liked (duplicate prevention)
     });
 
-    res.json({ count: record.count });
+    const totalLikes = await prisma.appLike.count();
+
+    res.json({
+      totalLikes,
+      userLiked: true,
+      count: totalLikes,
+      success: true,
+    });
   } catch (error) {
-    console.error('Error incrementing likes:', error);
-    res.status(500).json({ error: 'Failed to update likes' });
+    console.error('Error recording app like:', error);
+    res.status(500).json({ error: 'Failed to record app like' });
+  }
+});
+
+// DELETE remove like
+app.delete(['/api/app-like', '/api/likes'], async (req, res) => {
+  try {
+    const anonymousUserId = (req.body?.anonymousUserId || (req.query?.anonymousUserId as string))?.trim();
+
+    if (!anonymousUserId || anonymousUserId.length < 4) {
+      return res.status(400).json({ error: 'Valid anonymousUserId is required' });
+    }
+
+    await prisma.appLike.deleteMany({
+      where: { anonymousUserId },
+    });
+
+    const totalLikes = await prisma.appLike.count();
+
+    res.json({
+      totalLikes,
+      userLiked: false,
+      count: totalLikes,
+      success: true,
+    });
+  } catch (error) {
+    console.error('Error removing app like:', error);
+    res.status(500).json({ error: 'Failed to remove app like' });
   }
 });
 

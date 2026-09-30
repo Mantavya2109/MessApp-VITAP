@@ -47,7 +47,7 @@
   transform: scale(0.92) rotate(45deg);
 }
 
-/* Small App Identity Label: "VIT - AP Mess" */
+/* Small App Identity Label: "VIT-AP Mess Menu" */
 .menu-app-brand-badge {
   display: flex;
   align-items: center;
@@ -58,12 +58,11 @@
 
 .brand-text-label {
   font-family: var(--font-heading);
-  font-size: 0.75rem; /* 12px */
+  font-size: 0.8rem; /* 13px */
   font-weight: var(--weight-bold);
-  letter-spacing: 0.08em;
-  text-transform: uppercase;
+  letter-spacing: 0.03em;
   color: var(--text-secondary);
-  opacity: 0.72;
+  opacity: 0.8;
 }
 
 .menu-top-actions {
@@ -75,8 +74,8 @@
 
 /* Illustrated Circular Profile Avatar */
 .top-profile-avatar-btn {
-  width: 40px;
-  height: 40px;
+  width: 46px;
+  height: 46px;
   border-radius: 50%;
   padding: 0;
   background: transparent;

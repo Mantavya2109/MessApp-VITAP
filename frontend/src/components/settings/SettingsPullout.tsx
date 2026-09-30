@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useRef, useCallback } from 'react';
+import React, { useState, useEffect } from 'react';
 import {
   Moon,
   Sun,
@@ -13,7 +13,7 @@ import {
 import { useApp } from '../../context/AppContext';
 import { usePwa } from '../../context/PwaContext';
 import { MEAL_TIMINGS } from '../../data/mockData';
-import { fetchTotalLikes, sendLikesIncrement, getCachedLikes, setCachedLikes } from '../../data/likesRepository';
+import { fetchAppLikes, sendAppLike, sendAppUnlike, getCachedAppLikes } from '../../data/likesRepository';
 import './SettingsPullout.css';
 
 interface SettingsPulloutProps {
@@ -31,81 +31,92 @@ export const SettingsPullout: React.FC<SettingsPulloutProps> = ({ isOpen, onClos
   const { isInstalled, isInstalling, triggerInstall } = usePwa();
 
   const [isTimingsOpen, setIsTimingsOpen] = useState(false);
-  const [likesCount, setLikesCount] = useState<number>(() => getCachedLikes());
+  const [likesState, setLikesState] = useState<{ totalLikes: number; userLiked: boolean }>(() => getCachedAppLikes());
   const [isLikedRecently, setIsLikedRecently] = useState(false);
+  const [isSubmittingLike, setIsSubmittingLike] = useState(false);
   const [floatingHearts, setFloatingHearts] = useState<{ id: number; left: number }[]>([]);
-  const pendingLikesRef = useRef<number>(0);
-  const debounceTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
 
   // Fetch authoritative total likes from DB whenever pullout opens while online
   useEffect(() => {
     if (isOpen && !isOffline) {
-      fetchTotalLikes().then((count) => {
-        setLikesCount(count);
+      fetchAppLikes().then((data) => {
+        setLikesState(data);
       });
     }
   }, [isOpen, isOffline]);
 
-  // Flush queued likes to backend
-  const flushLikes = useCallback(() => {
-    if (pendingLikesRef.current > 0 && !isOffline) {
-      const toSend = pendingLikesRef.current;
-      pendingLikesRef.current = 0;
-      sendLikesIncrement(toSend).then((updatedCount) => {
-        if (updatedCount !== null) {
-          setLikesCount(updatedCount);
-        }
-      });
-    }
-  }, [isOffline]);
-
-  // Flush on unmount or close
+  // Re-fetch when coming back online
   useEffect(() => {
-    return () => {
-      if (debounceTimerRef.current) {
-        clearTimeout(debounceTimerRef.current);
-      }
-      flushLikes();
+    const handleOnline = () => {
+      fetchAppLikes().then((data) => {
+        setLikesState(data);
+      });
     };
-  }, [flushLikes]);
 
-  const handleLikeClick = (e: React.MouseEvent) => {
+    window.addEventListener('online', handleOnline);
+    return () => {
+      window.removeEventListener('online', handleOnline);
+    };
+  }, []);
+
+  const handleLikeClick = async (e: React.MouseEvent) => {
     e.stopPropagation();
 
     // Prevent liking while offline and inform student
     if (isOffline) {
-      showToast('Offline Mode', 'Connect to the internet to add likes.', 'info');
+      showToast('Offline Mode', 'Connect to the internet to like MessApp.', 'info');
       return;
     }
 
-    // Instant optimistic UI increment & local persistence
-    setLikesCount((prev) => {
-      const next = prev + 1;
-      setCachedLikes(next);
-      return next;
-    });
-    pendingLikesRef.current += 1;
+    if (isSubmittingLike) return;
+    setIsSubmittingLike(true);
+
+    const isCurrentlyLiked = likesState.userLiked;
+    const willBeLiked = !isCurrentlyLiked;
+
+    // Instant optimistic UI update
+    setLikesState((prev) => ({
+      totalLikes: willBeLiked ? prev.totalLikes + 1 : Math.max(0, prev.totalLikes - 1),
+      userLiked: willBeLiked,
+    }));
+
     setIsLikedRecently(true);
-    setTimeout(() => setIsLikedRecently(false), 300);
+    setTimeout(() => setIsLikedRecently(false), 350);
 
-    // Floating heart bubble effect
-    const newHeart = {
-      id: Date.now() + Math.random(),
-      left: Math.floor(Math.random() * 50) + 25,
-    };
-    setFloatingHearts((prev) => [...prev.slice(-7), newHeart]);
+    if (willBeLiked) {
+      // Floating heart bubble effect
+      const newHeart = {
+        id: Date.now() + Math.random(),
+        left: Math.floor(Math.random() * 50) + 25,
+      };
+      setFloatingHearts((prev) => [...prev.slice(-7), newHeart]);
 
-    setTimeout(() => {
-      setFloatingHearts((prev) => prev.filter((h) => h.id !== newHeart.id));
-    }, 850);
-
-    // Debounced API sync to persist into database
-    if (debounceTimerRef.current) {
-      clearTimeout(debounceTimerRef.current);
+      setTimeout(() => {
+        setFloatingHearts((prev) => prev.filter((h) => h.id !== newHeart.id));
+      }, 850);
     }
-    debounceTimerRef.current = setTimeout(() => {
-      flushLikes();
-    }, 350);
+
+    try {
+      if (willBeLiked) {
+        const res = await sendAppLike();
+        if (res) {
+          setLikesState(res);
+          showToast('Thank you!', 'Your support for MessApp has been recorded ❤️', 'success');
+        }
+      } else {
+        const res = await sendAppUnlike();
+        if (res) {
+          setLikesState(res);
+        }
+      }
+    } catch (err) {
+      console.warn('[SettingsPullout] Like error:', err);
+      // Revert from server
+      const latest = await fetchAppLikes();
+      setLikesState(latest);
+    } finally {
+      setIsSubmittingLike(false);
+    }
   };
 
   if (!isOpen) return null;
@@ -191,13 +202,19 @@ export const SettingsPullout: React.FC<SettingsPulloutProps> = ({ isOpen, onClos
             )}
           </div>
 
-          {/* 4. Infinite App Like Option (Online Only) */}
+          {/* 4. Like MessApp Community Support Option */}
           <div
             className={`pullout-item pullout-like-item ${isOffline ? 'is-disabled-offline' : 'clickable'}`}
             onClick={handleLikeClick}
             role="button"
             tabIndex={0}
-            aria-label={isOffline ? 'Liking is disabled while offline' : 'Like if you liked the app'}
+            aria-label={
+              isOffline
+                ? 'Liking is disabled while offline'
+                : likesState.userLiked
+                ? 'You have liked MessApp. Click to unlike.'
+                : 'Like MessApp'
+            }
             aria-disabled={isOffline}
           >
             <div className="pullout-item-header">
@@ -207,39 +224,48 @@ export const SettingsPullout: React.FC<SettingsPulloutProps> = ({ isOpen, onClos
                     size={20}
                     strokeWidth={2.2}
                     className="pullout-heart-svg"
-                    fill={likesCount > 0 ? '#EF4444' : 'none'}
-                    color={likesCount > 0 ? '#EF4444' : 'currentColor'}
+                    fill={likesState.userLiked ? '#EF4444' : 'none'}
+                    color={likesState.userLiked ? '#EF4444' : 'currentColor'}
                   />
                 </div>
                 <div className="pullout-like-title-wrap">
-                  <span className="pullout-item-label">Like if you liked the app</span>
+                  <span className="pullout-item-label">Like MessApp</span>
                   {isOffline && <span className="pullout-offline-pill">Offline</span>}
                 </div>
               </div>
 
-              {/* Dedicated Like Button */}
+              {/* Dedicated Like / Liked Button */}
               <button
                 type="button"
-                className={`pullout-like-action-btn ${isLikedRecently && !isOffline ? 'liked-active' : ''} ${isOffline ? 'btn-disabled' : ''}`}
+                className={`pullout-like-action-btn ${likesState.userLiked ? 'liked-active' : ''} ${isOffline ? 'btn-disabled' : ''}`}
                 onClick={handleLikeClick}
-                aria-label={isOffline ? 'Likes disabled offline' : 'Give a like'}
-                disabled={isOffline}
+                aria-label={isOffline ? 'Likes disabled offline' : likesState.userLiked ? 'Liked MessApp' : 'Like MessApp'}
+                disabled={isOffline || isSubmittingLike}
               >
-                <Heart
-                  size={13}
-                  strokeWidth={2.4}
-                  fill={isOffline ? '#94A3B8' : '#EF4444'}
-                  color={isOffline ? '#94A3B8' : '#EF4444'}
-                  className="action-heart-icon"
-                />
-                <span>{isOffline ? 'Offline' : 'Like'}</span>
+                {likesState.userLiked ? (
+                  <>
+                    <Check size={13} strokeWidth={2.8} />
+                    <span>Liked</span>
+                  </>
+                ) : (
+                  <>
+                    <Heart
+                      size={13}
+                      strokeWidth={2.4}
+                      fill={isOffline ? '#94A3B8' : '#EF4444'}
+                      color={isOffline ? '#94A3B8' : '#EF4444'}
+                      className="action-heart-icon"
+                    />
+                    <span>{isOffline ? 'Offline' : 'Like'}</span>
+                  </>
+                )}
               </button>
             </div>
 
-            {/* Total number of likes displayed below the option */}
+            {/* Total number of likes & support message displayed below the option */}
             <div className="pullout-likes-below-info">
               <span className={`pullout-likes-counter-tag ${isOffline ? 'tag-offline' : ''}`}>
-                ❤️ {likesCount.toLocaleString()} {likesCount === 1 ? 'total like' : 'total likes'} across all students
+                ❤️ {likesState.totalLikes.toLocaleString()} {likesState.totalLikes === 1 ? 'student' : 'students'} liked MessApp
                 {isOffline && ' (Cached)'}
               </span>
             </div>
@@ -315,19 +341,25 @@ export const SettingsPullout: React.FC<SettingsPulloutProps> = ({ isOpen, onClos
             </div>
           </div>
 
-          {/* 6. Committee Feedback */}
+          {/* 6. Committee Feedback (Coming Soon) */}
           <div
-            className="pullout-item clickable"
+            className="pullout-item pullout-coming-soon-item clickable"
             onClick={() => {
-              window.open('https://vtop2.vitap.ac.in/vtop/initialProcess', '_blank');
+              showToast('Coming Soon', 'Committee Feedback will be available in an upcoming update.', 'info');
             }}
+            role="button"
+            tabIndex={0}
+            aria-label="Committee Feedback - Coming Soon"
           >
             <div className="pullout-item-header">
               <div className="pullout-item-left">
                 <div className="pullout-icon">
                   <MessageSquare size={20} strokeWidth={2.2} />
                 </div>
-                <span className="pullout-item-label">Committee Feedback</span>
+                <div className="pullout-title-with-badge">
+                  <span className="pullout-item-label">Committee Feedback</span>
+                  <span className="pullout-coming-soon-pill">Coming Soon</span>
+                </div>
               </div>
             </div>
           </div>

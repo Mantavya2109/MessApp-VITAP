@@ -27,6 +27,11 @@ const MealCardComponent: React.FC<MealCardProps> = ({
       style={{ '--stagger': staggerIndex } as React.CSSProperties}
       aria-label={`${meal.label} menu for ${dateKey}`}
     >
+      {/* Simple Diagonal Corner Ribbon */}
+      <div className="meal-corner-ribbon-wrap" aria-hidden="true">
+        <div className={`meal-corner-ribbon ribbon-${meal.type}`} />
+      </div>
+
       {/* Header Area */}
       <div className="meal-card-header">
         <div className="meal-card-title-row">

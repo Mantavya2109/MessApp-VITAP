@@ -106,60 +106,95 @@ export const FoodIllustration: React.FC<FoodIllustrationProps> = ({ type, classN
           aria-hidden="true"
           style={{ width: '100%', height: '100%', display: 'block' }}
         >
-          {/* Clay Bowl Shadow */}
-          <ellipse cx="68" cy="88" rx="54" ry="24" fill="#451A03" opacity="0.5" />
-          
-          {/* Ceramic / Clay Bowl Body */}
+          {/* Defs for Dal, Rice, and Steam */}
+          <defs>
+            <linearGradient id="dalGradient" x1="0%" y1="0%" x2="0%" y2="100%">
+              <stop offset="0%" stopColor="#FBBF24" />
+              <stop offset="50%" stopColor="#F59E0B" />
+              <stop offset="100%" stopColor="#D97706" />
+            </linearGradient>
+            <linearGradient id="lunchPlateGrad" x1="0%" y1="0%" x2="0%" y2="100%">
+              <stop offset="0%" stopColor="#334155" />
+              <stop offset="100%" stopColor="#1E293B" />
+            </linearGradient>
+            <linearGradient id="lunchSteamGrad" x1="0%" y1="100%" x2="0%" y2="0%">
+              <stop offset="0%" stopColor="#FFFFFF" stopOpacity="0.85" />
+              <stop offset="100%" stopColor="#FFFFFF" stopOpacity="0.1" />
+            </linearGradient>
+          </defs>
+
+          {/* Plate Shadow */}
+          <ellipse cx="68" cy="88" rx="56" ry="20" fill="#0F172A" opacity="0.55" />
+
+          {/* Serving Dish / Plate Rim */}
+          <ellipse cx="68" cy="76" rx="56" ry="25" fill="url(#lunchPlateGrad)" stroke="#1E293B" strokeWidth="3.5" />
+          <ellipse cx="68" cy="73" rx="51" ry="21" fill="#475569" />
+          <ellipse cx="68" cy="70" rx="47" ry="18" fill="#1E293B" />
+
+          {/* Steamed Fluffy Basmati Rice Mound (Left Side) */}
           <path
-            d="M 16 56 C 20 92 44 110 68 110 C 92 110 116 92 120 56 Z"
-            fill="#854D0E"
-            stroke="#451A03"
-            strokeWidth="4"
+            d="M 24 68 C 24 50 46 42 66 52 C 72 56 72 68 66 78 C 48 83 26 80 24 68 Z"
+            fill="#F8FAFC"
+            stroke="#CBD5E1"
+            strokeWidth="2"
           />
-          {/* Inner Depth / Rim */}
-          <ellipse cx="68" cy="56" rx="52" ry="24" fill="#A16207" stroke="#451A03" strokeWidth="3.5" />
-          
-          {/* Steaming Food / Broth / Noodles */}
-          <ellipse cx="68" cy="56" rx="45" ry="19" fill="#FEF08A" />
-          <ellipse cx="68" cy="54" rx="38" ry="15" fill="#FDE047" />
-          
-          {/* Curled Noodles / Rice Textures */}
+          {/* Fluffy Rice Highlights */}
+          <ellipse cx="44" cy="58" rx="16" ry="9" fill="#FFFFFF" />
+          {/* Individual Basmati Rice Grains */}
+          <ellipse cx="36" cy="56" rx="3.5" ry="1.5" fill="#E2E8F0" transform="rotate(-20 36 56)" />
+          <ellipse cx="48" cy="52" rx="3.5" ry="1.5" fill="#E2E8F0" transform="rotate(15 48 52)" />
+          <ellipse cx="42" cy="64" rx="3.5" ry="1.5" fill="#E2E8F0" transform="rotate(-10 42 64)" />
+          <ellipse cx="54" cy="60" rx="3.5" ry="1.5" fill="#E2E8F0" transform="rotate(30 54 60)" />
+          <ellipse cx="32" cy="66" rx="3.5" ry="1.5" fill="#E2E8F0" transform="rotate(10 32 66)" />
+
+          {/* Aromatic Golden Dal Tadka (Right Side & Pooling) */}
           <path
-            d="M 38 52 Q 52 42 66 52 Q 80 62 96 48"
-            stroke="#EAB308"
-            strokeWidth="4.5"
+            d="M 58 54 C 76 46 106 50 110 66 C 112 78 88 86 64 82 C 60 76 56 64 58 54 Z"
+            fill="url(#dalGradient)"
+            stroke="#B45309"
+            strokeWidth="2.5"
+          />
+          {/* Dal Tadka Ghee Sheen */}
+          <ellipse cx="86" cy="66" rx="18" ry="9" fill="#FDE047" opacity="0.8" />
+          <ellipse cx="84" cy="64" rx="11" ry="5" fill="#FEF08A" opacity="0.9" />
+
+          {/* Cumin / Jeera Tadka Seeds */}
+          <ellipse cx="78" cy="62" rx="2" ry="0.8" fill="#78350F" transform="rotate(25 78 62)" />
+          <ellipse cx="92" cy="68" rx="2" ry="0.8" fill="#78350F" transform="rotate(-35 92 68)" />
+          <ellipse cx="84" cy="72" rx="2" ry="0.8" fill="#78350F" transform="rotate(15 84 72)" />
+
+          {/* Red Tadka Chilli */}
+          <path d="M 95 58 Q 103 54 101 64" stroke="#DC2626" strokeWidth="3" strokeLinecap="round" fill="none" />
+          <circle cx="95" cy="58" r="1.5" fill="#16A34A" />
+
+          {/* Fresh Coriander Garnish (Cilantro) */}
+          <path
+            d="M 64 62 C 62 58 66 56 68 58 C 70 56 74 58 72 62 C 74 66 70 68 68 66 C 66 68 62 66 64 62 Z"
+            fill="#22C55E"
+            stroke="#15803D"
+            strokeWidth="0.8"
+          />
+
+          {/* Hot Steam Wisps */}
+          <path
+            d="M 44 42 C 40 30 48 22 42 12"
+            stroke="url(#lunchSteamGrad)"
+            strokeWidth="3"
             strokeLinecap="round"
             fill="none"
           />
           <path
-            d="M 46 60 Q 62 50 78 60 Q 90 68 100 56"
-            stroke="#CA8A04"
+            d="M 72 40 C 78 28 66 18 74 8"
+            stroke="url(#lunchSteamGrad)"
             strokeWidth="3.5"
             strokeLinecap="round"
             fill="none"
           />
-
-          {/* Green Peas & Red Carrots / Veggies */}
-          <circle cx="50" cy="56" r="4" fill="#22C55E" stroke="#15803D" strokeWidth="1.5" />
-          <circle cx="70" cy="60" r="4.5" fill="#22C55E" stroke="#15803D" strokeWidth="1.5" />
-          <circle cx="86" cy="52" r="3.5" fill="#EF4444" stroke="#B91C1C" strokeWidth="1.5" />
-          <circle cx="58" cy="48" r="3" fill="#EF4444" stroke="#B91C1C" strokeWidth="1.5" />
-          <circle cx="94" cy="58" r="3" fill="#F97316" stroke="#C2410C" strokeWidth="1.5" />
-
-          {/* Steam Swirls */}
+          {/* Lunch aroma sparkle */}
           <path
-            d="M 54 30 Q 50 18 56 10"
-            stroke="rgba(255,255,255,0.45)"
-            strokeWidth="2.5"
-            strokeLinecap="round"
-            fill="none"
-          />
-          <path
-            d="M 72 32 Q 78 20 70 8"
-            stroke="rgba(255,255,255,0.45)"
-            strokeWidth="2.5"
-            strokeLinecap="round"
-            fill="none"
+            d="M 98 28 L 99.5 24 L 101 28 L 105 29.5 L 101 31 L 99.5 35 L 98 31 L 94 29.5 Z"
+            fill="#FACC15"
+            opacity="0.85"
           />
         </svg>
       );
@@ -167,65 +202,128 @@ export const FoodIllustration: React.FC<FoodIllustrationProps> = ({ type, classN
     case 'snacks':
       return (
         <svg
-          viewBox="0 0 120 125"
+          viewBox="0 0 130 120"
           fill="none"
           xmlns="http://www.w3.org/2000/svg"
           className={className}
           aria-hidden="true"
           style={{ width: '100%', height: '100%', display: 'block' }}
         >
-          {/* Angled Straw */}
+          {/* Defs for Gradients */}
+          <defs>
+            <linearGradient id="teaGradient" x1="0%" y1="0%" x2="0%" y2="100%">
+              <stop offset="0%" stopColor="#D97706" />
+              <stop offset="100%" stopColor="#78350F" />
+            </linearGradient>
+            <linearGradient id="cupGradient" x1="0%" y1="0%" x2="100%" y2="100%">
+              <stop offset="0%" stopColor="#10B981" />
+              <stop offset="55%" stopColor="#059669" />
+              <stop offset="100%" stopColor="#047857" />
+            </linearGradient>
+            <linearGradient id="saucerGradient" x1="0%" y1="0%" x2="0%" y2="100%">
+              <stop offset="0%" stopColor="#F8FAFC" />
+              <stop offset="100%" stopColor="#CBD5E1" />
+            </linearGradient>
+            <linearGradient id="steamGradient" x1="0%" y1="100%" x2="0%" y2="0%">
+              <stop offset="0%" stopColor="#FDBA74" stopOpacity="0.9" />
+              <stop offset="50%" stopColor="#FFFFFF" stopOpacity="0.8" />
+              <stop offset="100%" stopColor="#FFFFFF" stopOpacity="0.1" />
+            </linearGradient>
+          </defs>
+
+          {/* Saucer / Plate Shadow */}
+          <ellipse cx="62" cy="98" rx="46" ry="14" fill="#0F172A" opacity="0.45" />
+
+          {/* Ceramic Saucer Plate */}
+          <ellipse cx="62" cy="94" rx="46" ry="13" fill="url(#saucerGradient)" stroke="#64748B" strokeWidth="3" />
+          <ellipse cx="62" cy="92.5" rx="40" ry="10" fill="#FFFFFF" />
+          {/* Inner Saucer Indentation */}
+          <ellipse cx="62" cy="93" rx="26" ry="6.5" fill="#E2E8F0" stroke="#CBD5E1" strokeWidth="1.5" />
+
+          {/* Cup Handle (Back Outer Stroke & Inner Highlight) */}
           <path
-            d="M 70 48 L 86 20 L 102 12"
-            stroke="#E2E8F0"
-            strokeWidth="7"
+            d="M 82 60 C 104 60 106 82 82 84"
+            stroke="#064E3B"
+            strokeWidth="9"
             strokeLinecap="round"
-            strokeLinejoin="round"
             fill="none"
           />
           <path
-            d="M 70 48 L 86 20 L 102 12"
-            stroke="#CBD5E1"
-            strokeWidth="5"
+            d="M 82 60 C 104 60 106 82 82 84"
+            stroke="#34D399"
+            strokeWidth="4.5"
             strokeLinecap="round"
-            strokeLinejoin="round"
             fill="none"
           />
-          {/* Straw stripes */}
-          <path d="M 88 19 L 91 17" stroke="#38BDF8" strokeWidth="3" strokeLinecap="round" />
-          <path d="M 94 16 L 97 14" stroke="#38BDF8" strokeWidth="3" strokeLinecap="round" />
 
-          {/* Juice Box Main Body */}
-          <rect
-            x="22"
-            y="48"
-            width="72"
-            height="66"
-            rx="12"
-            fill="#4ADE80"
-            stroke="#166534"
+          {/* Cup Body Base (Matte Emerald Green) */}
+          <path
+            d="M 32 58 C 32 86 42 94 62 94 C 82 94 92 86 92 58 Z"
+            fill="url(#cupGradient)"
+            stroke="#064E3B"
             strokeWidth="3.5"
-          />
-          {/* Angled Box Top Lip */}
-          <path
-            d="M 22 58 L 58 46 L 94 58"
-            fill="#86EFAC"
-            stroke="#166534"
-            strokeWidth="3"
+            strokeLinejoin="round"
           />
 
-          {/* Circular Graphic Pattern on Box */}
-          <circle cx="58" cy="82" r="18" fill="#22C55E" />
-          <circle cx="58" cy="82" r="12" fill="#BBF7D0" />
-          <circle cx="58" cy="82" r="5" fill="#166534" />
-
-          {/* White Specular Shine */}
+          {/* Cup Body Specular Gloss Curve */}
           <path
-            d="M 28 62 L 28 104"
-            stroke="rgba(255,255,255,0.45)"
+            d="M 39 63 C 38 78 44 86 52 89"
+            stroke="rgba(255, 255, 255, 0.42)"
             strokeWidth="3.5"
             strokeLinecap="round"
+            fill="none"
           />
+
+          {/* Cup Rim & Hot Masala Chai Surface */}
+          <ellipse cx="62" cy="58" rx="30" ry="12" fill="#059669" stroke="#064E3B" strokeWidth="3.5" />
+          <ellipse cx="62" cy="57" rx="26" ry="9.5" fill="#A7F3D0" />
+          {/* Hot Tea Liquid */}
+          <ellipse cx="62" cy="57" rx="23" ry="8" fill="url(#teaGradient)" stroke="#78350F" strokeWidth="1.5" />
+          {/* Frothy Tea Swirl / Creamy Foam Sheen */}
+          <ellipse cx="59" cy="56" rx="16" ry="5.5" fill="#F59E0B" opacity="0.8" />
+          <ellipse cx="56" cy="55.5" rx="10" ry="3" fill="#FEF3C7" opacity="0.65" />
+          <path
+            d="M 68 57 Q 73 55 77 58"
+            stroke="#FEF3C7"
+            strokeWidth="1.5"
+            strokeLinecap="round"
+            opacity="0.7"
+          />
+
+          {/* Hot Waves / Rising Steam Trails */}
+          {/* Left Steam Wave */}
+          <path
+            d="M 46 44 C 40 32 50 24 44 12"
+            stroke="url(#steamGradient)"
+            strokeWidth="3.5"
+            strokeLinecap="round"
+            fill="none"
+          />
+          {/* Center Main Steam Wave (Taller & Radiant) */}
+          <path
+            d="M 62 42 C 70 30 55 18 64 6"
+            stroke="url(#steamGradient)"
+            strokeWidth="4"
+            strokeLinecap="round"
+            fill="none"
+          />
+          {/* Right Steam Wave */}
+          <path
+            d="M 76 45 C 82 34 72 24 80 14"
+            stroke="url(#steamGradient)"
+            strokeWidth="3.5"
+            strokeLinecap="round"
+            fill="none"
+          />
+
+          {/* Sparkles / Warm Aroma Stars */}
+          <path
+            d="M 94 22 L 95.5 17 L 97 22 L 102 23.5 L 97 25 L 95.5 30 L 94 25 L 89 23.5 Z"
+            fill="#FACC15"
+            opacity="0.9"
+          />
+          <circle cx="36" cy="20" r="2.5" fill="#FDE047" opacity="0.8" />
+          <circle cx="86" cy="38" r="2" fill="#FDE047" opacity="0.75" />
         </svg>
       );
 

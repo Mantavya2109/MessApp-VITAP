@@ -53,10 +53,10 @@ export const AvatarSelectorPopover: React.FC<AvatarSelectorPopoverProps> = ({
                 title={`Select avatar`}
               >
                 <div className="avatar-preview-wrap">
-                  <AvatarIcon avatarId={id} size={50} />
+                  <AvatarIcon avatarId={id} size={64} />
                   {isSelected && (
                     <div className="avatar-selected-badge" aria-hidden="true">
-                      <Check size={11} strokeWidth={3.5} />
+                      <Check size={13} strokeWidth={3.5} />
                     </div>
                   )}
                 </div>

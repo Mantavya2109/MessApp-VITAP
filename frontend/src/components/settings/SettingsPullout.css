@@ -592,3 +592,36 @@
   border-color: rgba(0, 0, 0, 0.1);
   color: #94A3B8;
 }
+
+/* ==========================================================================
+   Coming Soon Badge Styles
+   ========================================================================== */
+.pullout-title-with-badge {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.pullout-coming-soon-pill {
+  font-family: var(--font-heading, inherit);
+  font-size: 0.65625rem;
+  /* 10.5px */
+  font-weight: var(--weight-bold, 700);
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+  padding: 2px 7px;
+  border-radius: var(--radius-full, 9999px);
+  background: rgba(245, 158, 11, 0.14);
+  color: #F59E0B;
+  border: 1px solid rgba(245, 158, 11, 0.32);
+  line-height: 1;
+  display: inline-flex;
+  align-items: center;
+  user-select: none;
+}
+
+[data-theme="light"] .pullout-coming-soon-pill {
+  background: rgba(217, 119, 6, 0.1);
+  color: #B45309;
+  border-color: rgba(217, 119, 6, 0.25);
+}

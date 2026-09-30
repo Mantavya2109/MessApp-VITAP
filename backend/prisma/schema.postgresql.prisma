@@ -69,3 +69,11 @@ model MenuItem {
 
   @@index([mealSlotId])
 }
+
+model AppLike {
+  id              String   @id @default(cuid())
+  anonymousUserId String   @unique @map("anonymous_user_id")
+  createdAt       DateTime @default(now()) @map("created_at")
+
+  @@map("app_likes")
+}

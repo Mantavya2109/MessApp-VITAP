@@ -59,10 +59,66 @@
   gap: 1px;
 }
 
+/* 3D Realistic Corner Ribbon at 135° / 45° across top-right */
+.meal-corner-ribbon-wrap {
+  position: absolute;
+  top: 0;
+  right: 0;
+  width: 68px;
+  height: 68px;
+  overflow: hidden;
+  pointer-events: none;
+  z-index: 2;
+  border-top-right-radius: var(--radius-xl);
+}
+
+.meal-corner-ribbon {
+  position: absolute;
+  top: 13px;
+  right: -26px;
+  width: 94px;
+  height: 14px;
+  transform: rotate(45deg);
+  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.45), inset 0 1.5px 1px rgba(255, 255, 255, 0.45), inset 0 -1.5px 1px rgba(0, 0, 0, 0.35);
+  border-top: 0.75px solid rgba(255, 255, 255, 0.5);
+  border-bottom: 0.75px solid rgba(0, 0, 0, 0.35);
+  transition: transform var(--transition-fast), filter var(--transition-fast), box-shadow var(--transition-fast);
+}
+
+.meal-corner-ribbon::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(180deg, rgba(255, 255, 255, 0.35) 0%, rgba(255, 255, 255, 0.05) 40%, rgba(0, 0, 0, 0.15) 75%, rgba(0, 0, 0, 0.35) 100%);
+  pointer-events: none;
+}
+
+.meal-card:hover .meal-corner-ribbon {
+  filter: brightness(1.12);
+  box-shadow: 0 6px 14px rgba(0, 0, 0, 0.55), inset 0 1.5px 1px rgba(255, 255, 255, 0.6), inset 0 -1.5px 1px rgba(0, 0, 0, 0.4);
+}
+
+.ribbon-breakfast {
+  background: linear-gradient(135deg, #F59E0B, #EA580C);
+}
+
+.ribbon-lunch {
+  background: linear-gradient(135deg, #06B6D4, #0284C7);
+}
+
+.ribbon-snacks {
+  background: linear-gradient(135deg, #10B981, #059669);
+}
+
+.ribbon-dinner {
+  background: linear-gradient(135deg, #6366F1, #4F46E5);
+}
+
 .meal-card-title-row {
   display: flex;
   align-items: center;
-  justify-content: space-between;
+  gap: 8px;
+  padding-right: 44px;
 }
 
 .meal-card-name {

@@ -131,8 +131,8 @@ export const MenuScreen: React.FC = () => {
         <SettingsPullout isOpen={isSettingsOpen} onClose={() => setIsSettingsOpen(false)} />
 
         {/* Subtle App Identity Label between Settings and Actions */}
-        <div className="menu-app-brand-badge" aria-label="VIT - AP Mess">
-          <span className="brand-text-label">VIT - AP Mess</span>
+        <div className="menu-app-brand-badge" aria-label="VIT-AP Mess Menu">
+          <span className="brand-text-label">VIT-AP Mess Menu</span>
         </div>
 
         {/* Right Actions (Install App + Circular Illustrated Avatar) */}
@@ -148,7 +148,7 @@ export const MenuScreen: React.FC = () => {
               aria-label="Select Avatar"
               title="Change Profile Avatar"
             >
-              <AvatarIcon avatarId={profile.avatar || 'pro-man-1'} size={38} />
+              <AvatarIcon avatarId={profile.avatar || 'pro-man-1'} size={44} />
             </button>
 
             {/* Avatar Selector Floating Box */}
