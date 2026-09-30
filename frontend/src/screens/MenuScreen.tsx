@@ -1,15 +1,16 @@
 import React, { useState, useMemo, useRef, useEffect } from 'react';
 import {
-  Bell,
   Calendar as CalendarIcon,
   ChevronLeft,
   ChevronRight,
+  Settings,
 } from 'lucide-react';
 import { useApp } from '../context/AppContext';
 import { MealCard } from '../components/meals/MealCard';
 import { SettingsPullout } from '../components/settings/SettingsPullout';
 import { AvatarIcon } from '../components/profile/AvatarIcon';
 import { AvatarSelectorPopover } from '../components/profile/AvatarSelectorPopover';
+import { InstallAppButton } from '../components/common/InstallAppButton';
 import './MenuScreen.css';
 
 export const MenuScreen: React.FC = () => {
@@ -113,37 +114,31 @@ export const MenuScreen: React.FC = () => {
 
   return (
     <div className="menu-screen-container animate-fade-in">
-      {/* 1. Top Navigation Bar (Hamburger, subtle "VIT - AP Mess" label, Notification Bell, Avatar) */}
+      {/* 1. Top Navigation Bar (Settings Gear, subtle "VIT - AP Mess" label, Install App, Avatar) */}
       <header className="menu-top-bar">
-        {/* Custom 2-Line Minimal Hamburger */}
+        {/* Standard Gear/Cog Settings Button */}
         <button
           type="button"
-          className="menu-hamburger-btn"
+          className="menu-settings-btn"
           onClick={() => setIsSettingsOpen(!isSettingsOpen)}
           aria-label="Open settings menu"
           title="Open settings"
         >
-          <span className="hamburger-line line-1" />
-          <span className="hamburger-line line-2" />
+          <Settings size={26} strokeWidth={2.2} />
         </button>
 
-        {/* Floating Pullout Settings Menu Anchored under Hamburger */}
+        {/* Floating Pullout Settings Menu Anchored under Settings */}
         <SettingsPullout isOpen={isSettingsOpen} onClose={() => setIsSettingsOpen(false)} />
 
-        {/* Subtle App Identity Label between Settings and Bell */}
+        {/* Subtle App Identity Label between Settings and Actions */}
         <div className="menu-app-brand-badge" aria-label="VIT - AP Mess">
           <span className="brand-text-label">VIT - AP Mess</span>
         </div>
 
-        {/* Right Actions (Bell + Circular Illustrated Avatar) */}
+        {/* Right Actions (Install App + Circular Illustrated Avatar) */}
         <div className="menu-top-actions">
-          <button
-            type="button"
-            className="notification-bell-btn"
-            aria-label="View notifications"
-          >
-            <Bell size={26} fill="currentColor" strokeWidth={0} />
-          </button>
+          {/* Native PWA Installation CTA */}
+          <InstallAppButton />
 
           <div style={{ position: 'relative' }}>
             <button

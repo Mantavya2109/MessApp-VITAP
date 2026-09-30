@@ -249,7 +249,7 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
 
   // Apply theme dynamically to documentElement
   useEffect(() => {
-    const currentTheme = profile.theme || 'dark';
+    const currentTheme = profile.theme || 'light';
     document.documentElement.setAttribute('data-theme', currentTheme);
   }, [profile.theme]);
 

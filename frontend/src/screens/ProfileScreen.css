@@ -76,6 +76,11 @@
   flex-shrink: 0;
 }
 
+.setting-icon-wrap.icon-installed {
+  color: #10B981;
+  background: rgba(16, 185, 129, 0.12);
+}
+
 .setting-texts {
   display: flex;
   flex-direction: column;
@@ -101,9 +106,12 @@
   border-radius: var(--radius-full);
   padding: 3px;
   gap: 2px;
+  position: relative;
+  overflow: visible;
 }
 
 .theme-pill {
+  position: relative;
   padding: 5px 10px;
   border-radius: var(--radius-full);
   font-size: 0.75rem; /* 12px */
@@ -114,6 +122,43 @@
   cursor: pointer;
   transition: all var(--transition-fast);
   white-space: nowrap;
+  overflow: visible;
+}
+
+.theme-pill-recommended-badge {
+  position: absolute;
+  top: -7.5px;
+  left: 50%;
+  transform: translateX(-50%);
+  font-family: var(--font-heading);
+  font-size: 0.5rem; /* 8px */
+  font-weight: var(--weight-extrabold);
+  line-height: 1;
+  letter-spacing: 0.04em;
+  padding: 1.5px 5px;
+  border-radius: var(--radius-full);
+  background: #181E2A;
+  color: var(--accent-golden);
+  border: 1px solid rgba(255, 184, 0, 0.45);
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.4);
+  pointer-events: none;
+  user-select: none;
+  white-space: nowrap;
+  text-transform: none;
+  z-index: 2;
+}
+
+[data-theme="light"] .theme-pill-recommended-badge {
+  background: #FFFFFF;
+  color: #B45309;
+  border: 1px solid rgba(217, 119, 6, 0.35);
+  box-shadow: 0 1px 4px rgba(0, 0, 0, 0.1);
+}
+
+[data-theme="ultra-dark"] .theme-pill-recommended-badge {
+  background: #000000;
+  color: var(--accent-golden);
+  border: 1px solid rgba(255, 184, 0, 0.55);
 }
 
 .theme-pill:hover {
@@ -124,38 +169,6 @@
   background: var(--accent-golden);
   color: #11141A;
   box-shadow: 0 2px 8px var(--accent-golden-glow);
-}
-
-/* Toggle Switch */
-.toggle-switch {
-  width: 44px;
-  height: 24px;
-  background: var(--bg-surface-muted);
-  border-radius: var(--radius-full);
-  position: relative;
-  transition: background var(--transition-base);
-  cursor: pointer;
-  border: 1px solid var(--border-subtle);
-}
-
-.toggle-switch.on {
-  background: var(--accent-golden);
-}
-
-.toggle-handle {
-  width: 18px;
-  height: 18px;
-  background: #FFFFFF;
-  border-radius: 50%;
-  position: absolute;
-  top: 2px;
-  left: 2px;
-  transition: transform var(--transition-spring);
-  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.2);
-}
-
-.toggle-switch.on .toggle-handle {
-  transform: translateX(20px);
 }
 
 /* App Info card */

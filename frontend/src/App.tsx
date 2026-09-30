@@ -1,5 +1,6 @@
 import React from 'react';
 import { AppProvider, useApp } from './context/AppContext';
+import { PwaProvider } from './context/PwaContext';
 import { AppShell } from './components/layout/AppShell';
 import { MenuScreen } from './screens/MenuScreen';
 import { ProfileScreen } from './screens/ProfileScreen';
@@ -18,7 +19,9 @@ const MainNavigator: React.FC = () => {
 export function App() {
   return (
     <AppProvider>
-      <MainNavigator />
+      <PwaProvider>
+        <MainNavigator />
+      </PwaProvider>
     </AppProvider>
   );
 }

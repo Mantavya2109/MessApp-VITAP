@@ -53,8 +53,7 @@ export const MEAL_TIMINGS = {
 export const mockStudentProfile: StudentProfile = {
   name: 'Mantavya Sharma',
   messType: 'Veg Mess',
-  notificationsEnabled: true,
-  theme: 'dark',
+  theme: 'light',
   avatar: 'pro-man-1',
 };
 

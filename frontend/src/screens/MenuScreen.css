@@ -21,43 +21,30 @@
   position: relative;
 }
 
-/* Custom 2-Line Minimal Hamburger */
-.menu-hamburger-btn {
+/* Standard Settings Gear Button */
+.menu-settings-btn {
   display: flex;
-  flex-direction: column;
+  align-items: center;
   justify-content: center;
-  gap: 6px;
-  width: 38px;
-  height: 38px;
-  padding: 4px 0;
+  width: 40px;
+  height: 40px;
+  padding: 0;
   background: transparent;
+  color: var(--text-primary);
+  border: none;
   cursor: pointer;
   flex-shrink: 0;
   touch-action: manipulation;
-  transition: transform var(--transition-spring);
+  transition: transform var(--transition-spring), color var(--transition-fast);
 }
 
-.menu-hamburger-btn:active {
-  transform: scale(0.92);
+.menu-settings-btn:hover {
+  color: var(--accent-golden);
+  transform: rotate(25deg);
 }
 
-.hamburger-line {
-  height: 3px;
-  background-color: var(--text-primary);
-  border-radius: 3px;
-  transition: all var(--transition-fast);
-}
-
-.hamburger-line.line-1 {
-  width: 20px;
-}
-
-.hamburger-line.line-2 {
-  width: 28px;
-}
-
-.menu-hamburger-btn:hover .hamburger-line {
-  background-color: var(--accent-golden);
+.menu-settings-btn:active {
+  transform: scale(0.92) rotate(45deg);
 }
 
 /* Small App Identity Label: "VIT - AP Mess" */
@@ -84,28 +71,6 @@
   align-items: center;
   gap: 14px;
   flex-shrink: 0;
-}
-
-/* Golden / Terracotta Bell Button */
-.notification-bell-btn {
-  width: 38px;
-  height: 38px;
-  border-radius: 50%;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  color: var(--bell-color);
-  transition: transform var(--transition-spring);
-  cursor: pointer;
-  touch-action: manipulation;
-}
-
-.notification-bell-btn:hover {
-  transform: scale(1.1);
-}
-
-.notification-bell-btn:active {
-  transform: scale(0.92);
 }
 
 /* Illustrated Circular Profile Avatar */
@@ -427,8 +392,14 @@
 }
 
 /* ==========================================================================
-   7. Narrow Screen Media Query (< 360px)
+   7. Narrow Screen Media Query (< 480px & < 360px)
    ========================================================================== */
+@media (max-width: 480px) {
+  .menu-top-actions {
+    gap: 10px;
+  }
+}
+
 @media (max-width: 360px) {
   .menu-current-date-title {
     font-size: 1.1875rem; /* 19px */
@@ -441,7 +412,7 @@
     gap: 6px;
   }
   .menu-top-actions {
-    gap: 8px;
+    gap: 7px;
   }
   .brand-text-label {
     font-size: 0.6875rem; /* 11px */
