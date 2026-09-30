@@ -30092,6 +30092,12 @@ app.post("/api/likes", async (req, res) => {
     res.status(500).json({ error: "Failed to update likes" });
   }
 });
+if (process.env.NODE_ENV !== "production") {
+  const PORT = process.env.PORT || 3001;
+  app.listen(PORT, () => {
+    console.log(`\u{1F680} MessApp Backend API running on http://localhost:${PORT}`);
+  });
+}
 var app_default = app;
 export {
   app_default as default
@@ -30421,12 +30427,3 @@ object-assign/index.js:
      *)
   *)
 */
-
-// Start the server only when running locally (not in serverless production)
-if (process.env.NODE_ENV !== 'production') {
-  const PORT = process.env.PORT || 3001;
-  app.listen(PORT, () => {
-    console.log(`🚀 MessApp Backend API running on port ${PORT}`);
-  });
-}
-

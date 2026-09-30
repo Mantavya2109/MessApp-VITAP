@@ -36,7 +36,7 @@ export const ToastContainer: React.FC = () => {
               type="button"
               className="toast-close-btn"
               onClick={() => dismissToast(toast.id)}
-              aria-label="Dismiss notification"
+              aria-label="Dismiss message"
             >
               <X size={14} />
             </button>

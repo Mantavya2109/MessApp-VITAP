@@ -1,14 +1,15 @@
-import React from 'react';
 import {
-  Bell,
   Moon,
   Sun,
   Clock,
   MessageSquare,
   ChevronRight,
   ArrowLeft,
+  Download,
+  Check,
 } from 'lucide-react';
 import { useApp } from '../context/AppContext';
+import { usePwa } from '../context/PwaContext';
 import { MEAL_TIMINGS } from '../data/mockData';
 import './ProfileScreen.css';
 
@@ -17,12 +18,9 @@ export const ProfileScreen: React.FC = () => {
     profile,
     updateProfile,
     setActiveTab,
+    isOffline,
   } = useApp();
-
-  const handleToggleNotifications = () => {
-    const nextVal = !profile.notificationsEnabled;
-    updateProfile({ notificationsEnabled: nextVal });
-  };
+  const { isInstalled, isInstalling, triggerInstall } = usePwa();
 
   const handleFeedback = () => {
     // Open feedback
@@ -79,7 +77,17 @@ export const ProfileScreen: React.FC = () => {
             <div className="theme-toggle-pills" role="radiogroup" aria-label="Theme Selection">
               <button
                 type="button"
-                className={`theme-pill ${profile.theme === 'dark' || !profile.theme ? 'active' : ''}`}
+                className={`theme-pill ${profile.theme === 'light' || !profile.theme ? 'active' : ''}`}
+                onClick={() => {
+                  updateProfile({ theme: 'light' });
+                }}
+              >
+                <span className="theme-pill-recommended-badge">Recommended</span>
+                Light
+              </button>
+              <button
+                type="button"
+                className={`theme-pill ${profile.theme === 'dark' ? 'active' : ''}`}
                 onClick={() => {
                   updateProfile({ theme: 'dark' });
                 }}
@@ -95,32 +103,62 @@ export const ProfileScreen: React.FC = () => {
               >
                 Ultra Dark
               </button>
-              <button
-                type="button"
-                className={`theme-pill ${profile.theme === 'light' ? 'active' : ''}`}
-                onClick={() => {
-                  updateProfile({ theme: 'light' });
-                }}
-              >
-                Light
-              </button>
             </div>
           </div>
+        </div>
+      </div>
 
-          {/* Notifications */}
-          <div className="profile-setting-item" onClick={handleToggleNotifications} style={{ cursor: 'pointer' }}>
+      {/* App Installation Section (Permanent in Settings) */}
+      <div className="profile-section-group">
+        <span className="profile-section-title">App Installation</span>
+        <div className="profile-settings-card">
+          <div
+            className={`profile-setting-item ${!isInstalled && !isOffline ? 'clickable' : ''}`}
+            onClick={() => {
+              if (!isInstalled && !isOffline) {
+                triggerInstall();
+              }
+            }}
+            role="button"
+            tabIndex={0}
+            aria-label={isInstalled ? 'MessApp is already installed' : isOffline ? 'Installation disabled offline' : 'Install MessApp'}
+            aria-disabled={isInstalled || isOffline}
+          >
             <div className="profile-setting-left">
-              <div className="setting-icon-wrap">
-                <Bell size={17} />
+              <div className={`setting-icon-wrap ${isInstalled ? 'icon-installed' : ''}`}>
+                {isInstalled ? <Check size={17} strokeWidth={2.8} /> : <Download size={17} />}
               </div>
               <div className="setting-texts">
-                <span className="setting-label">Meal Reminders</span>
-                <span className="setting-desc">Get notified 15 mins before meals</span>
+                <span className="setting-label">{isInstalled ? 'MessApp Installed' : 'Install MessApp'}</span>
+                <span className="setting-desc">
+                  {isInstalled
+                    ? 'Installed on this device as a PWA'
+                    : 'Install on your device for 1-tap offline access'}
+                </span>
               </div>
             </div>
-            <div className={`toggle-switch ${profile.notificationsEnabled ? 'on' : ''}`} role="switch" aria-checked={profile.notificationsEnabled}>
-              <div className="toggle-handle" />
-            </div>
+
+            {isInstalled ? (
+              <div className="pullout-installed-badge" aria-label="Already installed">
+                <Check size={12} strokeWidth={3} />
+                <span>Installed</span>
+              </div>
+            ) : (
+              <button
+                type="button"
+                className={`pullout-install-action-btn ${isOffline ? 'btn-disabled' : ''}`}
+                onClick={(e) => {
+                  e.stopPropagation();
+                  triggerInstall();
+                }}
+                disabled={isOffline || isInstalling}
+                aria-label={isOffline ? 'Install disabled offline' : 'Install MessApp'}
+                title={isOffline ? 'Connect to internet to install' : 'Install MessApp'}
+              >
+                <Download size={13} strokeWidth={2.4} />
+                <span>{isOffline ? 'Offline' : 'Install'}</span>
+              </button>
+            )}
           </div>
         </div>
       </div>

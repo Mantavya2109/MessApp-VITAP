@@ -1,6 +1,5 @@
 import React, { useState, useEffect, useRef, useCallback } from 'react';
 import {
-  Bell,
   Moon,
   Sun,
   Clock,
@@ -8,8 +7,11 @@ import {
   ChevronDown,
   ChevronUp,
   Heart,
+  Download,
+  Check,
 } from 'lucide-react';
 import { useApp } from '../../context/AppContext';
+import { usePwa } from '../../context/PwaContext';
 import { MEAL_TIMINGS } from '../../data/mockData';
 import { fetchTotalLikes, sendLikesIncrement, getCachedLikes, setCachedLikes } from '../../data/likesRepository';
 import './SettingsPullout.css';
@@ -26,6 +28,7 @@ export const SettingsPullout: React.FC<SettingsPulloutProps> = ({ isOpen, onClos
     isOffline,
     showToast,
   } = useApp();
+  const { isInstalled, isInstalling, triggerInstall } = usePwa();
 
   const [isTimingsOpen, setIsTimingsOpen] = useState(false);
   const [likesCount, setLikesCount] = useState<number>(() => getCachedLikes());
@@ -107,10 +110,6 @@ export const SettingsPullout: React.FC<SettingsPulloutProps> = ({ isOpen, onClos
 
   if (!isOpen) return null;
 
-  const handleToggleNotifications = () => {
-    updateProfile({ notificationsEnabled: !profile.notificationsEnabled });
-  };
-
   return (
     <>
       {/* Invisible backdrop to dismiss pullout when tapping outside */}
@@ -136,7 +135,15 @@ export const SettingsPullout: React.FC<SettingsPulloutProps> = ({ isOpen, onClos
             <div className="pullout-theme-pills" role="radiogroup" aria-label="Theme Selection">
               <button
                 type="button"
-                className={`pullout-theme-pill ${profile.theme === 'dark' || !profile.theme ? 'active' : ''}`}
+                className={`pullout-theme-pill ${profile.theme === 'light' || !profile.theme ? 'active' : ''}`}
+                onClick={() => updateProfile({ theme: 'light' })}
+              >
+                <span className="theme-pill-recommended-badge">Recommended</span>
+                Light
+              </button>
+              <button
+                type="button"
+                className={`pullout-theme-pill ${profile.theme === 'dark' ? 'active' : ''}`}
                 onClick={() => updateProfile({ theme: 'dark' })}
               >
                 Dark
@@ -148,36 +155,10 @@ export const SettingsPullout: React.FC<SettingsPulloutProps> = ({ isOpen, onClos
               >
                 Ultra Dark
               </button>
-              <button
-                type="button"
-                className={`pullout-theme-pill ${profile.theme === 'light' ? 'active' : ''}`}
-                onClick={() => updateProfile({ theme: 'light' })}
-              >
-                Light
-              </button>
             </div>
           </div>
 
-          {/* 2. Meal Reminders */}
-          <div className="pullout-item clickable" onClick={handleToggleNotifications}>
-            <div className="pullout-item-header">
-              <div className="pullout-item-left">
-                <div className="pullout-icon">
-                  <Bell size={20} strokeWidth={2.2} />
-                </div>
-                <span className="pullout-item-label">Meal Reminders</span>
-              </div>
-              <div
-                className={`pullout-toggle ${profile.notificationsEnabled ? 'on' : ''}`}
-                role="switch"
-                aria-checked={profile.notificationsEnabled}
-              >
-                <div className="pullout-toggle-thumb" />
-              </div>
-            </div>
-          </div>
-
-          {/* 3. Daily Mess Timings (Collapsible) */}
+          {/* 2. Daily Mess Timings (Collapsible) */}
           <div className="pullout-item">
             <div
               className="pullout-item-header clickable"
@@ -279,7 +260,62 @@ export const SettingsPullout: React.FC<SettingsPulloutProps> = ({ isOpen, onClos
             )}
           </div>
 
-          {/* 5. Committee Feedback */}
+          {/* 5. Install MessApp (Permanent in Settings) */}
+          <div
+            className={`pullout-item pullout-install-item ${isInstalled ? 'is-installed' : isOffline ? 'is-disabled-offline' : 'clickable'}`}
+            onClick={() => {
+              if (!isInstalled && !isOffline) {
+                triggerInstall();
+              }
+            }}
+            role="button"
+            tabIndex={0}
+            aria-label={isInstalled ? 'MessApp is already installed' : isOffline ? 'Installation disabled offline' : 'Install MessApp'}
+            aria-disabled={isInstalled || isOffline}
+          >
+            <div className="pullout-item-header">
+              <div className="pullout-item-left">
+                <div className={`pullout-icon pullout-install-icon ${isInstalled ? 'icon-installed' : ''}`}>
+                  {isInstalled ? <Check size={20} strokeWidth={2.6} /> : <Download size={20} strokeWidth={2.2} />}
+                </div>
+                <div className="pullout-install-text-wrap">
+                  <span className="pullout-item-label">
+                    {isInstalled ? 'MessApp Installed' : 'Install MessApp'}
+                  </span>
+                  <span className="pullout-install-desc">
+                    {isInstalled
+                      ? 'Installed on this device'
+                      : 'Add to home screen'}
+                  </span>
+                </div>
+              </div>
+
+              {/* Action: Installed Badge vs Install Button */}
+              {isInstalled ? (
+                <div className="pullout-installed-badge" aria-label="Already installed">
+                  <Check size={12} strokeWidth={3} />
+                  <span>Installed</span>
+                </div>
+              ) : (
+                <button
+                  type="button"
+                  className={`pullout-install-action-btn ${isOffline ? 'btn-disabled' : ''}`}
+                  onClick={(e) => {
+                    e.stopPropagation();
+                    triggerInstall();
+                  }}
+                  aria-label={isOffline ? 'Install disabled offline' : 'Install MessApp'}
+                  disabled={isOffline || isInstalling}
+                  title={isOffline ? 'Connect to internet to install' : 'Install MessApp'}
+                >
+                  <Download size={13} strokeWidth={2.4} />
+                  <span>{isOffline ? 'Offline' : 'Install'}</span>
+                </button>
+              )}
+            </div>
+          </div>
+
+          {/* 6. Committee Feedback */}
           <div
             className="pullout-item clickable"
             onClick={() => {
@@ -297,7 +333,7 @@ export const SettingsPullout: React.FC<SettingsPulloutProps> = ({ isOpen, onClos
           </div>
         </div>
 
-        {/* 6. Footer / Creator Credit */}
+        {/* 7. Footer / Creator Credit */}
         <footer className="pullout-footer">
           <p>
             Designed for students by{' '}

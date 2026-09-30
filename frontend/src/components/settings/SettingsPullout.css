@@ -43,6 +43,7 @@
     opacity: 0;
     transform: scale(0.92) translateY(-8px);
   }
+
   100% {
     opacity: 1;
     transform: scale(1) translateY(0);
@@ -99,7 +100,8 @@
 
 .pullout-item-label {
   font-family: var(--font-heading);
-  font-size: 1.03125rem; /* 16.5px */
+  font-size: 1.03125rem;
+  /* 16.5px */
   font-weight: var(--weight-semibold);
   color: var(--text-primary);
   letter-spacing: -0.01em;
@@ -114,15 +116,19 @@
   border-radius: var(--radius-full);
   padding: 3px;
   gap: 2px;
-  margin-top: 2px;
+  margin-top: 8px;
+  position: relative;
+  overflow: visible;
 }
 
 .pullout-theme-pill {
+  position: relative;
   flex: 1;
   padding: 5px 0;
   border-radius: var(--radius-full);
   font-family: var(--font-heading);
-  font-size: 0.75rem; /* 12px */
+  font-size: 0.75rem;
+  /* 12px */
   font-weight: var(--weight-bold);
   color: var(--text-secondary);
   background: transparent;
@@ -132,6 +138,43 @@
   transition: all var(--transition-fast);
   white-space: nowrap;
   touch-action: manipulation;
+  overflow: visible;
+}
+
+.theme-pill-recommended-badge {
+  position: absolute;
+  top: -7.5px;
+  left: 50%;
+  transform: translateX(-50%);
+  font-family: var(--font-heading);
+  font-size: 0.5rem; /* 8px */
+  font-weight: var(--weight-extrabold);
+  line-height: 1;
+  letter-spacing: 0.04em;
+  padding: 1.5px 5px;
+  border-radius: var(--radius-full);
+  background: #181E2A;
+  color: var(--accent-golden);
+  border: 1px solid rgba(255, 184, 0, 0.45);
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.4);
+  pointer-events: none;
+  user-select: none;
+  white-space: nowrap;
+  text-transform: none;
+  z-index: 2;
+}
+
+[data-theme="light"] .theme-pill-recommended-badge {
+  background: #FFFFFF;
+  color: #B45309;
+  border: 1px solid rgba(217, 119, 6, 0.35);
+  box-shadow: 0 1px 4px rgba(0, 0, 0, 0.1);
+}
+
+[data-theme="ultra-dark"] .theme-pill-recommended-badge {
+  background: #000000;
+  color: var(--accent-golden);
+  border: 1px solid rgba(255, 184, 0, 0.55);
 }
 
 .pullout-theme-pill:hover {
@@ -146,40 +189,6 @@
   background: var(--accent-golden);
   color: #11141A;
   box-shadow: 0 2px 8px var(--accent-golden-glow);
-}
-
-/* Toggle Switch */
-.pullout-toggle {
-  width: 40px;
-  height: 22px;
-  background: var(--bg-surface-muted);
-  border-radius: var(--radius-full);
-  position: relative;
-  transition: background var(--transition-base);
-  cursor: pointer;
-  border: 1px solid var(--border-subtle);
-  flex-shrink: 0;
-  touch-action: manipulation;
-}
-
-.pullout-toggle.on {
-  background: var(--accent-golden);
-}
-
-.pullout-toggle-thumb {
-  width: 16px;
-  height: 16px;
-  background: #FFFFFF;
-  border-radius: 50%;
-  position: absolute;
-  top: 2px;
-  left: 2px;
-  transition: transform var(--transition-spring);
-  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.25);
-}
-
-.pullout-toggle.on .pullout-toggle-thumb {
-  transform: translateX(18px);
 }
 
 /* Timings Sublist */
@@ -214,7 +223,8 @@
   display: flex;
   align-items: center;
   justify-content: space-between;
-  font-size: 0.78125rem; /* 12.5px */
+  font-size: 0.78125rem;
+  /* 12.5px */
 }
 
 .timing-meal-name {
@@ -230,7 +240,8 @@
 /* Footer Creator Link */
 .pullout-footer {
   text-align: center;
-  font-size: 0.71875rem; /* 11.5px */
+  font-size: 0.71875rem;
+  /* 11.5px */
   color: var(--text-tertiary);
   padding: 6px 0 2px 0;
   border-top: 1px solid var(--border-subtle);
@@ -273,9 +284,11 @@
   0% {
     transform: scale(1);
   }
+
   40% {
     transform: scale(1.35);
   }
+
   100% {
     transform: scale(1);
   }
@@ -292,7 +305,8 @@
 }
 
 .pullout-offline-pill {
-  font-size: 0.65625rem; /* 10.5px */
+  font-size: 0.65625rem;
+  /* 10.5px */
   font-weight: var(--weight-bold);
   text-transform: uppercase;
   letter-spacing: 0.04em;
@@ -323,7 +337,8 @@
   border: 1px solid rgba(239, 68, 68, 0.38);
   border-radius: var(--radius-full);
   font-family: var(--font-heading);
-  font-size: 0.8125rem; /* 13px */
+  font-size: 0.8125rem;
+  /* 13px */
   font-weight: var(--weight-bold);
   color: #FFFFFF;
   cursor: pointer;
@@ -377,7 +392,8 @@
 /* Below Option Total Likes Display */
 .pullout-likes-below-info {
   margin-top: 3px;
-  padding-left: 34px; /* Aligns with text label next to the heart icon */
+  padding-left: 34px;
+  /* Aligns with text label next to the heart icon */
   display: flex;
   align-items: center;
 }
@@ -387,7 +403,8 @@
   align-items: center;
   gap: 4px;
   font-family: var(--font-body);
-  font-size: 0.78125rem; /* 12.5px */
+  font-size: 0.78125rem;
+  /* 12.5px */
   font-weight: var(--weight-medium);
   color: #F87171;
   background: rgba(239, 68, 68, 0.1);
@@ -441,12 +458,137 @@
     opacity: 1;
     transform: translateY(0) scale(0.7) rotate(0deg);
   }
+
   50% {
     opacity: 0.9;
     transform: translateY(-28px) scale(1.2) rotate(-8deg);
   }
+
   100% {
     opacity: 0;
     transform: translateY(-56px) scale(1) rotate(12deg);
   }
+}
+
+/* ==========================================================================
+   Install MessApp Pullout Item Styles (Permanent Settings Option)
+   ========================================================================== */
+.pullout-install-item {
+  position: relative;
+  user-select: none;
+  -webkit-user-select: none;
+}
+
+.pullout-install-icon {
+  color: var(--accent-golden);
+  transition: all var(--transition-fast);
+}
+
+.pullout-install-icon.icon-installed {
+  color: #10B981;
+  /* Emerald green check */
+}
+
+.pullout-install-text-wrap {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+
+.pullout-install-desc {
+  font-family: var(--font-body);
+  font-size: 0.6875rem;
+  /* 11px */
+  color: var(--text-tertiary);
+  line-height: 1.25;
+}
+
+/* Action: Installed Badge */
+.pullout-installed-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  padding: 4px 10px;
+  border-radius: var(--radius-full);
+  background: rgba(16, 185, 129, 0.14);
+  border: 1px solid rgba(16, 185, 129, 0.35);
+  color: #10B981;
+  font-family: var(--font-heading);
+  font-size: 0.75rem;
+  /* 12px */
+  font-weight: var(--weight-bold);
+  letter-spacing: 0.02em;
+  user-select: none;
+}
+
+[data-theme="light"] .pullout-installed-badge {
+  background: rgba(16, 185, 129, 0.1);
+  border-color: rgba(16, 185, 129, 0.28);
+  color: #059669;
+}
+
+/* Action: Install Button */
+.pullout-install-action-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+  height: 29px;
+  padding: 0 12px;
+  border-radius: var(--radius-full);
+  background: linear-gradient(135deg, rgba(255, 184, 0, 0.18) 0%, rgba(224, 110, 35, 0.1) 100%), rgba(24, 30, 42, 0.88);
+  border: 1.5px solid rgba(255, 184, 0, 0.45);
+  color: #FFFFFF;
+  font-family: var(--font-heading);
+  font-size: 0.75rem;
+  /* 12px */
+  font-weight: var(--weight-bold);
+  letter-spacing: 0.02em;
+  cursor: pointer;
+  touch-action: manipulation;
+  transition: all var(--transition-fast);
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.35), 0 0 10px rgba(255, 184, 0, 0.12);
+  white-space: nowrap;
+}
+
+.pullout-install-action-btn:hover:not(:disabled) {
+  transform: translateY(-1px);
+  border-color: var(--accent-golden);
+  color: var(--accent-golden);
+  background: linear-gradient(135deg, rgba(255, 184, 0, 0.26) 0%, rgba(224, 110, 35, 0.18) 100%), rgba(32, 40, 56, 0.96);
+  box-shadow: 0 4px 14px var(--accent-golden-glow);
+}
+
+.pullout-install-action-btn:active:not(:disabled) {
+  transform: scale(0.95);
+}
+
+.pullout-install-action-btn:disabled,
+.pullout-install-action-btn.btn-disabled {
+  cursor: not-allowed;
+  opacity: 0.5;
+  background: rgba(148, 163, 184, 0.12);
+  border-color: rgba(148, 163, 184, 0.25);
+  color: #94A3B8;
+  box-shadow: none;
+  transform: none !important;
+}
+
+[data-theme="light"] .pullout-install-action-btn {
+  background: linear-gradient(135deg, rgba(255, 184, 0, 0.12) 0%, rgba(255, 255, 255, 0.95) 100%), #FFFFFF;
+  border-color: rgba(224, 110, 35, 0.38);
+  color: var(--text-primary);
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
+}
+
+[data-theme="light"] .pullout-install-action-btn:hover:not(:disabled) {
+  border-color: var(--accent-orange);
+  color: var(--accent-orange);
+  box-shadow: 0 4px 12px rgba(224, 110, 35, 0.2);
+}
+
+[data-theme="light"] .pullout-install-action-btn:disabled,
+[data-theme="light"] .pullout-install-action-btn.btn-disabled {
+  background: rgba(0, 0, 0, 0.05);
+  border-color: rgba(0, 0, 0, 0.1);
+  color: #94A3B8;
 }

@@ -4,6 +4,52 @@
    ========================================================================== */
 
 :root,
+[data-theme="light"] {
+  /* Warm, Bright Soft Atmosphere Canvas matching light mode reference */
+  --bg-app-base: #F7F8FA;
+  --bg-app-gradient: radial-gradient(circle at 94% 4%, rgba(245, 140, 70, 0.35) 0%, rgba(245, 160, 100, 0.18) 26%, rgba(247, 248, 250, 0) 58%),
+                     radial-gradient(circle at -4% 44%, rgba(135, 195, 240, 0.38) 0%, rgba(247, 248, 250, 0) 48%),
+                     radial-gradient(circle at 98% 88%, rgba(250, 205, 110, 0.34) 0%, rgba(247, 248, 250, 0) 42%),
+                     #F7F8FA;
+
+  /* Frosted Glass Translucent Light Card Surfaces ("Blurriness in blocks") */
+  --bg-surface-card: rgba(255, 255, 255, 0.72);
+  --bg-surface-card-hover: rgba(255, 255, 255, 0.86);
+  --bg-surface-card-border: rgba(255, 255, 255, 0.85);
+  --meal-card-top-border: rgba(255, 255, 255, 0.95);
+  --meal-card-shadow: inset 0 1px 1px 0 rgba(255, 255, 255, 0.95),
+                      0 10px 28px rgba(0, 0, 0, 0.06),
+                      0 2px 8px rgba(0, 0, 0, 0.03);
+  --card-backdrop-blur: 28px;
+  
+  --bg-surface-elevated: #FFFFFF;
+  --bg-surface-subtle: #F3F4F6;
+  --bg-surface-muted: #E5E7EB;
+
+  /* Vivid Accents (Golden Yellow & Terracotta Orange) */
+  --accent-golden: #FFB800;
+  --accent-golden-hover: #F5A623;
+  --accent-golden-glow: rgba(255, 184, 0, 0.3);
+  
+  --accent-orange: #E06E23;
+  --accent-orange-hover: #C95E1B;
+  --accent-orange-glow: rgba(224, 110, 35, 0.25);
+
+  --bell-color: #E06E23;
+
+  /* Text Colors */
+  --text-primary: #111827;
+  --text-secondary: #4B5563;
+  --text-tertiary: #6B7280;
+  --text-dishes: #1F2937;
+
+  /* Borders & Shadows */
+  --border-subtle: rgba(0, 0, 0, 0.08);
+  --border-focus: #FFB800;
+  --shadow-card: 0 10px 28px rgba(0, 0, 0, 0.06), 0 2px 6px rgba(0, 0, 0, 0.03);
+  --shadow-dock: 0 -8px 24px rgba(0, 0, 0, 0.08);
+}
+
 [data-theme="dark"] {
   /* Rich Deep Atmospheric Canvas matching dark mode warm amber lighting with prominent middle blue */
   --bg-app-base: #090B10;
@@ -94,52 +140,6 @@
   --border-focus: #FFB800;
   --shadow-card: 0 12px 32px rgba(0, 0, 0, 0.8), 0 2px 6px rgba(0, 0, 0, 0.55);
   --shadow-dock: 0 -8px 28px rgba(0, 0, 0, 0.85);
-}
-
-[data-theme="light"] {
-  /* Warm, Bright Soft Atmosphere Canvas matching light mode reference */
-  --bg-app-base: #F7F8FA;
-  --bg-app-gradient: radial-gradient(circle at 94% 4%, rgba(245, 140, 70, 0.35) 0%, rgba(245, 160, 100, 0.18) 26%, rgba(247, 248, 250, 0) 58%),
-                     radial-gradient(circle at -4% 44%, rgba(135, 195, 240, 0.38) 0%, rgba(247, 248, 250, 0) 48%),
-                     radial-gradient(circle at 98% 88%, rgba(250, 205, 110, 0.34) 0%, rgba(247, 248, 250, 0) 42%),
-                     #F7F8FA;
-
-  /* Frosted Glass Translucent Light Card Surfaces ("Blurriness in blocks") */
-  --bg-surface-card: rgba(255, 255, 255, 0.72);
-  --bg-surface-card-hover: rgba(255, 255, 255, 0.86);
-  --bg-surface-card-border: rgba(255, 255, 255, 0.85);
-  --meal-card-top-border: rgba(255, 255, 255, 0.95);
-  --meal-card-shadow: inset 0 1px 1px 0 rgba(255, 255, 255, 0.95),
-                      0 10px 28px rgba(0, 0, 0, 0.06),
-                      0 2px 8px rgba(0, 0, 0, 0.03);
-  --card-backdrop-blur: 28px;
-  
-  --bg-surface-elevated: #FFFFFF;
-  --bg-surface-subtle: #F3F4F6;
-  --bg-surface-muted: #E5E7EB;
-
-  /* Vivid Accents (Golden Yellow & Terracotta Orange) */
-  --accent-golden: #FFB800;
-  --accent-golden-hover: #F5A623;
-  --accent-golden-glow: rgba(255, 184, 0, 0.3);
-  
-  --accent-orange: #E06E23;
-  --accent-orange-hover: #C95E1B;
-  --accent-orange-glow: rgba(224, 110, 35, 0.25);
-
-  --bell-color: #E06E23;
-
-  /* Text Colors */
-  --text-primary: #111827;
-  --text-secondary: #4B5563;
-  --text-tertiary: #6B7280;
-  --text-dishes: #1F2937;
-
-  /* Borders & Shadows */
-  --border-subtle: rgba(0, 0, 0, 0.08);
-  --border-focus: #FFB800;
-  --shadow-card: 0 10px 28px rgba(0, 0, 0, 0.06), 0 2px 6px rgba(0, 0, 0, 0.03);
-  --shadow-dock: 0 -8px 24px rgba(0, 0, 0, 0.08);
 }
 
 :root {
