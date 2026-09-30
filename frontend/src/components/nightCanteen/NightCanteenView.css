@@ -1,0 +1,300 @@
+/* ==========================================================================
+   Night Canteen Simple & Clean View Styles (No glow, flat & minimal)
+   ========================================================================== */
+
+.night-canteen-container {
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+  width: 100%;
+  padding-bottom: 24px;
+}
+
+/* 2 Styled Dropdown Filters Bar */
+.nc-dropdowns-bar {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  flex-wrap: wrap;
+}
+
+/* Styled Custom Select Container */
+.nc-select-box {
+  position: relative;
+  display: flex;
+  align-items: center;
+  flex: 1;
+  min-width: 190px;
+}
+
+.nc-select-icon-left {
+  position: absolute;
+  left: 12px;
+  color: var(--text-secondary, #64748b);
+  pointer-events: none;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 1;
+}
+
+.nc-select-caret {
+  position: absolute;
+  right: 12px;
+  color: var(--text-secondary, #64748b);
+  pointer-events: none;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 1;
+  transition: transform 0.15s ease;
+}
+
+/* Clean, Flat Dropdown Select */
+.nc-dropdown-select {
+  width: 100%;
+  appearance: none;
+  -webkit-appearance: none;
+  -moz-appearance: none;
+  padding: 9px 34px 9px 36px;
+  border-radius: var(--radius-md, 8px);
+  border: 1px solid var(--border-subtle, #e2e8f0);
+  background: var(--bg-surface-elevated, #f8fafc);
+  color: var(--text-primary, #0f172a);
+  font-family: var(--font-heading, sans-serif);
+  font-size: 0.8125rem;
+  font-weight: 600;
+  cursor: pointer;
+  outline: none;
+  transition: border-color 0.15s ease, background-color 0.15s ease;
+}
+
+.nc-dropdown-select:hover {
+  border-color: var(--text-tertiary, #94a3b8);
+  background: var(--bg-surface-card);
+}
+
+.nc-dropdown-select:focus {
+  border-color: #111827;
+  background: #ffffff;
+}
+
+/* Dark Theme Support */
+[data-theme='dark'] .nc-dropdown-select,
+[data-theme='ultra-dark'] .nc-dropdown-select {
+  background: var(--bg-surface-elevated);
+  border-color: var(--border-subtle);
+  color: var(--text-primary);
+}
+
+[data-theme='dark'] .nc-dropdown-select:hover,
+[data-theme='ultra-dark'] .nc-dropdown-select:hover {
+  background: rgba(255, 255, 255, 0.05);
+  border-color: rgba(255, 255, 255, 0.2);
+}
+
+[data-theme='dark'] .nc-dropdown-select:focus,
+[data-theme='ultra-dark'] .nc-dropdown-select:focus {
+  border-color: #f1f5f9;
+  background: var(--bg-surface-card);
+}
+
+[data-theme='dark'] .nc-select-icon-left,
+[data-theme='dark'] .nc-select-caret,
+[data-theme='ultra-dark'] .nc-select-icon-left,
+[data-theme='ultra-dark'] .nc-select-caret {
+  color: var(--text-secondary);
+}
+
+/* Dropdown Option Items */
+.nc-dropdown-select option {
+  background: var(--bg-surface-elevated, #ffffff);
+  color: var(--text-primary, #0f172a);
+  font-weight: 500;
+  padding: 6px;
+}
+
+/* Simple, Clean Table */
+.nc-table-wrapper {
+  background: var(--bg-surface-card);
+  border: 1px solid var(--border-subtle);
+  border-radius: var(--radius-lg, 12px);
+  overflow-x: auto;
+}
+
+.nc-simple-table {
+  width: 100%;
+  border-collapse: collapse;
+  text-align: left;
+  font-size: 0.875rem;
+}
+
+.nc-simple-table th {
+  padding: 10px 14px;
+  background: var(--bg-surface-elevated);
+  color: var(--text-tertiary);
+  font-family: var(--font-heading);
+  font-size: 0.75rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+  border-bottom: 1px solid var(--border-subtle);
+}
+
+.nc-simple-table td {
+  padding: 11px 14px;
+  border-bottom: 1px solid var(--border-subtle);
+  vertical-align: middle;
+  color: var(--text-primary);
+}
+
+.nc-simple-table tbody tr:last-child td {
+  border-bottom: none;
+}
+
+.nc-simple-table tbody tr:hover {
+  background: rgba(0, 0, 0, 0.02);
+}
+
+[data-theme='dark'] .nc-simple-table tbody tr:hover,
+[data-theme='ultra-dark'] .nc-simple-table tbody tr:hover {
+  background: rgba(255, 255, 255, 0.03);
+}
+
+/* Table Columns */
+.nc-col-sno {
+  width: 40px;
+  text-align: center;
+  color: var(--text-tertiary);
+  font-size: 0.8rem;
+}
+
+.nc-col-name {
+  min-width: 180px;
+}
+
+.nc-name-wrap {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.nc-name-text {
+  font-weight: 600;
+  color: var(--text-primary);
+}
+
+.nc-dot {
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  flex-shrink: 0;
+}
+
+.dot-veg {
+  background: #10B981;
+}
+
+.dot-nonveg {
+  background: #EF4444;
+}
+
+.nc-mobile-meta {
+  display: none;
+  align-items: center;
+  gap: 5px;
+  font-size: 0.75rem;
+  color: var(--text-tertiary);
+  margin-top: 3px;
+}
+
+.nc-type-badge {
+  display: inline-block;
+  padding: 2px 7px;
+  border-radius: 4px;
+  font-size: 0.725rem;
+  font-weight: 600;
+}
+
+.nc-type-badge.veg {
+  background: rgba(16, 185, 129, 0.1);
+  color: #10B981;
+}
+
+.nc-type-badge.non-veg {
+  background: rgba(239, 68, 68, 0.1);
+  color: #EF4444;
+}
+
+.nc-col-cat {
+  color: var(--text-secondary);
+  font-size: 0.8125rem;
+}
+
+.nc-col-qty {
+  color: var(--text-secondary);
+  font-size: 0.8125rem;
+  white-space: nowrap;
+}
+
+.nc-col-price {
+  font-weight: 700;
+  font-family: var(--font-heading);
+  text-align: right;
+  white-space: nowrap;
+}
+
+.nc-simple-table th.nc-col-price {
+  text-align: right;
+}
+
+.nc-simple-message {
+  padding: 36px 16px;
+  text-align: center;
+  color: var(--text-tertiary);
+  font-size: 0.9rem;
+}
+
+/* Mobile Responsiveness */
+@media (max-width: 640px) {
+  .nc-dropdowns-bar {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 8px;
+    width: 100%;
+  }
+
+  .nc-select-box {
+    min-width: 0;
+    width: 100%;
+  }
+
+  .nc-select-icon-left {
+    left: 9px;
+  }
+
+  .nc-select-caret {
+    right: 8px;
+  }
+
+  .nc-dropdown-select {
+    padding: 8px 22px 8px 28px;
+    font-size: 0.75rem;
+    text-overflow: ellipsis;
+  }
+
+  .nc-col-type,
+  .nc-col-cat,
+  .nc-col-qty {
+    display: none;
+  }
+
+  .nc-mobile-meta {
+    display: flex;
+  }
+
+  .nc-simple-table th,
+  .nc-simple-table td {
+    padding: 10px 10px;
+  }
+}

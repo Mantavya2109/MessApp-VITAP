@@ -109,6 +109,8 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
   const refreshSchedule = useCallback(
     async (refDate?: Date | string, forceMessType?: string) => {
       const mType = forceMessType || profile.messType;
+      if (mType === 'Night Canteen') return;
+
       const targetDate = refDate
         ? typeof refDate === 'string'
           ? new Date(refDate + 'T00:00:00')
@@ -169,6 +171,12 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
   // Hydrate schedule from Dexie / API whenever messType changes
   useEffect(() => {
     let isMounted = true;
+
+    if (profile.messType === 'Night Canteen') {
+      // Prefetch both regular plans in background for seamless offline use
+      prefetchAllMessPlans().catch(() => { });
+      return;
+    }
 
     getWeekSchedule(currentIST, profile.messType)
       .then((days) => {
