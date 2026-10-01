@@ -1,11 +1,9 @@
 import React from 'react';
 import { Download } from 'lucide-react';
-import { useApp } from '../../context/AppContext';
 import { usePwa } from '../../context/PwaContext';
 import './InstallAppButton.css';
 
 export const InstallAppButton: React.FC = () => {
-  const { isOffline } = useApp();
   const { isInstalled, canInstall, isInstalling, triggerInstall } = usePwa();
 
   // Dynamic visibility:
@@ -18,15 +16,11 @@ export const InstallAppButton: React.FC = () => {
   return (
     <button
       type="button"
-      className={`pwa-install-nav-btn ${isOffline ? 'is-offline' : ''}`}
+      className="pwa-install-nav-btn"
       onClick={triggerInstall}
-      disabled={isOffline || isInstalling}
-      aria-label={isOffline ? 'Install App (Disabled while offline)' : 'Install MessApp'}
-      title={
-        isOffline
-          ? 'Connect to internet to install MessApp'
-          : 'Install MessApp on your device'
-      }
+      disabled={isInstalling}
+      aria-label="Install MessApp"
+      title="Install MessApp on your device"
     >
       <span className="pwa-install-icon-wrap" aria-hidden="true">
         <Download size={15} strokeWidth={2.4} />

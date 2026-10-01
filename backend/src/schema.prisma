@@ -82,7 +82,7 @@ model AppLike {
 model NightCanteenItem {
   id        String   @id @default(cuid())
   sno       Int      @unique
-  type      String   // "Veg" | "Non-Veg"
+  type      String // "Veg" | "Non-Veg"
   category  String
   name      String
   quantity  String
@@ -92,4 +92,3 @@ model NightCanteenItem {
 
   @@map("night_canteen_items")
 }
-

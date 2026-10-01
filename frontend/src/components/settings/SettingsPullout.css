@@ -211,12 +211,31 @@
 .pullout-timings-sublist {
   display: flex;
   flex-direction: column;
-  gap: 6px;
-  padding: 8px 10px;
+  gap: 8px;
+  padding: 10px 12px;
   background: var(--bg-surface-subtle);
   border-radius: var(--radius-md);
   border: 1px solid var(--border-subtle);
   margin-top: 4px;
+}
+
+.pullout-timing-group {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  padding-bottom: 6px;
+  border-bottom: 1px solid var(--border-subtle);
+}
+
+.pullout-timing-group:last-child {
+  border-bottom: none;
+  padding-bottom: 0;
+}
+
+.timing-schedule-entries {
+  display: flex;
+  flex-direction: column;
+  gap: 3px;
 }
 
 .pullout-timing-row {
@@ -228,13 +247,23 @@
 }
 
 .timing-meal-name {
-  font-weight: var(--weight-bold);
+  font-family: var(--font-heading);
+  font-size: 0.78125rem;
+  font-weight: var(--weight-extrabold);
   color: var(--text-primary);
+  letter-spacing: 0.03em;
+}
+
+.timing-day-label {
+  font-size: 0.75rem;
+  color: var(--text-secondary);
+  font-weight: var(--weight-medium);
 }
 
 .timing-meal-time {
-  color: var(--text-secondary);
-  font-weight: var(--weight-medium);
+  color: var(--text-primary);
+  font-weight: var(--weight-bold);
+  font-size: 0.78125rem;
 }
 
 /* Footer Creator Link */
