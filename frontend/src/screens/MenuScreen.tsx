@@ -8,6 +8,7 @@ import {
 import { useApp } from '../context/AppContext';
 import { MealCard } from '../components/meals/MealCard';
 import { SettingsPullout } from '../components/settings/SettingsPullout';
+import { MessServiceInstructionsModal } from '../components/settings/MessServiceInstructionsModal';
 import { AvatarIcon } from '../components/profile/AvatarIcon';
 import { AvatarSelectorPopover } from '../components/profile/AvatarSelectorPopover';
 import { InstallAppButton } from '../components/common/InstallAppButton';
@@ -25,10 +26,10 @@ export const MenuScreen: React.FC = () => {
     currentMealInfo,
     profile,
     updateProfile,
-    refreshSchedule,
   } = useApp();
 
   const [isSettingsOpen, setIsSettingsOpen] = useState(false);
+  const [isInstructionsOpen, setIsInstructionsOpen] = useState(false);
   const [isAvatarPickerOpen, setIsAvatarPickerOpen] = useState(false);
   const activePillRef = useRef<HTMLButtonElement | null>(null);
 
@@ -84,7 +85,6 @@ export const MenuScreen: React.FC = () => {
       const prevDate = schedule[activeDayIndex - 1].date;
       setSelectedMenuDateKey(prevDate);
       if (selectedMenuTab === 'week') setSelectedMenuTab('today');
-      refreshSchedule(prevDate);
     }
   };
 
@@ -94,11 +94,10 @@ export const MenuScreen: React.FC = () => {
       const nextDate = schedule[activeDayIndex + 1].date;
       setSelectedMenuDateKey(nextDate);
       if (selectedMenuTab === 'week') setSelectedMenuTab('today');
-      refreshSchedule(nextDate);
     }
   };
 
-  // Toggle Week / Day view via Calendar button (Directly jumps to current date & caches all dates)
+  // Toggle Week / Day view via Calendar button (Directly jumps to current date)
   const handleToggleCalendar = () => {
     if (selectedMenuTab === 'week') {
       setSelectedMenuTab('today');
@@ -108,8 +107,6 @@ export const MenuScreen: React.FC = () => {
       if (hasToday) {
         setSelectedMenuDateKey(todayDateKey);
       }
-      // Proactively ensure schedule and selected date are fully cached in Dexie
-      refreshSchedule(todayDateKey);
     }
   };
 
@@ -130,7 +127,11 @@ export const MenuScreen: React.FC = () => {
 
 
         {/* Floating Pullout Settings Menu Anchored under Settings */}
-        <SettingsPullout isOpen={isSettingsOpen} onClose={() => setIsSettingsOpen(false)} />
+        <SettingsPullout
+          isOpen={isSettingsOpen}
+          onClose={() => setIsSettingsOpen(false)}
+          onOpenInstructions={() => setIsInstructionsOpen(true)}
+        />
 
         {/* Subtle App Identity Label between Settings and Actions */}
         <div className="menu-app-brand-badge" aria-label="VIT-AP Mess Menu">
@@ -270,7 +271,6 @@ export const MenuScreen: React.FC = () => {
                     className={`date-pill-item ${isSelected ? 'active' : ''}`}
                     onClick={() => {
                       setSelectedMenuDateKey(day.date);
-                      refreshSchedule(day.date);
                     }}
                   >
                     <span className="date-pill-day">{day.isToday ? 'Today' : shortDay}</span>
@@ -314,6 +314,12 @@ export const MenuScreen: React.FC = () => {
           )}
         </>
       )}
+
+      {/* Mess Service Instructions Compact Modal (60vh mobile) */}
+      <MessServiceInstructionsModal
+        isOpen={isInstructionsOpen}
+        onClose={() => setIsInstructionsOpen(false)}
+      />
     </div>
   );
 };

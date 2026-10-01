@@ -6,22 +6,29 @@ import {
   MessageSquare,
   ChevronDown,
   ChevronUp,
+  ChevronRight,
+  ScrollText,
   Heart,
   Download,
   Check,
 } from 'lucide-react';
 import { useApp } from '../../context/AppContext';
 import { usePwa } from '../../context/PwaContext';
-import { MEAL_TIMINGS } from '../../data/mockData';
+import { MESS_TIMING_SCHEDULE } from '../../data/mockData';
 import { fetchAppLikes, sendAppLike, sendAppUnlike, getCachedAppLikes } from '../../data/likesRepository';
 import './SettingsPullout.css';
 
 interface SettingsPulloutProps {
   isOpen: boolean;
   onClose: () => void;
+  onOpenInstructions?: () => void;
 }
 
-export const SettingsPullout: React.FC<SettingsPulloutProps> = ({ isOpen, onClose }) => {
+export const SettingsPullout: React.FC<SettingsPulloutProps> = ({
+  isOpen,
+  onClose,
+  onOpenInstructions,
+}) => {
   const {
     profile,
     updateProfile,
@@ -64,7 +71,7 @@ export const SettingsPullout: React.FC<SettingsPulloutProps> = ({ isOpen, onClos
 
     // Prevent liking while offline and inform student
     if (isOffline) {
-      showToast('Offline Mode', 'Connect to the internet to like MessApp.', 'info');
+      showToast('Connect to Internet', 'Please connect to the internet to record your like.', 'info');
       return;
     }
 
@@ -192,34 +199,62 @@ export const SettingsPullout: React.FC<SettingsPulloutProps> = ({ isOpen, onClos
 
             {isTimingsOpen && (
               <div className="pullout-timings-sublist">
-                {Object.entries(MEAL_TIMINGS).map(([key, val]) => (
-                  <div key={key} className="pullout-timing-row">
-                    <span className="timing-meal-name">{val.label}</span>
-                    <span className="timing-meal-time">{val.timeRange}</span>
+                {MESS_TIMING_SCHEDULE.map((item) => (
+                  <div key={item.meal} className="pullout-timing-group">
+                    <span className="timing-meal-name">{item.meal}</span>
+                    <div className="timing-schedule-entries">
+                      {item.schedules.map((s, idx) => (
+                        <div key={idx} className="pullout-timing-row">
+                          <span className="timing-day-label">{s.days}</span>
+                          <span className="timing-meal-time">{s.timeRange}</span>
+                        </div>
+                      ))}
+                    </div>
                   </div>
                 ))}
               </div>
             )}
           </div>
 
+          {/* 3. Mess Service Instructions Option */}
+          <div
+            className="pullout-item clickable"
+            onClick={() => {
+              onClose();
+              if (onOpenInstructions) {
+                onOpenInstructions();
+              }
+            }}
+            role="button"
+            tabIndex={0}
+            aria-label="Open Mess Service Instructions"
+          >
+            <div className="pullout-item-header">
+              <div className="pullout-item-left">
+                <div className="pullout-icon">
+                  <ScrollText size={20} strokeWidth={2.2} />
+                </div>
+                <span className="pullout-item-label">Mess Service Instructions</span>
+              </div>
+              <ChevronRight size={18} color="var(--text-secondary)" strokeWidth={2.4} />
+            </div>
+          </div>
+
           {/* 4. Like MessApp Community Support Option */}
           <div
-            className={`pullout-item pullout-like-item ${isOffline ? 'is-disabled-offline' : 'clickable'}`}
+            className="pullout-item pullout-like-item clickable"
             onClick={handleLikeClick}
             role="button"
             tabIndex={0}
             aria-label={
-              isOffline
-                ? 'Liking is disabled while offline'
-                : likesState.userLiked
+              likesState.userLiked
                 ? 'You have liked MessApp. Click to unlike.'
                 : 'Like MessApp'
             }
-            aria-disabled={isOffline}
           >
             <div className="pullout-item-header">
               <div className="pullout-item-left">
-                <div className={`pullout-icon pullout-like-icon ${isLikedRecently && !isOffline ? 'heart-bump' : ''}`}>
+                <div className={`pullout-icon pullout-like-icon ${isLikedRecently ? 'heart-bump' : ''}`}>
                   <Heart
                     size={20}
                     strokeWidth={2.2}
@@ -230,17 +265,16 @@ export const SettingsPullout: React.FC<SettingsPulloutProps> = ({ isOpen, onClos
                 </div>
                 <div className="pullout-like-title-wrap">
                   <span className="pullout-item-label">Like MessApp</span>
-                  {isOffline && <span className="pullout-offline-pill">Offline</span>}
                 </div>
               </div>
 
               {/* Dedicated Like / Liked Button */}
               <button
                 type="button"
-                className={`pullout-like-action-btn ${likesState.userLiked ? 'liked-active' : ''} ${isOffline ? 'btn-disabled' : ''}`}
+                className={`pullout-like-action-btn ${likesState.userLiked ? 'liked-active' : ''}`}
                 onClick={handleLikeClick}
-                aria-label={isOffline ? 'Likes disabled offline' : likesState.userLiked ? 'Liked MessApp' : 'Like MessApp'}
-                disabled={isOffline || isSubmittingLike}
+                aria-label={likesState.userLiked ? 'Liked MessApp' : 'Like MessApp'}
+                disabled={isSubmittingLike}
               >
                 {likesState.userLiked ? (
                   <>
@@ -252,11 +286,11 @@ export const SettingsPullout: React.FC<SettingsPulloutProps> = ({ isOpen, onClos
                     <Heart
                       size={13}
                       strokeWidth={2.4}
-                      fill={isOffline ? '#94A3B8' : '#EF4444'}
-                      color={isOffline ? '#94A3B8' : '#EF4444'}
+                      fill="#EF4444"
+                      color="#EF4444"
                       className="action-heart-icon"
                     />
-                    <span>{isOffline ? 'Offline' : 'Like'}</span>
+                    <span>Like</span>
                   </>
                 )}
               </button>
@@ -264,40 +298,36 @@ export const SettingsPullout: React.FC<SettingsPulloutProps> = ({ isOpen, onClos
 
             {/* Total number of likes & support message displayed below the option */}
             <div className="pullout-likes-below-info">
-              <span className={`pullout-likes-counter-tag ${isOffline ? 'tag-offline' : ''}`}>
+              <span className="pullout-likes-counter-tag">
                 ❤️ {likesState.totalLikes.toLocaleString()} {likesState.totalLikes === 1 ? 'student' : 'students'} liked MessApp
-                {isOffline && ' (Cached)'}
               </span>
             </div>
 
             {/* Floating hearts particles */}
-            {!isOffline && (
-              <div className="floating-hearts-container" aria-hidden="true">
-                {floatingHearts.map((h) => (
-                  <span
-                    key={h.id}
-                    className="floating-heart"
-                    style={{ left: `${h.left}%` }}
-                  >
-                    ❤️
-                  </span>
-                ))}
-              </div>
-            )}
+            <div className="floating-hearts-container" aria-hidden="true">
+              {floatingHearts.map((h) => (
+                <span
+                  key={h.id}
+                  className="floating-heart"
+                  style={{ left: `${h.left}%` }}
+                >
+                  ❤️
+                </span>
+              ))}
+            </div>
           </div>
 
           {/* 5. Install MessApp (Permanent in Settings) */}
           <div
-            className={`pullout-item pullout-install-item ${isInstalled ? 'is-installed' : isOffline ? 'is-disabled-offline' : 'clickable'}`}
+            className={`pullout-item pullout-install-item ${isInstalled ? 'is-installed' : 'clickable'}`}
             onClick={() => {
-              if (!isInstalled && !isOffline) {
+              if (!isInstalled) {
                 triggerInstall();
               }
             }}
             role="button"
             tabIndex={0}
-            aria-label={isInstalled ? 'MessApp is already installed' : isOffline ? 'Installation disabled offline' : 'Install MessApp'}
-            aria-disabled={isInstalled || isOffline}
+            aria-label={isInstalled ? 'MessApp is already installed' : 'Install MessApp'}
           >
             <div className="pullout-item-header">
               <div className="pullout-item-left">
@@ -325,17 +355,17 @@ export const SettingsPullout: React.FC<SettingsPulloutProps> = ({ isOpen, onClos
               ) : (
                 <button
                   type="button"
-                  className={`pullout-install-action-btn ${isOffline ? 'btn-disabled' : ''}`}
+                  className="pullout-install-action-btn"
                   onClick={(e) => {
                     e.stopPropagation();
                     triggerInstall();
                   }}
-                  aria-label={isOffline ? 'Install disabled offline' : 'Install MessApp'}
-                  disabled={isOffline || isInstalling}
-                  title={isOffline ? 'Connect to internet to install' : 'Install MessApp'}
+                  aria-label="Install MessApp"
+                  disabled={isInstalling}
+                  title="Install MessApp"
                 >
                   <Download size={13} strokeWidth={2.4} />
-                  <span>{isOffline ? 'Offline' : 'Install'}</span>
+                  <span>Install</span>
                 </button>
               )}
             </div>

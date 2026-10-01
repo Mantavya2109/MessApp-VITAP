@@ -1,3 +1,4 @@
+import React, { useState } from 'react';
 import {
   Moon,
   Sun,
@@ -7,10 +8,12 @@ import {
   ArrowLeft,
   Download,
   Check,
+  ScrollText,
 } from 'lucide-react';
 import { useApp } from '../context/AppContext';
 import { usePwa } from '../context/PwaContext';
-import { MEAL_TIMINGS } from '../data/mockData';
+import { MESS_TIMING_SCHEDULE } from '../data/mockData';
+import { MessServiceInstructionsModal } from '../components/settings/MessServiceInstructionsModal';
 import './ProfileScreen.css';
 
 export const ProfileScreen: React.FC = () => {
@@ -18,9 +21,9 @@ export const ProfileScreen: React.FC = () => {
     profile,
     updateProfile,
     setActiveTab,
-    isOffline,
   } = useApp();
   const { isInstalled, isInstalling, triggerInstall } = usePwa();
+  const [isInstructionsOpen, setIsInstructionsOpen] = useState(false);
 
   const handleFeedback = () => {
     // Open feedback
@@ -113,16 +116,15 @@ export const ProfileScreen: React.FC = () => {
         <span className="profile-section-title">App Installation</span>
         <div className="profile-settings-card">
           <div
-            className={`profile-setting-item ${!isInstalled && !isOffline ? 'clickable' : ''}`}
+            className={`profile-setting-item ${!isInstalled ? 'clickable' : ''}`}
             onClick={() => {
-              if (!isInstalled && !isOffline) {
+              if (!isInstalled) {
                 triggerInstall();
               }
             }}
             role="button"
             tabIndex={0}
-            aria-label={isInstalled ? 'MessApp is already installed' : isOffline ? 'Installation disabled offline' : 'Install MessApp'}
-            aria-disabled={isInstalled || isOffline}
+            aria-label={isInstalled ? 'MessApp is already installed' : 'Install MessApp'}
           >
             <div className="profile-setting-left">
               <div className={`setting-icon-wrap ${isInstalled ? 'icon-installed' : ''}`}>
@@ -133,7 +135,7 @@ export const ProfileScreen: React.FC = () => {
                 <span className="setting-desc">
                   {isInstalled
                     ? 'Installed on this device as a PWA'
-                    : 'Install on your device for 1-tap offline access'}
+                    : 'Install on your device for quick 1-tap access'}
                 </span>
               </div>
             </div>
@@ -146,17 +148,17 @@ export const ProfileScreen: React.FC = () => {
             ) : (
               <button
                 type="button"
-                className={`pullout-install-action-btn ${isOffline ? 'btn-disabled' : ''}`}
+                className="pullout-install-action-btn"
                 onClick={(e) => {
                   e.stopPropagation();
                   triggerInstall();
                 }}
-                disabled={isOffline || isInstalling}
-                aria-label={isOffline ? 'Install disabled offline' : 'Install MessApp'}
-                title={isOffline ? 'Connect to internet to install' : 'Install MessApp'}
+                disabled={isInstalling}
+                aria-label="Install MessApp"
+                title="Install MessApp"
               >
                 <Download size={13} strokeWidth={2.4} />
-                <span>{isOffline ? 'Offline' : 'Install'}</span>
+                <span>Install</span>
               </button>
             )}
           </div>
@@ -167,19 +169,48 @@ export const ProfileScreen: React.FC = () => {
       <div className="profile-section-group">
         <span className="profile-section-title">Daily Mess Timings</span>
         <div className="profile-settings-card">
-          {Object.entries(MEAL_TIMINGS).map(([key, val]) => (
-            <div key={key} className="profile-setting-item">
+          {MESS_TIMING_SCHEDULE.map((item) => (
+            <div key={item.meal} className="profile-setting-item">
               <div className="profile-setting-left">
                 <div className="setting-icon-wrap">
                   <Clock size={16} />
                 </div>
                 <div className="setting-texts">
-                  <span className="setting-label">{val.label}</span>
-                  <span className="setting-desc">{val.timeRange}</span>
+                  <span className="setting-label">{item.meal}</span>
+                  {item.schedules.map((s, idx) => (
+                    <span key={idx} className="setting-desc">
+                      {s.days}: {s.timeRange}
+                    </span>
+                  ))}
                 </div>
               </div>
             </div>
           ))}
+        </div>
+      </div>
+
+      {/* Mess Service Instructions Section */}
+      <div className="profile-section-group">
+        <span className="profile-section-title">Mess Guidelines</span>
+        <div className="profile-settings-card">
+          <div
+            className="profile-setting-item clickable"
+            onClick={() => setIsInstructionsOpen(true)}
+            role="button"
+            tabIndex={0}
+            aria-label="Open Mess Service Instructions"
+          >
+            <div className="profile-setting-left">
+              <div className="setting-icon-wrap">
+                <ScrollText size={17} />
+              </div>
+              <div className="setting-texts">
+                <span className="setting-label">Mess Service Instructions</span>
+                <span className="setting-desc">Official serving guidelines, weights & portion standards</span>
+              </div>
+            </div>
+            <ChevronRight size={16} color="var(--text-tertiary)" />
+          </div>
         </div>
       </div>
 
@@ -217,6 +248,12 @@ export const ProfileScreen: React.FC = () => {
           </a>
         </p>
       </footer>
+
+      {/* Mess Service Instructions Compact Modal (60vh mobile) */}
+      <MessServiceInstructionsModal
+        isOpen={isInstructionsOpen}
+        onClose={() => setIsInstructionsOpen(false)}
+      />
     </div>
   );
 };

@@ -1,6 +1,6 @@
 import { db, type DbDayMenuRecord } from './db';
 import type { DayMenu, MealSlot, MenuItem } from '../types';
-import { formatDateKey, MEAL_TIMINGS, getISTDate } from './mockData';
+import { formatDateKey, getMealTiming, getISTDate } from './mockData';
 
 const API_BASE_URL =
   import.meta.env.VITE_API_URL ||
@@ -17,6 +17,28 @@ export function getPlanCode(messType: string): string {
 }
 
 /**
+ * Ensures meal slots have the correct date-specific timing (e.g. Sunday/Monday vs Tue-Sat breakfast).
+ */
+function ensureDynamicMealTimings(meals: DayMenu['meals'], dateKey: string): DayMenu['meals'] {
+  const mealTypes = ['breakfast', 'lunch', 'snacks', 'dinner'] as const;
+  const updatedMeals = { ...meals };
+
+  for (const mType of mealTypes) {
+    if (updatedMeals[mType]) {
+      const timing = getMealTiming(mType, dateKey);
+      updatedMeals[mType] = {
+        ...updatedMeals[mType],
+        timeRange: timing.timeRange,
+        startTime: timing.startTime,
+        endTime: timing.endTime,
+      };
+    }
+  }
+
+  return updatedMeals;
+}
+
+/**
  * Maps an API meal slot response to the frontend MealSlot structure.
  */
 function mapApiSlotToFrontendSlot(
@@ -24,7 +46,7 @@ function mapApiSlotToFrontendSlot(
   dateKey: string
 ): MealSlot {
   const typeLower = (apiSlot?.mealType || 'breakfast').toLowerCase() as 'breakfast' | 'lunch' | 'snacks' | 'dinner';
-  const timing = MEAL_TIMINGS[typeLower] || MEAL_TIMINGS.breakfast;
+  const timing = getMealTiming(typeLower, dateKey);
 
   const items: MenuItem[] = (apiSlot?.items || []).map((item: any, idx: number) => {
     let dietary: 'veg' | 'non-veg' | 'egg' = 'veg';
@@ -84,19 +106,24 @@ export function mapApiDayToDayMenu(apiDay: any, todayKey: string, tomorrowKey: s
   };
 }
 
+export const CACHE_VERSION = 'v4_october_2026_timings';
+const CACHE_TTL_MS = 60 * 60 * 1000; // 1 hour TTL for background sync revalidation
+
 /**
  * Clears old/stale mock records from Dexie if needed.
  */
 export async function clearStaleCache(): Promise<void> {
   try {
     const syncMeta = await db.metadata.get('cacheVersion');
-    if (syncMeta?.value !== 'v2_september_2026') {
+    if (syncMeta?.value !== CACHE_VERSION) {
       await db.menus.clear();
       await db.metadata.put({
         key: 'cacheVersion',
-        value: 'v2_september_2026',
+        value: CACHE_VERSION,
         updatedAt: new Date().toISOString(),
       });
+      await db.metadata.delete('lastSync_Veg Mess');
+      await db.metadata.delete('lastSync_Special Mess');
     }
   } catch (e) {
     console.warn('[menuRepository] Failed to clear stale cache:', e);
@@ -104,7 +131,8 @@ export async function clearStaleCache(): Promise<void> {
 }
 
 /**
- * Fetches menu from backend API and caches all days into IndexedDB (Dexie).
+ * Fetches menu from backend API and caches ALL days of the month into IndexedDB (Dexie).
+ * One single sync caches the COMPLETE month (all 31 days).
  */
 export async function syncMenusFromApi(refDate: Date = getISTDate(), messType: string = 'Veg Mess'): Promise<DayMenu[]> {
   const planCode = getPlanCode(messType);
@@ -130,7 +158,7 @@ export async function syncMenusFromApi(refDate: Date = getISTDate(), messType: s
     const nowIso = new Date().toISOString();
     const dayMenus: DayMenu[] = data.days.map((apiDay: any) => mapApiDayToDayMenu(apiDay, todayKey, tomorrowKey));
 
-    // Save to IndexedDB Dexie Cache
+    // Save COMPLETE month to IndexedDB Dexie Cache in a single bulk operation
     const recordsToInsert: DbDayMenuRecord[] = dayMenus.map((day) => ({
       id: `${messType}_${day.date}`,
       messType,
@@ -158,12 +186,16 @@ export async function syncMenusFromApi(refDate: Date = getISTDate(), messType: s
 
 /**
  * Retrieves the schedule for a given date and mess type (Local-first: IndexedDB -> Network Sync).
+ * Uses local cache directly and only fetches if cache is missing or stale.
  */
 export async function getWeekSchedule(
   refDate: Date = getISTDate(),
   messType: string = 'Veg Mess'
 ): Promise<DayMenu[]> {
   await clearStaleCache();
+
+  const targetDateKey = formatDateKey(refDate);
+  const targetMonthPrefix = targetDateKey.substring(0, 7); // "YYYY-MM"
 
   const todayDate = getISTDate();
   const todayKey = formatDateKey(todayDate);
@@ -172,10 +204,11 @@ export async function getWeekSchedule(
   const tomorrowKey = formatDateKey(tomorrowObj);
 
   try {
-    // 1. Check Dexie IndexedDB cache first
+    // 1. Check Dexie IndexedDB cache first for this messType and month
     const cachedRecords = await db.menus
       .where('messType')
       .equals(messType)
+      .filter((rec) => rec.date.startsWith(targetMonthPrefix))
       .sortBy('date');
 
     if (cachedRecords.length > 0) {
@@ -184,16 +217,22 @@ export async function getWeekSchedule(
         dayName: rec.dayName,
         isToday: rec.date === todayKey,
         isTomorrow: rec.date === tomorrowKey,
-        meals: rec.meals,
+        meals: ensureDynamicMealTimings(rec.meals, rec.date),
       }));
 
-      // Background revalidation
-      syncMenusFromApi(refDate, messType).catch(() => { });
+      // Background revalidation only if TTL has elapsed
+      const lastSyncRecord = await db.metadata.get(`lastSync_${messType}`);
+      const lastSyncTime = lastSyncRecord?.value ? new Date(lastSyncRecord.value).getTime() : 0;
+      const isStale = Date.now() - lastSyncTime > CACHE_TTL_MS;
+
+      if (isStale) {
+        syncMenusFromApi(refDate, messType).catch(() => { });
+      }
 
       return cachedDayMenus;
     }
 
-    // 2. If IndexedDB empty, fetch from API and cache
+    // 2. If IndexedDB empty, perform 1 sync for the complete month and cache
     const freshDays = await syncMenusFromApi(refDate, messType);
     return freshDays;
   } catch (err) {
@@ -203,13 +242,12 @@ export async function getWeekSchedule(
 }
 
 /**
- * Fetch a single day menu for a specific date and guarantees it is added to Dexie cache.
+ * Fetch a single day menu for a specific date (Local-first with full month fallback).
  */
 export async function getDayMenu(
   dateKey: string,
   messType: string = 'Veg Mess'
 ): Promise<DayMenu | null> {
-  const planCode = getPlanCode(messType);
   const todayDate = getISTDate();
   const todayKey = formatDateKey(todayDate);
   const tomorrowObj = new Date(todayDate);
@@ -225,35 +263,21 @@ export async function getDayMenu(
         dayName: cached.dayName,
         isToday: cached.date === todayKey,
         isTomorrow: cached.date === tomorrowKey,
-        meals: cached.meals,
+        meals: ensureDynamicMealTimings(cached.meals, cached.date),
       };
     }
   } catch (e) {
     console.warn('[menuRepository] Dexie read failed:', e);
   }
 
-  // 2. Fetch from API and store into Dexie cache
+  // 2. If not in cache, sync the entire month so all days are loaded at once
   try {
-    const response = await fetch(`${API_BASE_URL}/menu?date=${dateKey}&messPlan=${planCode}`);
-    if (response.ok) {
-      const data = await response.json();
-      if (data.day) {
-        const dayMenu = mapApiDayToDayMenu(data.day, todayKey, tomorrowKey);
-        await db.menus.put({
-          id: `${messType}_${dayMenu.date}`,
-          messType,
-          date: dayMenu.date,
-          dayName: dayMenu.dayName,
-          isToday: dayMenu.isToday,
-          isTomorrow: dayMenu.isTomorrow,
-          meals: dayMenu.meals,
-          updatedAt: new Date().toISOString(),
-        });
-        return dayMenu;
-      }
-    }
+    const targetDate = new Date(dateKey + 'T00:00:00');
+    const syncedDays = await syncMenusFromApi(targetDate, messType);
+    const found = syncedDays.find((d) => d.date === dateKey);
+    if (found) return found;
   } catch (e) {
-    console.warn('[menuRepository] API read failed:', e);
+    console.warn('[menuRepository] Full sync failed:', e);
   }
 
   return null;
@@ -262,11 +286,20 @@ export async function getDayMenu(
 /**
  * Prefetches and caches all mess plans in the background for instant offline availability.
  */
-export async function prefetchAllMessPlans(): Promise<void> {
+export async function prefetchAllMessPlans(refDate: Date = getISTDate()): Promise<void> {
   const plans = ['Veg Mess', 'Special Mess'];
+  const targetMonthPrefix = formatDateKey(refDate).substring(0, 7);
   for (const plan of plans) {
     try {
-      await syncMenusFromApi(getISTDate(), plan);
+      const count = await db.menus
+        .where('messType')
+        .equals(plan)
+        .filter((rec) => rec.date.startsWith(targetMonthPrefix))
+        .count();
+
+      if (count === 0) {
+        await syncMenusFromApi(refDate, plan);
+      }
     } catch {
       // Quiet background fallback
     }

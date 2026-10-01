@@ -218,8 +218,13 @@ app.get('/api/menu/week', async (req, res) => {
 
         // If range === 'month', fetch the entire month
         if (range === 'month') {
-          const y = targetDate.getFullYear();
-          const m = String(targetDate.getMonth() + 1).padStart(2, '0');
+          const parts = (date as string).split('-');
+          let y = parts[0];
+          let m = parts[1];
+          if (!y || !m || parts.length < 2) {
+            y = String(targetDate.getFullYear());
+            m = String(targetDate.getMonth() + 1).padStart(2, '0');
+          }
           whereClause.date = {
             gte: `${y}-${m}-01`,
             lte: `${y}-${m}-31`,

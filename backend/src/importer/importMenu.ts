@@ -308,15 +308,17 @@ export function findLatestExcelFile(): string {
     throw new Error(`Data directory not found at ${dataDir}`);
   }
 
-  const files = fs.readdirSync(dataDir).filter((f) => f.endsWith('.xlsx') && !f.startsWith('~$'));
+  const files = fs
+    .readdirSync(dataDir)
+    .filter((f) => f.endsWith('.xlsx') && !f.startsWith('~$') && !f.toLowerCase().includes('night canteen'));
   if (files.length === 0) {
-    throw new Error('No .xlsx files found in data directory');
+    throw new Error('No menu .xlsx files found in data directory');
   }
 
-  // Prioritize September if present, or sort by name
-  const sept = files.find((f) => f.toLowerCase().includes('september'));
-  if (sept) {
-    return path.join(dataDir, sept);
+  // Prioritize October if present, or select newest menu file
+  const oct = files.find((f) => f.toLowerCase().includes('october'));
+  if (oct) {
+    return path.join(dataDir, oct);
   }
 
   return path.join(dataDir, files[files.length - 1]);
@@ -398,10 +400,17 @@ export async function importExcelMenu(options: ImportOptions = {}) {
 
       console.log(`  Upserted MessPlan: ${messPlan.code} (${messPlan.name})`);
 
-      // Clean existing days for this plan in one fast query
-      await prisma.menuDay.deleteMany({
-        where: { messPlanId: messPlan.id },
+      // Clean existing days ONLY for the dates being imported (preserves previous months like September)
+      const dateList = sheetData.days.map((d) => d.date);
+      const deletedExisting = await prisma.menuDay.deleteMany({
+        where: {
+          messPlanId: messPlan.id,
+          date: { in: dateList },
+        },
       });
+      if (deletedExisting.count > 0) {
+        console.log(`  Cleaned ${deletedExisting.count} existing records for ${sheetData.planCode} for re-import`);
+      }
 
       // Insert days in fast parallel batches of 5
       const BATCH_SIZE = 5;

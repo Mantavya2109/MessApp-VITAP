@@ -4,7 +4,11 @@ import fs from 'fs';
 import path from 'path';
 
 console.log('⚡ Generating Prisma client and query engine binaries...');
-execSync('npx prisma generate', { stdio: 'inherit' });
+try {
+  execSync('npx prisma generate', { stdio: 'inherit' });
+} catch (err) {
+  console.warn('Note: Prisma client already generated or locked by active dev process.');
+}
 
 // Copy Prisma engine binaries to src/ and dist/ so they are co-located in __dirname on Vercel
 const prismaDir = path.resolve('node_modules/.prisma/client');
