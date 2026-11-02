@@ -1,14 +1,19 @@
 import xlsx from 'xlsx';
 import path from 'path';
 import fs from 'fs';
+import { fileURLToPath } from 'url';
 import { PrismaClient } from '@prisma/client';
 import { DietaryTag, MealType } from '../types/index.js';
+
+const __filename = fileURLToPath(import.meta.url);
+const __dirname = path.dirname(__filename);
 
 export interface ImportOptions {
   filePath?: string;
   year?: number;
   month?: number; // 1-12
   dryRun?: boolean;
+  cleanPrevious?: boolean;
 }
 
 export interface ParsedItem {
@@ -138,6 +143,16 @@ export function detectYearAndMonth(workbook: xlsx.WorkBook, fileName: string): {
   };
 }
 
+const DAY_INDEX_MAP: Record<string, number> = {
+  Sunday: 0,
+  Monday: 1,
+  Tuesday: 2,
+  Wednesday: 3,
+  Thursday: 4,
+  Friday: 5,
+  Saturday: 6,
+};
+
 export function parseDayHeader(cellValue: string, year: number, month: number): { dayOfWeek: string; dates: string[] } | null {
   const text = cellValue.replace(/\r?\n/g, ' ').trim();
   // e.g. "Tue 1, 15, 29" or "Thu 3, 17"
@@ -146,12 +161,30 @@ export function parseDayHeader(cellValue: string, year: number, month: number): 
 
   const prefix = match[1].toLowerCase().slice(0, 3);
   const dayOfWeek = DAY_NAME_MAP[prefix] || match[1];
-  const dateNumbers = match[2]
+  const rawDateNumbers = match[2]
     .split(',')
     .map((s) => parseInt(s.trim(), 10))
     .filter((n) => !isNaN(n) && n >= 1 && n <= 31);
 
-  if (dateNumbers.length === 0) return null;
+  if (rawDateNumbers.length === 0) return null;
+
+  const expectedDayIdx = DAY_INDEX_MAP[dayOfWeek];
+  const dateNumbers = rawDateNumbers.map((d) => {
+    if (expectedDayIdx !== undefined) {
+      const dt = new Date(year, month - 1, d);
+      if (dt.getDay() !== expectedDayIdx) {
+        if (d > 1 && new Date(year, month - 1, d - 1).getDay() === expectedDayIdx) {
+          console.warn(`  [parseDayHeader] Auto-corrected typo in day header "${text}": date ${d} is not ${dayOfWeek}, corrected to ${d - 1}`);
+          return d - 1;
+        }
+        if (d < 31 && new Date(year, month - 1, d + 1).getDay() === expectedDayIdx) {
+          console.warn(`  [parseDayHeader] Auto-corrected typo in day header "${text}": date ${d} is not ${dayOfWeek}, corrected to ${d + 1}`);
+          return d + 1;
+        }
+      }
+    }
+    return d;
+  });
 
   const dates = dateNumbers.map((d) => {
     const yStr = String(year);
@@ -303,9 +336,21 @@ export function parseSheet(workbook: xlsx.WorkBook, sheetName: string, planCode:
 }
 
 export function findLatestExcelFile(): string {
-  const dataDir = path.resolve(process.cwd(), '../data');
-  if (!fs.existsSync(dataDir)) {
-    throw new Error(`Data directory not found at ${dataDir}`);
+  const possibleDirs = [
+    path.resolve(process.cwd(), '../data'),
+    path.resolve(process.cwd(), 'data'),
+    path.resolve(__dirname, '../../../data'),
+    path.resolve(__dirname, '../../data'),
+  ];
+  let dataDir = '';
+  for (const d of possibleDirs) {
+    if (fs.existsSync(d)) {
+      dataDir = d;
+      break;
+    }
+  }
+  if (!dataDir) {
+    throw new Error('Data directory not found');
   }
 
   const files = fs
@@ -315,19 +360,30 @@ export function findLatestExcelFile(): string {
     throw new Error('No menu .xlsx files found in data directory');
   }
 
-  // Prioritize October if present, or select newest menu file
-  const oct = files.find((f) => f.toLowerCase().includes('october'));
-  if (oct) {
-    return path.join(dataDir, oct);
-  }
+  // Sort files by year and month descending to dynamically pick newest menu
+  const getFileScore = (fileName: string) => {
+    const fileLower = fileName.toLowerCase();
+    let m = 0;
+    for (const [name, val] of Object.entries(MONTH_NAMES)) {
+      if (fileLower.includes(name)) {
+        m = val;
+        break;
+      }
+    }
+    const yearMatch = fileLower.match(/\b(202\d)\b/);
+    const y = yearMatch ? parseInt(yearMatch[1], 10) : 2026;
+    return y * 100 + m;
+  };
 
-  return path.join(dataDir, files[files.length - 1]);
+  const sortedFiles = files.sort((a, b) => getFileScore(b) - getFileScore(a));
+  return path.join(dataDir, sortedFiles[0]);
 }
 
 export async function importExcelMenu(options: ImportOptions = {}) {
   const resolvedPath = options.filePath || findLatestExcelFile();
   const fileName = path.basename(resolvedPath);
   const dryRun = options.dryRun || false;
+  const cleanPrevious = options.cleanPrevious !== undefined ? options.cleanPrevious : true;
 
   const workbook = xlsx.readFile(resolvedPath);
   const { year, month } = detectYearAndMonth(workbook, fileName);
@@ -337,6 +393,7 @@ export async function importExcelMenu(options: ImportOptions = {}) {
   console.log(`Workbook: ${fileName}`);
   console.log(`Detected Month/Year: ${year}-${String(month).padStart(2, '0')}`);
   console.log(`Mode: ${dryRun ? 'DRY-RUN (Validation only)' : 'DATABASE IMPORT'}`);
+  console.log(`Clean Previous Months: ${cleanPrevious}`);
   console.log(`========================================\n`);
 
   const sheetsToImport = [
@@ -383,6 +440,22 @@ export async function importExcelMenu(options: ImportOptions = {}) {
 
   try {
     console.log(`\nImporting into PostgreSQL...`);
+
+    if (cleanPrevious) {
+      console.log(`  🧹 Cleaning previous months' MenuDay records from database...`);
+      const targetMonthPrefix = `${year}-${String(month).padStart(2, '0')}`;
+      const deletedOld = await prisma.menuDay.deleteMany({
+        where: {
+          NOT: {
+            date: {
+              startsWith: targetMonthPrefix,
+            },
+          },
+        },
+      });
+      console.log(`  ✓ Cleaned ${deletedOld.count} obsolete previous MenuDay records (and cascaded meal slots/items).`);
+    }
+
     for (const sheetData of parsedSheets) {
       // 1. Upsert MessPlan
       const messPlan = await prisma.messPlan.upsert({
@@ -400,7 +473,7 @@ export async function importExcelMenu(options: ImportOptions = {}) {
 
       console.log(`  Upserted MessPlan: ${messPlan.code} (${messPlan.name})`);
 
-      // Clean existing days ONLY for the dates being imported (preserves previous months like September)
+      // Clean existing days for the dates being imported
       const dateList = sheetData.days.map((d) => d.date);
       const deletedExisting = await prisma.menuDay.deleteMany({
         where: {
@@ -457,7 +530,8 @@ export async function importExcelMenu(options: ImportOptions = {}) {
 // CLI direct execution
 if (process.argv[1]?.endsWith('importMenu.ts') || process.argv[1]?.endsWith('importMenu.js')) {
   const isDryRun = process.argv.includes('--dry-run');
-  importExcelMenu({ dryRun: isDryRun }).catch((err) => {
+  const keepPrevious = process.argv.includes('--keep-previous');
+  importExcelMenu({ dryRun: isDryRun, cleanPrevious: !keepPrevious }).catch((err) => {
     console.error(err);
     process.exit(1);
   });

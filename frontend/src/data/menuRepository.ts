@@ -106,7 +106,7 @@ export function mapApiDayToDayMenu(apiDay: any, todayKey: string, tomorrowKey: s
   };
 }
 
-export const CACHE_VERSION = 'v4_october_2026_timings';
+export const CACHE_VERSION = 'v5_november_2026_menu';
 const CACHE_TTL_MS = 60 * 60 * 1000; // 1 hour TTL for background sync revalidation
 
 /**
